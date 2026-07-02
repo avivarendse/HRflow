@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <title>HRflow</title>
+</head>
+
+<body>
+
+<div class="d-flex">
+
+  <!-- ================= SIDEBAR (Bootstrap collapse on mobile) ================= -->
+  <div class="collapse d-lg-block bg-light border-end vh-100 p-3"
+       id="sidebar">
+
+    <h5 class="fw-bold mb-4">HRflow</h5>
+
+    <ul class="nav nav-pills flex-column gap-1">
+
+      <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Employees</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Payroll</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Leave</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+
+    </ul>
+
+  </div>
+
+  <!-- ================= MAIN AREA ================= -->
+  <div class="flex-grow-1">
+
+    <!-- TOP BAR -->
+    <nav class="navbar bg-body-tertiary border-bottom px-3">
+
+      <!-- Burger (ONLY mobile) -->
+      <button class="btn btn-outline-secondary d-lg-none"
+              data-bs-toggle="collapse"
+              data-bs-target="#sidebar">
+        ☰
+      </button>
+
+      <!-- Search -->
+      <form class="d-flex mx-auto w-50">
+        <input class="form-control" type="search" placeholder="Search...">
+      </form>
+
+      <!-- Profile -->
+      <div class="d-flex align-items-center gap-2">
+        <span>User</span>
+        <div class="rounded-circle bg-secondary" style="width:32px; height:32px;"></div>
+      </div>
+
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main class="p-3">
+      <h2>
+            <i class="fa-regular fa-paper-plane"></i>
+            New Leave Request
+        </h2>
+
+        <form id="leaveForm">
+
+            <label>Employee</label>
+
+          <select id="employee">
+            <option>Sibongile Nkosi</option>
+            <option>Lungile Moyo</option>
+            <option>Thabo Molefe</option>
+            <option>Keshav Naidoo</option>
+            <option>Zanele Khumalo</option>
+            <option>Sipho Zulu</option>
+            <option>Naledi Moeketsi</option>
+            <option>Farai Gumbo</option>
+            <option>Karabo Dlamini</option>
+            <option>Fatima Patel</option>
+          </select>
+
+            <label>Leave Type</label>
+
+            <select id="leaveType">
+                <option>Vacation</option>
+                <option>Sick Leave</option>
+                <option>Personal</option>
+            </select>
+
+            <div class="row">
+
+                <div class="column">
+
+                    <label>Start Date</label>
+
+                    <input
+                    type="date"
+                    id="startDate">
+
+                </div>
+
+                <div class="column">
+
+                    <label>End Date</label>
+
+                    <input
+                    type="date"
+                    id="endDate">
+
+                </div>
+
+            </div>
+
+            <label>Reason</label>
+
+            <textarea
+            id="reason"
+            placeholder="Briefly describe the reason for your leave..."></textarea>
+
+            <button
+            class="submit-btn"
+            type="submit">
+
+                <i class="fa-regular fa-paper-plane"></i>
+
+                Submit Request
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- APPROVAL QUEUE -->
+
+    <div class="card">
+
+        <h2>
+
+            <i class="fa-regular fa-calendar"></i>
+
+            HR Approval Queue
+
+        </h2>
+
+        <div class="status-bar">
+
+            <div class="status active">
+                Pending -
+                <span id="pendingCount">3</span>
+            </div>
+
+            <div class="status">
+                Approved -
+                <span id="approvedCount">0</span>
+            </div>
+
+            <div class="status">
+                Rejected -
+                <span id="rejectedCount">0</span>
+            </div>
+
+        </div>
+
+        <div id="requestList"></div>
+                            
+                <div class="buttons">
+
+                    <button
+                    class="reject">
+                        Reject
+                    </button>
+
+                    <button
+                    class="approve">
+                        Approve
+                    </button>
+
+                </div>
+
+            </div>           
+    </main>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
