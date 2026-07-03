@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <title>HRflow</title>
-</head>
+<title>Attendance - HR Dashboard</title>
 
+</head>
 <body>
 
 <div class="d-flex">
 
   <!-- ================= SIDEBAR (Bootstrap collapse on mobile) ================= -->
-  <div class="collapse d-lg-block bg-light border-end vh-100 p-3"
-       id="sidebar">
+  <div class="collapse d-lg-block bg-light border-end vh-100 p-3" id="sidebar">
 
     <h5 class="fw-bold mb-4">HRflow</h5>
 
@@ -26,142 +24,129 @@
       <li class="nav-item"><a class="nav-link" href="#">Employees</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Payroll</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Leave</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
+      <li class="nav-item"><a class="nav-link" href="Attendance.html">Attendance</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
       <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
 
     </ul>
 
   </div>
-    <!-- ================= MAIN AREA ================= -->
-     <body>
 
-<div class="container-fluid">
+  <!-- ================= MAIN AREA ================= -->
+  <div class="flex-grow-1">
 
-  <div class="row">
+    <!-- TOP BAR -->
+    <nav class="navbar bg-body-tertiary border-bottom px-3">
 
-    <!-- Sidebar -->
-    
-        <li class="nav-item">
-          <a class="nav-link" href="#">
-            <i class="fa-solid fa-gear me-2"></i> Settings
-          </a>
-        </li>
+      <!-- Burger (ONLY mobile) -->
+      <button class="btn btn-outline-secondary d-lg-none" data-bs-toggle="collapse" data-bs-target="#sidebar">
+        ☰
+      </button>
 
-      </ul>
+      <!-- Search -->
+      <form class="d-flex mx-auto w-50">
+        <input class="form-control" type="search" placeholder="Search employees, payroll,">
+      </form>
 
-    </aside>
-
-    <!-- Main Content -->
-    <main class="col-lg-10 bg-body-tertiary min-vh-100">
-
-
-        <form class="d-flex flex-grow-1 mx-lg-3">
-
-          <div class="input-group">
-
-            <span class="input-group-text bg-white border-end-0">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </span>
-
-            <input
-              class="form-control border-start-0"
-              type="search"
-              placeholder="Search employees, payroll, requests..."
-            >
-
-          </div>
-
-        </form>
-
-        <div class="d-flex align-items-center gap-3">
-
-          <button class="btn position-relative">
-
-            <i class="fa-regular fa-bell fs-5"></i>
-
-            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-
-          </button>
-
-          <div
-            class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
-            style="width:42px;height:42px;font-weight:600;">
-
-            PR
-
-          </div>
-
-        </div>
-
-      </nav>
-
-      <!-- Attendance Header -->
-      <div class="d-flex justify-content-between align-items-center mt-4">
-
-        <div>
-
-          <h2 class="fw-bold mb-1">Attendance</h2>
-
-          <p class="text-secondary mb-0">
-            Daily presence, absences and monthly trends.
-          </p>
-
-        </div>
-
-        <button class="btn btn-light shadow-sm rounded-pill px-4">
-
-          <i class="fa-solid fa-download me-2"></i>
-
-          Export CSV
-
-        </button>
-
+      <!-- Profile -->
+      <div class="d-flex align-items-center gap-2">
+        <span>Priya Raman</span>
+        <div class="rounded-circle bg-secondary" style="width:32px; height:32px;"></div>
       </div>
 
-      <!-- Cards Row -->
-      <div class="row g-4 mt-2">
+    </nav>
 
-        <div class="col-md-6">
-
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-
-            <span class="badge text-bg-success rounded-pill px-3 py-2 align-self-start">
-              Present today
-            </span>
-
-            <h1 class="mt-4 fw-bold">7</h1>
-
-            <p class="text-secondary">of 10</p>
-
-          </div>
-
-        </div>
-
-        <div class="col-md-6">
-
-          <div class="card border-0 shadow-sm rounded-4 p-4">
-
-            <span class="badge text-bg-danger rounded-pill px-3 py-2 align-self-start">
-              Absent today
-            </span>
-
-            <h1 class="mt-4 fw-bold">1</h1>
-
-            <p class="text-secondary">needs follow-up</p>
-
-          </div>
-
-        </div>
-
+    <main class="p-3">
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1>Attendance</h1>
+        <p>Daily presence, absences and monthly trends.</p>
       </div>
+      <button class="btn-export" id="exportBtn">⬇ Export CSV</button>
+    </div>
+
+    <!-- Stat Cards Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="badge badge-green">Present today</span>
+        <div class="stat-value">7</div>
+        <div class="stat-label">of 10</div>
+      </div>
+      <div class="stat-card">
+        <span class="badge badge-red">Absent today</span>
+        <div class="stat-value">1</div>
+        <div class="stat-label">needs follow-up</div>
+      </div>
+      <div class="stat-card">
+        <span class="badge badge-amber">On leave</span>
+        <div class="stat-value">2</div>
+        <div class="stat-label">approved</div>
+      </div>
+      <div class="stat-card">
+        <span class="badge badge-blue">Monthly attendance</span>
+        <div class="stat-value">70%</div>
+        <div class="stat-label delta">+1.2% MoM</div>
+      </div>
+    </div>
+
+    <!-- Chart + Breakdown Row -->
+    <div class="two-col">
+      <div class="card">
+        <h3>Attendance trend</h3>
+        <p class="sub">Last 6 months · % of workforce</p>
+        <div class="chart-box"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Today's breakdown</h3>
+        <div class="breakdown-item">
+          <div class="breakdown-head">
+            <span><span class="dot green"></span> Present</span>
+            <span class="muted">7 · 70%</span>
+          </div>
+          <div class="bar"><div class="fill green" style="width:70%"></div></div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-head">
+            <span><span class="dot amber"></span> On leave</span>
+            <span class="muted">2 · 20%</span>
+          </div>
+          <div class="bar"><div class="fill amber" style="width:20%"></div></div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-head">
+            <span><span class="dot red"></span> Absent</span>
+            <span class="muted">1 · 10%</span>
+          </div>
+          <div class="bar"><div class="fill red" style="width:10%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <h3>Daily attendance — <span id="todayDate"></span></h3>
+      <div class="table-wrap">
+        <table id="attendanceTable">
+          <thead>
+            <tr>
+              <th>Employee</th><th>ID</th><th>Status</th><th>Check-in</th><th>Check-out</th>
+              
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
 
     </main>
 
   </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
 </body>
+</html>
