@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Payroll — Statement</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+ 
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-name">ModernTech</div>
+    </div>
+ 
+    <div class="nav-group-label">Workspace</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Overview
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+      Employees
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      Payroll
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg>
+      Time off
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l4 4 10-10"/></svg>
+      Attendance
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+      Reports
+    </div>
+ 
+    <div class="sidebar-fill"></div>
+ 
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z"/></svg>
+      Settings
+    </div>
+  </aside>
+ 
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">Payroll <b>/</b> Run <b>/</b> <span id="crumbName">Sibongile Nkosi</span></div>
+      <div class="topbar-fill"></div>
+      <button class="run-btn" id="runBatchBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+        Run batch payroll
+      </button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">☾</button>
+      <div class="avatar-chip" id="userAvatar">SN</div>
+    </div>
+ 
+    <div class="content">
+      <p class="page-title">Payroll statement</p>
+      <p class="page-sub">10 employees loaded from your uploaded records — pick one, adjust figures, and the statement recalculates.</p>
+ 
+      <div class="input-strip">
+        <div class="field">
+          <label>Employee</label>
+          <select id="empSelect"></select>
+        </div>
+        <div class="field">
+          <label>Monthly base</label>
+          <div class="num-wrap"><span>ZAR</span><input type="number" id="monthlyBase" /></div>
+        </div>
+        <div class="field">
+          <label>Hours worked</label>
+          <div class="num-wrap"><input type="number" id="hoursWorked" /><span>hrs</span></div>
+        </div>
+        <div class="field">
+          <label>Leave deducted</label>
+          <div class="num-wrap"><input type="number" id="leaveHours" /><span>hrs</span></div>
+        </div>
+        <div class="field">
+          <label>Bonus</label>
+          <div class="num-wrap"><span>ZAR</span><input type="number" id="bonus" value="0" /></div>
+        </div>
+        <div class="field">
+          <label>Tax rate</label>
+          <div class="num-wrap"><input type="number" id="taxRate" value="18" /><span>%</span></div>
+        </div>
+      </div>
+ 
+      <div class="statement">
+        <div class="statement-head">
+          <div class="net-block">
+            <div class="eyebrow">Net pay</div>
+            <div class="net-figure" id="netFigure">$0</div>
+            <div class="net-period">This period &middot; on-file annual final salary: <span class="ref" id="refSalary">ZAR0</span></div>
+          </div>
+          <div class="who-block">
+            <div class="who-name" id="psName">Sibongile Nkosi</div>
+            <div class="who-meta">
+              <span id="psPosition">Software Engineer</span>
+              <span class="sep">&middot;</span>
+              <span id="psDept">Development</span>
+              <span class="sep">&middot;</span>
+              <span id="psId">EMP-1</span>
+            </div>
+            <div class="who-contact" id="psContact">sibongile.nkosi@moderntech.com</div>
+            <div class="who-history" id="psHistory">Joined in 2015, promoted to Senior in 2018</div>
+          </div>
+        </div>
+ 
+        <div class="statement-body">
+          <div>
+            <div class="col-label">Earnings</div>
+            <div class="receipt-line"><span class="lbl">Base pay</span><span class="leader"></span><span class="amt" id="psBase">ZAR 0</span></div>
+            <div class="receipt-line"><span class="lbl">Bonus</span><span class="leader"></span><span class="amt" id="psBonus">ZAR 0</span></div>
+            <div class="receipt-line total"><span class="lbl">Gross</span><span class="leader"></span><span class="amt" id="psGross">ZAR 0</span></div>
+ 
+            <div class="rate-chips">
+              <div class="chip"><div class="chip-label">Annual salary</div><div class="chip-value" id="chipSalary">ZAR 0</div></div>
+              <div class="chip"><div class="chip-label">Hours this period</div><div class="chip-value" id="chipHours">0</div></div>
+            </div>
+          </div>
+ 
+          <div>
+            <div class="col-label">Deductions</div>
+            <div class="receipt-line ded"><span class="lbl" id="psLeaveLabel">Leave (0 hrs)</span><span class="leader"></span><span class="amt">-<span id="psLeave">ZAR 0</span></span></div>
+            <div class="receipt-line ded"><span class="lbl" id="psTaxLabel">Income tax (18%)</span><span class="leader"></span><span class="amt">-<span id="psTax">ZAR 0</span></span></div>
+            <div class="receipt-line total"><span class="lbl">Net pay</span><span class="leader"></span><span class="amt" id="psNet">ZAR 0</span></div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="panel-row">
+        <div class="panel">
+          <p class="panel-title">Recent attendance</p>
+          <p class="panel-sub">Last 5 recorded days</p>
+          <div id="attList"></div>
+        </div>
+        <div class="panel">
+          <p class="panel-title">Leave requests</p>
+          <p class="panel-sub">Submitted by this employee</p>
+          <div id="leaveList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</div>
+
+<div class="print-modal hidden" id="printModal" aria-hidden="true">
+  <div class="print-modal-card" role="dialog" aria-modal="true" aria-labelledby="printModalTitle">
+    <h3 id="printModalTitle">Print payroll receipts</h3>
+    <p>Select whether to print the current receipt or all employee receipts.</p>
+    <div class="print-modal-actions">
+      <button class="print-choice" data-choice="single" type="button">Current receipt</button>
+      <button class="print-choice primary" data-choice="all" type="button">All receipts</button>
+      <button class="print-choice secondary" id="printCancel" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+ 
