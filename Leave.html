@@ -10,7 +10,7 @@
   <title>HRflow</title>
 </head>
 
-<body>
+<body class="leave-page">
 
 <div class="d-flex">
 
@@ -55,6 +55,9 @@
       <!-- Profile -->
       <div class="d-flex align-items-center gap-2">
         <span>User</span>
+        <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Toggle theme">
+          <i class="fa-regular fa-moon"></i>
+        </button>
         <div class="rounded-circle bg-secondary" style="width:32px; height:32px;"></div>
       </div>
 
@@ -123,7 +126,7 @@
             placeholder="Briefly describe the reason for your leave..."></textarea>
 
             <button
-            class="submit-btn"
+            class="submit-btn btn-brand"
             type="submit">
 
                 <i class="fa-regular fa-paper-plane"></i>

@@ -9,7 +9,7 @@
 <title>Attendance - HR Dashboard</title>
 
 </head>
-<body>
+<body class="attendance-page">
 
 <div class="d-flex">
 
@@ -50,7 +50,10 @@
 
       <!-- Profile -->
       <div class="d-flex align-items-center gap-2">
-        <span>Priya Raman</span>
+        <span>User</span>
+        <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Toggle theme">
+          <i class="fa-regular fa-moon"></i>
+        </button>
         <div class="rounded-circle bg-secondary" style="width:32px; height:32px;"></div>
       </div>
 
@@ -63,7 +66,7 @@
         <h1>Attendance</h1>
         <p>Daily presence, absences and monthly trends.</p>
       </div>
-      <button class="btn-export" id="exportBtn">⬇ Export CSV</button>
+      <button class="btn-export btn-brand" id="exportBtn">⬇ Export CSV</button>
     </div>
 
     <!-- Stat Cards Grid -->

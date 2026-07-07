@@ -1,3 +1,26 @@
+const themeToggle = document.getElementById('themeToggle');
+const storedTheme = localStorage.getItem('hrflowTheme') || 'light';
+
+function applyTheme(theme) {
+  document.body.classList.toggle('dark-mode', theme === 'dark');
+  document.body.classList.toggle('light-mode', theme === 'light');
+  if (themeToggle) {
+    themeToggle.innerHTML = theme === 'dark'
+      ? '<i class="fa-solid fa-sun"></i>'
+      : '<i class="fa-regular fa-moon"></i>';
+  }
+}
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const newTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+    localStorage.setItem('hrflowTheme', newTheme);
+    applyTheme(newTheme);
+  });
+}
+
+applyTheme(storedTheme);
+
 const employees = [
   {name: 'Sibongile Nkosi', id: 'MT-1005', status: 'Present', in: '08:30', out: '17:30', initials: 'SN'},
   {name: 'Lungile Moyo', id: 'MT-1006', status: 'Absent', in: '–', out: '–', initials: 'LM'},
