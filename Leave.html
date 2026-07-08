@@ -1,199 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  <title>HRflow</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRflow | Leave Request</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="leave-page">
+<body>
 
-<div class="d-flex">
+<div id="wrapper">
 
-  <!-- ================= SIDEBAR (Bootstrap collapse on mobile) ================= -->
-  <div class="collapse d-lg-block bg-light border-end vh-100 p-3"
-       id="sidebar">
+    <!-- Sidebar -->
+    <aside id="sidebar">
 
-    <h5 class="fw-bold mb-4">HRflow</h5>
+        <div class="sidebar-header">
+            <div class="sidebar-logo-box">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
 
-    <ul class="nav nav-pills flex-column gap-1">
+            <div class="sidebar-brand-text">
+                <span class="brand-name">HR<span>Flow</span></span>
+                <span class="brand-sub">Modern HR Platform</span>
+            </div>
+        </div>
 
-      <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Employees</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Payroll</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Leave</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+        <ul class="sidebar-menu">
 
-    </ul>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="dashboard.html">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
 
-  </div>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="employees.html">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Employees</span>
+                </a>
+            </li>
 
-  <!-- ================= MAIN AREA ================= -->
-  <div class="flex-grow-1">
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="attendance.html">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+            </li>
 
-    <!-- TOP BAR -->
-    <nav class="navbar bg-body-tertiary border-bottom px-3">
+            <li class="sidebar-item">
+                <a class="sidebar-link active" href="leave.html">
+                    <i class="bi bi-calendar2-x"></i>
+                    <span>Leave</span>
+                </a>
+            </li>
 
-      <!-- Burger (ONLY mobile) -->
-      <button class="btn btn-outline-secondary d-lg-none"
-              data-bs-toggle="collapse"
-              data-bs-target="#sidebar">
-        ☰
-      </button>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="payroll.html">
+                    <i class="bi bi-cash-stack"></i>
+                    <span>Payroll</span>
+                </a>
+            </li>
 
-      <!-- Search -->
-      <form class="d-flex mx-auto w-50">
-        <input class="form-control" type="search" placeholder="Search...">
-      </form>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="reports.html">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
 
-      <!-- Profile -->
-      <div class="d-flex align-items-center gap-2">
-        <span>User</span>
-        <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Toggle theme">
-          <i class="fa-regular fa-moon"></i>
-        </button>
-        <div class="rounded-circle bg-secondary" style="width:32px; height:32px;"></div>
-      </div>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="settings.html">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
 
-    </nav>
+        </ul>
 
-    <!-- PAGE CONTENT -->
-    <main class="p-3">
-      <h2>
-            <i class="fa-regular fa-paper-plane"></i>
-            New Leave Request
-        </h2>
+        <div class="sidebar-footer"></div>
+    </aside>
 
-        <form id="leaveForm">
+    <!-- Main Content -->
+    <main id="page-content-wrapper">
 
-            <label>Employee</label>
+        <!-- Topbar -->
+        <div class="content-topbar">
+            <div class="page-titles">
+                <button
+                    class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
+                    id="mobile-toggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h1>Leave Management</h1>
+                <p>Submit and approve time-off requests.</p>
+            </div>
+            <div class="topbar-tools"></div>
+        </div>
 
-          <select id="employee">
-            <option>Sibongile Nkosi</option>
-            <option>Lungile Moyo</option>
-            <option>Thabo Molefe</option>
-            <option>Keshav Naidoo</option>
-            <option>Zanele Khumalo</option>
-            <option>Sipho Zulu</option>
-            <option>Naledi Moeketsi</option>
-            <option>Farai Gumbo</option>
-            <option>Karabo Dlamini</option>
-            <option>Fatima Patel</option>
-          </select>
+        <div class="main-container">
 
-            <label>Leave Type</label>
+            <div class="row g-4">
 
-            <select id="leaveType">
-                <option>Vacation</option>
-                <option>Sick Leave</option>
-                <option>Personal</option>
-            </select>
+                <!-- Form Column -->
+                <div class="col-lg-5">
 
-            <div class="row">
+                    <div class="card card-custom">
 
-                <div class="column">
+                        <div class="card-body">
 
-                    <label>Start Date</label>
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="bi bi-send me-2"></i>
+                                New Request
+                            </h5>
 
-                    <input
-                    type="date"
-                    id="startDate">
+                            <form id="leaveForm">
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        Employee
+                                    </label>
+
+                                    <select class="form-select form-control-custom">
+                                        <option>Sibongile Nkosi</option>
+                                        <option>Lungile Moyo</option>
+                                    </select>
+                                </div>
+
+                                <div class="row g-2 mb-3">
+
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold">
+                                            Start Date
+                                        </label>
+
+                                        <input type="date" class="form-control form-control-custom">
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label small fw-bold">
+                                            End Date
+                                        </label>
+
+                                        <input type="date" class="form-control form-control-custom">
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold">
+                                        Reason
+                                    </label>
+
+                                    <textarea class="form-control form-control-custom" rows="3"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-custom btn-custom-primary w-100">
+                                    Submit Request
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="column">
+                <!-- Approval Queue -->
+                <div class="col-lg-7">
 
-                    <label>End Date</label>
+                    <div class="card card-custom">
 
-                    <input
-                    type="date"
-                    id="endDate">
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-3 text-primary">
+                                <i class="bi bi-list-check me-2"></i>
+                                Approval Queue
+                            </h5>
+
+                            <div id="requestList">
+                                <!-- JavaScript inserts requests here -->
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-            <label>Reason</label>
-
-            <textarea
-            id="reason"
-            placeholder="Briefly describe the reason for your leave..."></textarea>
-
-            <button
-            class="submit-btn btn-brand"
-            type="submit">
-
-                <i class="fa-regular fa-paper-plane"></i>
-
-                Submit Request
-
-            </button>
-
-        </form>
-
-    </div>
-
-    <!-- APPROVAL QUEUE -->
-
-    <div class="card">
-
-        <h2>
-
-            <i class="fa-regular fa-calendar"></i>
-
-            HR Approval Queue
-
-        </h2>
-
-        <div class="status-bar">
-
-            <div class="status active">
-                Pending -
-                <span id="pendingCount">3</span>
-            </div>
-
-            <div class="status">
-                Approved -
-                <span id="approvedCount">0</span>
-            </div>
-
-            <div class="status">
-                Rejected -
-                <span id="rejectedCount">0</span>
             </div>
 
         </div>
 
-        <div id="requestList"></div>
-                            
-                <div class="buttons">
-
-                    <button
-                    class="reject">
-                        Reject
-                    </button>
-
-                    <button
-                    class="approve">
-                        Approve
-                    </button>
-
-                </div>
-
-            </div>           
     </main>
 
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-<script src="script.js"></script>
+<script src="data.js"></script>
+
+<script>
+document.getElementById("mobile-toggle")?.addEventListener("click", () => {
+    document.getElementById("wrapper").classList.toggle("toggled");
+});
+
+(function renderLeave() {
+
+    const list = document.getElementById("requestList");
+
+    if (!list || !window.dummyData || !window.dummyData.leaveRequests) return;
+
+    list.innerHTML = "";
+
+    window.dummyData.leaveRequests.forEach((r) => {
+
+        const item = document.createElement("div");
+
+        item.className =
+            "p-3 border rounded mb-2 d-flex justify-content-between align-items-center";
+
+        item.innerHTML = `
+            <div>
+                <div class="fw-bold">${r.name}</div>
+                <div class="text-muted small">${r.type} · ${r.date}</div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-danger">
+                    Reject
+                </button>
+
+                <button class="btn btn-sm btn-custom-primary">
+                    Approve
+                </button>
+            </div>
+        `;
+
+        list.appendChild(item);
+
+    });
+
+})();
+</script>
 
 </body>
+
 </html>

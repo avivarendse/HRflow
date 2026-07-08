@@ -1,155 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<title>Attendance - HR Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRflow | Attendance</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="attendance-page">
 
-<div class="d-flex">
+<body>
 
-  <!-- ================= SIDEBAR (Bootstrap collapse on mobile) ================= -->
-  <div class="collapse d-lg-block bg-light border-end vh-100 p-3" id="sidebar">
+<div id="wrapper">
 
-    <h5 class="fw-bold mb-4">HRflow</h5>
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo-box">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
 
-    <ul class="nav nav-pills flex-column gap-1">
-
-      <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Employees</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Payroll</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Leave</a></li>
-      <li class="nav-item"><a class="nav-link" href="Attendance">Attendance</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
-      <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
-
-    </ul>
-
-  </div>
-
-  <!-- ================= MAIN AREA ================= -->
-  <div class="flex-grow-1">
-
-    <!-- TOP BAR -->
-    <nav class="navbar bg-body-tertiary border-bottom px-3">
-
-      <!-- Burger (ONLY mobile) -->
-      <button class="btn btn-outline-secondary d-lg-none" data-bs-toggle="collapse" data-bs-target="#sidebar">
-        ☰
-      </button>
-
-      <!-- Search -->
-      <form class="d-flex mx-auto w-50">
-        <input class="form-control" type="search" placeholder="Search employees, payroll,">
-      </form>
-
-      <!-- Profile -->
-      <div class="d-flex align-items-center gap-2">
-        <span>User</span>
-        <button id="themeToggle" class="btn btn-ghost" type="button" aria-label="Toggle theme">
-          <i class="fa-regular fa-moon"></i>
-        </button>
-        <div class="rounded-circle bg-secondary" style="width:32px; height:32px;"></div>
-      </div>
-
-    </nav>
-
-    <main class="p-3">
-    <!-- Header -->
-    <div class="page-header">
-      <div>
-        <h1>Attendance</h1>
-        <p>Daily presence, absences and monthly trends.</p>
-      </div>
-      <button class="btn-export btn-brand" id="exportBtn">⬇ Export CSV</button>
-    </div>
-
-    <!-- Stat Cards Grid -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span class="badge badge-green">Present today</span>
-        <div class="stat-value">7</div>
-        <div class="stat-label">of 10</div>
-      </div>
-      <div class="stat-card">
-        <span class="badge badge-red">Absent today</span>
-        <div class="stat-value">1</div>
-        <div class="stat-label">needs follow-up</div>
-      </div>
-      <div class="stat-card">
-        <span class="badge badge-amber">On leave</span>
-        <div class="stat-value">2</div>
-        <div class="stat-label">approved</div>
-      </div>
-      <div class="stat-card">
-        <span class="badge badge-blue">Monthly attendance</span>
-        <div class="stat-value">70%</div>
-        <div class="stat-label delta">+1.2% MoM</div>
-      </div>
-    </div>
-
-    <!-- Chart + Breakdown Row -->
-    <div class="two-col">
-      <div class="card">
-        <h3>Attendance trend</h3>
-        <p class="sub">Last 6 months · % of workforce</p>
-        <div class="chart-box"><canvas id="trendChart"></canvas></div>
-      </div>
-      <div class="card">
-        <h3>Today's breakdown</h3>
-        <div class="breakdown-item">
-          <div class="breakdown-head">
-            <span><span class="dot green"></span> Present</span>
-            <span class="muted">7 · 70%</span>
-          </div>
-          <div class="bar"><div class="fill green" style="width:70%"></div></div>
+            <div class="sidebar-brand-text">
+                <span class="brand-name">HR<span>Flow</span></span>
+                <span class="brand-sub">Modern HR Platform</span>
+            </div>
         </div>
-        <div class="breakdown-item">
-          <div class="breakdown-head">
-            <span><span class="dot amber"></span> On leave</span>
-            <span class="muted">2 · 20%</span>
-          </div>
-          <div class="bar"><div class="fill amber" style="width:20%"></div></div>
-        </div>
-        <div class="breakdown-item">
-          <div class="breakdown-head">
-            <span><span class="dot red"></span> Absent</span>
-            <span class="muted">1 · 10%</span>
-          </div>
-          <div class="bar"><div class="fill red" style="width:10%"></div></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Table -->
-    <div class="card">
-      <h3>Daily attendance — <span id="todayDate"></span></h3>
-      <div class="table-wrap">
-        <table id="attendanceTable">
-          <thead>
-            <tr>
-              <th>Employee</th><th>ID</th><th>Status</th><th>Check-in</th><th>Check-out</th>
-              
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </main>
+        <ul class="sidebar-menu">
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="dashboard.html">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="employees.html">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Employees</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link active" href="attendance.html">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="leave.html">
+                    <i class="bi bi-calendar2-x"></i>
+                    <span>Leave</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="payroll.html">
+                    <i class="bi bi-cash-stack"></i>
+                    <span>Payroll</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="reports.html">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="settings.html">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="sidebar-footer"></div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="page-content-wrapper">
+
+        <!-- Topbar -->
+        <div class="content-topbar">
+
+            <div class="page-titles">
+
+                <button
+                    class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
+                    id="mobile-toggle">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <h1>Attendance</h1>
+                <p>Daily presence and monthly trends.</p>
+
+            </div>
+
+            <div class="topbar-tools">
+                <button class="btn btn-custom btn-custom-primary" id="exportBtn">
+                    <i class="bi bi-download"></i>
+                    Export CSV
+                </button>
+            </div>
+
+        </div>
+
+        <div class="main-container">
+
+            <!-- Statistics -->
+            <div class="row g-4 mb-4">
+
+                <div class="col-md-3">
+                    <div class="card card-custom stat-card">
+                        <div class="card-body">
+
+                            <div class="stat-top">
+                                <div class="icon-shape bg-soft-success">
+                                    <i class="bi bi-check-circle text-success"></i>
+                                </div>
+                            </div>
+
+                            <h2>7</h2>
+                            <small>Present Today</small>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card card-custom stat-card">
+                        <div class="card-body">
+
+                            <div class="stat-top">
+                                <div class="icon-shape bg-soft-danger">
+                                    <i class="bi bi-x-circle text-danger"></i>
+                                </div>
+                            </div>
+
+                            <h2>1</h2>
+                            <small>Absent Today</small>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card card-custom stat-card">
+                        <div class="card-body">
+
+                            <div class="stat-top">
+                                <div class="icon-shape bg-soft-warning">
+                                    <i class="bi bi-clock-history text-warning"></i>
+                                </div>
+                            </div>
+
+                            <h2>2</h2>
+                            <small>On Leave</small>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card card-custom stat-card">
+                        <div class="card-body">
+
+                            <div class="stat-top">
+                                <div class="icon-shape bg-soft-primary">
+                                    <i class="bi bi-graph-up text-primary"></i>
+                                </div>
+                            </div>
+
+                            <h2>70%</h2>
+                            <small>Monthly Rate</small>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="card card-custom">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3 text-primary">
+                        Daily Log
+                    </h5>
+
+                    <div class="table-responsive">
+
+                        <table class="table custom-table-styles align-middle">
+
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="attendanceTable">
+                                <!-- JavaScript inserts data here -->
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </main>
 
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
+<script src="data.js"></script>
+
+<script>
+document.getElementById("mobile-toggle")?.addEventListener("click", () => {
+    document.getElementById("wrapper").classList.toggle("toggled");
+});
+
+(function renderAttendance() {
+
+    const table = document.getElementById("attendanceTable");
+
+    if (!table || !window.dummyData || !window.dummyData.attendance) return;
+
+    window.dummyData.attendance.forEach((a) => {
+
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${a.name}</td>
+            <td>${a.id}</td>
+            <td>${a.status}</td>
+            <td>${a.checkin}</td>
+            <td>${a.checkout}</td>
+        `;
+
+        table.appendChild(tr);
+
+    });
+
+})();
+</script>
+
 </body>
 </html>
