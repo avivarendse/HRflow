@@ -5,21 +5,60 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ModernTech — Sign in</title>
 <style>
-  :root{
-    --bg: #0E1411;
-    --sidebar: #0B100D;
-    --card: #161D18;
-    --card-raised: #1C241E;
-    --line: #263029;
-    --line-soft: #1D2620;
-    --emerald: #2FBF83;
-    --emerald-dim: #1D8A5E;
-    --amber: #E2A93E;
-    --red: #E2604F;
-    --text: #EDF1EC;
-    --text-soft: #9AA69D;
-    --text-faint: #647066;
-  }
+  :root {
+
+
+  --primary: #12766B;
+  --primary-dark: #0D2E2A;
+  --primary-light: #E6F5F2;
+  --accent: #EF7D5C;
+  --accent-light: #FDE6DD;
+
+
+  --success: #22A35D;
+  --success-light: #DFF5E6;
+  --danger: #D5493A;
+  --danger-light: #FBE6E3;
+  --warning: #E2942A;
+  --warning-light: #FDECD2;
+
+
+  --bg: #F5F4EF;
+  --card: #FFFFFF;
+  --text: #1C2624;
+  --muted: #7C8B88;
+  --border: #E9E6DE;
+
+
+  --sidebar-bg: linear-gradient(180deg, #123832 0%, #0C2622 100%);
+  --sidebar-text: rgba(255, 255, 255, 0.68);
+  --sidebar-text-active: #FFFFFF;
+
+
+  --shadow: 0 8px 24px rgba(18, 46, 42, 0.06);
+  --shadow-hover: 0 16px 36px rgba(18, 46, 42, 0.1);
+  --radius: 18px;
+
+
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 78px;
+
+
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
+
+  /* compatibility aliases for existing styles */
+  --sidebar: var(--sidebar-bg);
+  --card-raised: #FCFBF7;
+  --line: var(--border);
+  --line-soft: #EFE9DD;
+  --emerald: var(--primary);
+  --emerald-dim: var(--primary-dark);
+  --amber: var(--warning);
+  --red: var(--danger);
+  --text-soft: var(--muted);
+  --text-faint: #81908C;
+} 
 
   *{ box-sizing:border-box; }
 
@@ -359,6 +398,10 @@
     </div>
 
     <div class="brand-footer">&copy; 2026 ModernTech. All records kept in order.</div>
+    <div style="margin-top:12px;">
+      <a href="Payroll.html" style="color:var(--emerald); margin-right:12px; text-decoration:none; font-weight:600;">Payroll</a>
+      <a href="Performance.html" style="color:var(--emerald); text-decoration:none; font-weight:600;">Performance</a>
+    </div>
   </div>
 
   <div class="form-panel">

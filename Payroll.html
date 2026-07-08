@@ -558,31 +558,35 @@
     </div>
  
     <div class="nav-group-label">Workspace</div>
-    <div class="nav-item">
+    <a class="nav-item" href="login%20(1).html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       Overview
-    </div>
-    <div class="nav-item">
+    </a>
+    <a class="nav-item" href="#">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
       Employees
-    </div>
-    <div class="nav-item active">
+    </a>
+    <a class="nav-item active" href="Payroll.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
       Payroll
-    </div>
-    <div class="nav-item">
+    </a>
+    <a class="nav-item" href="#">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg>
       Time off
       <span class="nav-badge">3</span>
-    </div>
-    <div class="nav-item">
+    </a>
+    <a class="nav-item" href="#">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l4 4 10-10"/></svg>
       Attendance
-    </div>
-    <div class="nav-item">
+    </a>
+        <a class="nav-item" href="Performance.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l4 4 10-10"/></svg>
+      Performance
+    </a>
+    <a class="nav-item" href="#">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
       Reports
-    </div>
+    </a>
  
     <div class="sidebar-fill"></div>
  
@@ -639,7 +643,7 @@
         <div class="statement-head">
           <div class="net-block">
             <div class="eyebrow">Net pay</div>
-            <div class="net-figure" id="netFigure">$0</div>
+            <div class="net-figure" id="netFigure">ZAR0</div>
             <div class="net-period">This period &middot; on-file annual final salary: <span class="ref" id="refSalary">ZAR0</span></div>
           </div>
           <div class="who-block">
@@ -1361,18 +1365,17 @@ function openReceiptPrint(mode) {
     });
   }
 
-  var html =
-    "<!DOCTYPE html><html><head><title>Payroll receipts</title><style>" +
-    "body{font-family: Arial, sans-serif; margin:24px; color:#1c2624; background:#fff;}" +
-    ".receipt-print-card{border:1px solid #e9e6de; border-radius:14px; padding:20px; margin:0 0 18px; page-break-inside:avoid;}" +
-    "h2{margin:0 0 4px; font-size:20px;}" +
-    "p{margin:0 0 12px; color:#7c8b88;}" +
-    ".receipt-print-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0ece4; font-size:14px;}" +
-    ".receipt-print-row.total{font-weight:700; border-bottom:none; padding-top:10px;}" +
-    "@media print{body{margin:0;} .receipt-print-card{box-shadow:none;}}" +
-    "</style></head><body><h1>Payroll receipts</h1>" +
-    sections.join("") +
-    "</body></html>";
+  const printStyles = `
+    body{font-family: Arial, sans-serif; margin:24px; color:#1c2624; background:#fff;}
+    .receipt-print-card{border:1px solid #e9e6de; border-radius:14px; padding:20px; margin:0 0 18px; page-break-inside:avoid;}
+    h2{margin:0 0 4px; font-size:20px;}
+    p{margin:0 0 12px; color:#7c8b88;}
+    .receipt-print-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0ece4; font-size:14px;}
+    .receipt-print-row.total{font-weight:700; border-bottom:none; padding-top:10px;}
+    @media print{body{margin:0;} .receipt-print-card{box-shadow:none;}}
+  `;
+
+  const html = `<!DOCTYPE html><html><head><title>Payroll receipts</title><style>${printStyles}</style></head><body><h1>Payroll receipts</h1>${sections.join('')}</body></html>`;
 
   printWindow.document.open();
   printWindow.document.write(html);
