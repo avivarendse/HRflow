@@ -1238,14 +1238,15 @@ function calculate() {
   var standardHours = 160;
   var hourlyRate = monthlyBase / standardHours;
   var leaveDeductionAmt = leaveHours * hourlyRate;
+  var proratedBase = hourlyRate * hoursWorked;
 
-  var gross = monthlyBase + bonus;
+  var gross = proratedBase + bonus;
   var tax = gross * (taxRate / 100);
   var net = gross - tax - leaveDeductionAmt;
 
   document.getElementById("netFigure").textContent = formatMoney(net);
 
-  document.getElementById("psBase").textContent = formatMoney(monthlyBase);
+  document.getElementById("psBase").textContent = formatMoney(proratedBase);
   document.getElementById("psBonus").textContent = formatMoney(bonus);
   document.getElementById("psGross").textContent = formatMoney(gross);
 
@@ -1279,12 +1280,13 @@ function buildReceiptData(emp, values) {
   var standardHours = 160;
   var hourlyRate = monthlyBase / standardHours;
   var leaveDeductionAmt = leaveHours * hourlyRate;
-  var gross = monthlyBase + bonus;
+  var proratedBase = hourlyRate * hoursWorked;
+  var gross = proratedBase + bonus;
   var tax = gross * (taxRate / 100);
   var net = gross - tax - leaveDeductionAmt;
 
   return {
-    monthlyBase: monthlyBase,
+    monthlyBase: proratedBase,
     hoursWorked: hoursWorked,
     leaveHours: leaveHours,
     bonus: bonus,
@@ -1365,21 +1367,34 @@ function openReceiptPrint(mode) {
     });
   }
 
-  const printStyles = `
-    body{font-family: Arial, sans-serif; margin:24px; color:#1c2624; background:#fff;}
-    .receipt-print-card{border:1px solid #e9e6de; border-radius:14px; padding:20px; margin:0 0 18px; page-break-inside:avoid;}
-    h2{margin:0 0 4px; font-size:20px;}
-    p{margin:0 0 12px; color:#7c8b88;}
-    .receipt-print-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0ece4; font-size:14px;}
-    .receipt-print-row.total{font-weight:700; border-bottom:none; padding-top:10px;}
-    @media print{body{margin:0;} .receipt-print-card{box-shadow:none;}}
-  `;
+  const printStyles = [
+    "body{font-family: Arial, sans-serif; margin:24px; color:#1c2624; background:#fff;}",
+    ".receipt-print-card{border:1px solid #e9e6de; border-radius:14px; padding:20px; margin:0 0 18px; page-break-inside:avoid;}",
+    "h2{margin:0 0 4px; font-size:20px;}",
+    "p{margin:0 0 12px; color:#7c8b88;}",
+    ".receipt-print-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0ece4; font-size:14px;}",
+    ".receipt-print-row.total{font-weight:700; border-bottom:none; padding-top:10px;}",
+    "@media print{body{margin:0;} .receipt-print-card{box-shadow:none;}}",
+  ].join("\n");
 
-  const html = `<!DOCTYPE html><html><head><title>Payroll receipts</title><style>${printStyles}</style></head><body><h1>Payroll receipts</h1>${sections.join('')}</body></html>`;
+  var printDoc = printWindow.document;
+  var titleEl = printDoc.createElement("title");
+  titleEl.textContent = "Payroll receipts";
+  printDoc.head.appendChild(titleEl);
+  var styleEl = printDoc.createElement("style");
+  styleEl.textContent = printStyles;
+  printDoc.head.appendChild(styleEl);
 
-  printWindow.document.open();
-  printWindow.document.write(html);
-  printWindow.document.close();
+  var heading = printDoc.createElement("h1");
+  heading.textContent = "Payroll receipts";
+  printDoc.body.appendChild(heading);
+
+  var wrapper = printDoc.createElement("div");
+  wrapper.innerHTML = sections.join("");
+  while (wrapper.firstChild) {
+    printDoc.body.appendChild(wrapper.firstChild);
+  }
+
   printWindow.focus();
   printWindow.print();
 }
@@ -1452,4 +1467,3 @@ loadEmployee();
 </script>
 </body>
 </html>
- 
