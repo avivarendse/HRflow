@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Flow | Employees</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<script>
+if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark-mode");
+}
+</script>
+
+<div id="wrapper">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside id="sidebar">
+
+        <div class="sidebar-header">
+            <div class="sidebar-logo-box">
+                <i class="bi bi-buildings-fill"></i>
+            </div>
+
+            <div class="sidebar-brand-text">
+                <span class="brand-name">HR<span>Flow</span></span>
+                <span class="brand-sub">Modern HR Platform</span>
+            </div>
+        </div>
+
+        <ul class="sidebar-menu">
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="dashboard.html">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link active" href="employees.html">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Employees</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="#">
+                    <i class="bi bi-cash-stack"></i>
+                    <span>Payroll</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="#">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="#">
+                    <i class="bi bi-calendar2-x"></i>
+                    <span>Leave</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="reports.html">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="settings.html">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="sidebar-footer">
+
+            <button
+                id="sidebar-toggle-btn"
+                class="sidebar-collapse-btn">
+
+                <i class="bi bi-chevron-left"></i>
+
+            </button>
+
+            <div class="sidebar-user-chip">AD</div>
+
+            <div class="sidebar-user-info">
+                <span class="u-name">Admin User</span>
+                <span class="u-role">HR Manager</span>
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main id="page-content-wrapper">
+
+        <!-- Topbar -->
+
+        <div class="content-topbar">
+
+            <div class="page-titles">
+
+                <button
+                    class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
+                    id="mobile-toggle">
+
+                    <i class="bi bi-list"></i>
+
+                </button>
+
+                <h1>Employees</h1>
+
+                <p>Manage employee records and departmental filters.</p>
+
+            </div>
+
+            <div class="topbar-tools">
+
+                <div class="topbar-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        id="search-input"
+                        type="text"
+                        class="form-control"
+                        placeholder="Search employees...">
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Main Container -->
+
+        <div class="main-container">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div class="d-flex gap-2">
+
+                    <select
+                        class="form-select form-control-custom w-auto"
+                        id="department-filter">
+
+                        <option value="">All Departments</option>
+
+                    </select>
+
+                    <button
+                        class="btn btn-custom btn-custom-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#employeeModal">
+
+                        + Add Employee
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="card card-custom">
+
+                <div class="card-body p-0">
+
+                    <div class="table-responsive">
+
+                        <table class="table custom-table-styles align-middle mb-0">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Name</th>
+                                    <th>ID</th>
+                                    <th>Position</th>
+                                    <th>Department</th>
+                                    <th>Salary</th>
+                                    <th>Contact</th>
+                                    <th>Actions</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="employee-table-body">
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+
+                <button
+                    id="btn-previous"
+                    class="btn btn-custom btn-custom-outline">
+
+                    Previous
+
+                </button>
+
+                <button
+                    id="btn-next"
+                    class="btn btn-custom btn-custom-outline">
+
+                    Next
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<!-- ================= Modal ================= -->
+
+<div class="modal fade" id="employeeModal" tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">Add Employee</h5>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label>Name</label>
+                        <input id="empName" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Employee ID</label>
+                        <input id="empId" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Position</label>
+                        <input id="empPosition" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Department</label>
+                        <input id="empDepartment" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Salary</label>
+                        <input id="empSalary" type="number" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        <input id="empEmail" type="email" class="form-control">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    id="saveEmployee"
+                    class="btn btn-custom btn-custom-primary">
+
+                    Save Employee
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="dummy-data.js"></script>
+<script src="employees.js"></script>
+
+<script>
+
+document.getElementById("sidebar-toggle-btn")?.addEventListener("click", () => {
+    document.getElementById("wrapper").classList.toggle("toggled");
+});
+
+document.getElementById("mobile-toggle")?.addEventListener("click", () => {
+    document.getElementById("wrapper").classList.toggle("toggled");
+});
+
+</script>
+
+</body>
+</html>
