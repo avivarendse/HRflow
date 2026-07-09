@@ -1,494 +1,148 @@
-// =====================================================
-// HRflow Employees Management
-// employees.js
-// =====================================================
+(function () {
+  const dummyData = window.__DUMMY_DATA__ || {};
+  const employeeRecords = Array.isArray(dummyData.attendance)
+    ? dummyData.attendance
+    : [];
+  const tableBody = document.getElementById("employee-table-body");
+  const departmentFilter = document.getElementById("department-filter");
+  const searchInput = document.getElementById("search-input");
+  const previousButton = document.getElementById("btn-previous");
+  const nextButton = document.getElementById("btn-next");
 
-// ---------- Load Employees ----------
-let employeeData = JSON.parse(localStorage.getItem("employees"));
+  if (!tableBody) return;
 
-if (employeeData) {
-    employees = employeeData;
-}
+  const departments = [
+    "Engineering",
+    "Human Resources",
+    "Operations",
+    "Finance",
+    "Sales",
+  ];
+  const positions = [
+    "Software Engineer",
+    "HR Specialist",
+    "Operations Lead",
+    "Financial Analyst",
+    "Sales Executive",
+  ];
 
-let filteredEmployees = [...employees];
+  const employees = employeeRecords.map((employee, index) => ({
+    id: employee.employeeId || index + 1,
+    name: employee.name || `Employee ${index + 1}`,
+    position: positions[index % positions.length],
+    department: departments[index % departments.length],
+    salary: `R${(45000 + index * 5000).toLocaleString("en-ZA")}`,
+    contact: `+27 82 000 ${1000 + index}`,
+  }));
 
-let editingId = null;
+  let currentPage = 1;
+  const pageSize = 6;
 
-let currentPage = 1;
+  function getFilteredEmployees() {
+    const searchTerm = (searchInput?.value || "").trim().toLowerCase();
+    const selectedDepartment = departmentFilter?.value || "";
 
-const rowsPerPage = 8;
+    return employees.filter((employee) => {
+      const matchesDepartment =
+        !selectedDepartment || employee.department === selectedDepartment;
+      const matchesSearch =
+        !searchTerm ||
+        [
+          employee.name,
+          employee.position,
+          employee.department,
+          String(employee.id),
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm);
 
-// ---------- DOM ----------
-const tableBody = document.getElementById("employee-table-body");
-const searchInput = document.getElementById("search-input");
-const departmentFilter = document.getElementById("department-filter");
+      return matchesDepartment && matchesSearch;
+    });
+  }
 
-const previousButton = document.getElementById("btn-previous");
-const nextButton = document.getElementById("btn-next");
+  function renderDepartments() {
+    if (!departmentFilter) return;
 
-const saveButton = document.getElementById("saveEmployee");
-
-const employeeModal =
-    new bootstrap.Modal(document.getElementById("employeeModal"));
-
-// =====================================================
-// Utility Functions
-// =====================================================
-
-function saveEmployees() {
-
-    localStorage.setItem(
-        "employees",
-        JSON.stringify(employees)
-    );
-
-}
-
-function resetForm() {
-
-    document.getElementById("empName").value = "";
-
-    document.getElementById("empId").value = "";
-
-    document.getElementById("empPosition").value = "";
-
-    document.getElementById("empDepartment").value = "";
-
-    document.getElementById("empSalary").value = "";
-
-    document.getElementById("empEmail").value = "";
-
-    editingId = null;
-
-}
-
-function populateDepartments() {
-
-    const departments =
-        [...new Set(employees.map(emp => emp.department))];
-
+    const uniqueDepartments = [
+      ...new Set(employees.map((employee) => employee.department)),
+    ].sort();
     departmentFilter.innerHTML =
-        `<option value="">All Departments</option>`;
-
-    departments.forEach(department => {
-
-        departmentFilter.innerHTML +=
-        `
-        <option value="${department}">
-            ${department}
-        </option>
-        `;
-
-    });
-
-}
-
-// =====================================================
-// Table Rendering
-// =====================================================
-
-function renderTable() {
-
-    tableBody.innerHTML = "";
-
-    const start =
-        (currentPage - 1) * rowsPerPage;
-
-    const end =
-        start + rowsPerPage;
-
-    const pageEmployees =
-        filteredEmployees.slice(start, end);
-
-    pageEmployees.forEach(emp => {
-
-        tableBody.innerHTML +=
-        `
-        <tr>
-
-            <td>${emp.name}</td>
-
-            <td>${emp.employeeId}</td>
-
-            <td>${emp.position}</td>
-
-            <td>${emp.department}</td>
-
-            <td>
-
-                R${Number(emp.salary).toLocaleString()}
-
-            </td>
-
-            <td>
-
-                <a href="mailto:${emp.contact}">
-                    ${emp.contact}
-                </a>
-
-            </td>
-
-            <td class="text-center">
-
-                <button
-                    class="btn btn-sm btn-outline-secondary view-btn"
-                    data-id="${emp.employeeId}"
-                    title="View">
-
-                    <i class="bi bi-eye"></i>
-
-                </button>
-
-                <button
-                    class="btn btn-sm btn-outline-primary edit-btn"
-                    data-id="${emp.employeeId}"
-                    title="Edit">
-
-                    <i class="bi bi-pencil"></i>
-
-                </button>
-
-                <button
-                    class="btn btn-sm btn-outline-danger delete-btn"
-                    data-id="${emp.employeeId}"
-                    title="Delete">
-
-                    <i class="bi bi-trash"></i>
-
-                </button>
-
-            </td>
-
-        </tr>
-
-        `;
-
-    });
-
-    updatePagination();
-
-}
-
-// =====================================================
-// Pagination
-// =====================================================
-
-function updatePagination() {
-
-    previousButton.disabled =
-        currentPage === 1;
-
-    nextButton.disabled =
-        currentPage >=
-        Math.ceil(filteredEmployees.length / rowsPerPage);
-
-}
-
-// =====================================================
-// Filtering
-// =====================================================
-
-function applyFilters() {
-
-    const search =
-        searchInput.value.toLowerCase();
-
-    const department =
-        departmentFilter.value;
-
-    filteredEmployees = employees.filter(emp => {
-
-        const matchesSearch =
-
-            emp.name.toLowerCase().includes(search) ||
-
-            emp.employeeId.toString().includes(search) ||
-
-            emp.position.toLowerCase().includes(search) ||
-
-            emp.department.toLowerCase().includes(search);
-
-        const matchesDepartment =
-
-            department === "" ||
-
-            emp.department === department;
-
-        return matchesSearch && matchesDepartment;
-
-    });
-
-    currentPage = 1;
-
-    renderTable();
-
-}
-
-// =====================================================
-// Validation
-// =====================================================
-
-function validateEmployee(employee) {
-
-    if (
-
-        employee.name.trim() === "" ||
-
-        employee.employeeId.trim() === "" ||
-
-        employee.position.trim() === "" ||
-
-        employee.department.trim() === "" ||
-
-        employee.contact.trim() === "" ||
-
-        employee.salary <= 0
-
-    ) {
-
-        alert("Please complete all fields.");
-
-        return false;
-
-    }
-
-    const duplicate = employees.find(emp =>
-
-        emp.employeeId === employee.employeeId &&
-
-        emp.employeeId !== editingId
-
+      '<option value="">All Departments</option>' +
+      uniqueDepartments
+        .map(
+          (department) =>
+            `<option value="${department}">${department}</option>`,
+        )
+        .join("");
+  }
+
+  function renderEmployees() {
+    const filteredEmployees = getFilteredEmployees();
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filteredEmployees.length / pageSize),
     );
 
-    if (duplicate) {
-
-        alert("Employee ID already exists.");
-
-        return false;
-
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
     }
 
-    return true;
-
-}
-
-// =====================================================
-// Add / Edit Employee
-// =====================================================
-
-saveButton.addEventListener("click", () => {
-
-    const employee = {
-
-        employeeId:
-            document.getElementById("empId").value.trim(),
-
-        name:
-            document.getElementById("empName").value.trim(),
-
-        position:
-            document.getElementById("empPosition").value.trim(),
-
-        department:
-            document.getElementById("empDepartment").value.trim(),
-
-        salary:
-            Number(document.getElementById("empSalary").value),
-
-        contact:
-            document.getElementById("empEmail").value.trim()
-
-    };
-
-    if (!validateEmployee(employee)) return;
-
-    if (editingId === null) {
-
-        employees.push(employee);
-
-    } else {
-
-        const index = employees.findIndex(emp =>
-            emp.employeeId === editingId
-        );
-
-        if (index !== -1) {
-
-            employees[index] = employee;
-
-        }
-
-    }
-
-    saveEmployees();
-
-    populateDepartments();
-
-    applyFilters();
-
-    employeeModal.hide();
-
-    resetForm();
-
-});
-
-// =====================================================
-// Edit Button
-// =====================================================
-
-document.addEventListener("click", function(e) {
-
-    const editButton =
-        e.target.closest(".edit-btn");
-
-    if (!editButton) return;
-
-    const id =
-        editButton.dataset.id;
-
-    const employee =
-        employees.find(emp =>
-            emp.employeeId == id
-        );
-
-    if (!employee) return;
-
-    editingId = employee.employeeId;
-
-    document.getElementById("empName").value =
-        employee.name;
-
-    document.getElementById("empId").value =
-        employee.employeeId;
-
-    document.getElementById("empPosition").value =
-        employee.position;
-
-    document.getElementById("empDepartment").value =
-        employee.department;
-
-    document.getElementById("empSalary").value =
-        employee.salary;
-
-    document.getElementById("empEmail").value =
-        employee.contact;
-
-    employeeModal.show();
-
-});
-
-// =====================================================
-// Delete Employee
-// =====================================================
-
-document.addEventListener("click", function (e) {
-
-    const deleteButton = e.target.closest(".delete-btn");
-
-    if (!deleteButton) return;
-
-    const id = deleteButton.dataset.id;
-
-    if (!confirm("Are you sure you want to delete this employee?")) return;
-
-    employees = employees.filter(emp => emp.employeeId != id);
-
-    filteredEmployees = filteredEmployees.filter(emp => emp.employeeId != id);
-
-    saveEmployees();
-
-    populateDepartments();
-
-    applyFilters();
-
-});
-
-// =====================================================
-// View Employee
-// =====================================================
-
-document.addEventListener("click", function (e) {
-
-    const viewButton = e.target.closest(".view-btn");
-
-    if (!viewButton) return;
-
-    const id = viewButton.dataset.id;
-
-    const employee = employees.find(emp => emp.employeeId == id);
-
-    if (!employee) return;
-
-    alert(
-`Employee Details
-
-Name: ${employee.name}
-
-Employee ID: ${employee.employeeId}
-
-Position: ${employee.position}
-
-Department: ${employee.department}
-
-Salary: R${Number(employee.salary).toLocaleString()}
-
-Email: ${employee.contact}`
+    const startIndex = (currentPage - 1) * pageSize;
+    const visibleEmployees = filteredEmployees.slice(
+      startIndex,
+      startIndex + pageSize,
     );
 
-});
+    tableBody.innerHTML = visibleEmployees.length
+      ? visibleEmployees
+          .map(
+            (employee) => `
+          <tr>
+            <td>
+              <div class="fw-semibold">${employee.name}</div>
+            </td>
+            <td>${employee.id}</td>
+            <td>${employee.position}</td>
+            <td>${employee.department}</td>
+            <td>${employee.salary}</td>
+            <td>${employee.contact}</td>
+          </tr>
+        `,
+          )
+          .join("")
+      : '<tr><td colspan="6" class="text-center py-4">No employees found.</td></tr>';
 
-// =====================================================
-// Pagination
-// =====================================================
+    previousButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage >= totalPages;
+  }
 
-previousButton.addEventListener("click", () => {
+  renderDepartments();
+  renderEmployees();
 
+  [searchInput, departmentFilter].forEach((element) => {
+    element?.addEventListener("input", () => {
+      currentPage = 1;
+      renderEmployees();
+    });
+  });
+
+  previousButton?.addEventListener("click", () => {
     if (currentPage > 1) {
-
-        currentPage--;
-
-        renderTable();
-
+      currentPage -= 1;
+      renderEmployees();
     }
+  });
 
-});
-
-nextButton.addEventListener("click", () => {
-
-    const totalPages = Math.ceil(filteredEmployees.length / rowsPerPage);
-
+  nextButton?.addEventListener("click", () => {
+    const filteredEmployees = getFilteredEmployees();
+    const totalPages = Math.max(
+      1,
+      Math.ceil(filteredEmployees.length / pageSize),
+    );
     if (currentPage < totalPages) {
-
-        currentPage++;
-
-        renderTable();
-
+      currentPage += 1;
+      renderEmployees();
     }
-
-});
-
-// =====================================================
-// Search & Filter Events
-// =====================================================
-
-searchInput.addEventListener("input", applyFilters);
-
-departmentFilter.addEventListener("change", applyFilters);
-
-// =====================================================
-// Modal Reset
-// =====================================================
-
-document
-    .getElementById("employeeModal")
-    .addEventListener("hidden.bs.modal", resetForm);
-
-// =====================================================
-// Initial Page Load
-// =====================================================
-
-populateDepartments();
-
-applyFilters();
-
-renderTable();
+  });
+})();
