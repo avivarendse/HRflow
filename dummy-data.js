@@ -1,9 +1,9 @@
 window.__DUMMY_DATA__ = {
-  attendance: [
+  Performance: [
     {
       employeeId: 1,
       name: "Sibongile Nkosi",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -41,7 +41,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 2,
       name: "Lungile Moyo",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -79,7 +79,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 3,
       name: "Thabo Molefe",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -117,7 +117,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 4,
       name: "Keshav Naidoo",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Absent",
@@ -150,7 +150,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 5,
       name: "Zanele Khumalo",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -183,7 +183,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 6,
       name: "Sipho Zulu",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -216,7 +216,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 7,
       name: "Naledi Moeketsi",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -249,7 +249,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 8,
       name: "Farai Gumbo",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -282,7 +282,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 9,
       name: "Karabo Dlamini",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",
@@ -315,7 +315,7 @@ window.__DUMMY_DATA__ = {
     {
       employeeId: 10,
       name: "Fatima Patel",
-      attendance: [
+      Performance: [
         {
           date: "2025-07-25",
           status: "Present",

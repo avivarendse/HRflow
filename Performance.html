@@ -1,989 +1,235 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ledgerline — Performance</title>
-<style>
-  :root {
-
-
-  --primary: #12766B;
-  --primary-dark: #0D2E2A;
-  --primary-light: #E6F5F2;
-  --accent: #EF7D5C;
-  --accent-light: #FDE6DD;
-
-
-  --success: #22A35D;
-  --success-light: #DFF5E6;
-  --danger: #D5493A;
-  --danger-light: #FBE6E3;
-  --warning: #E2942A;
-  --warning-light: #FDECD2;
-
-
-  --bg: #F5F4EF;
-  --card: #FFFFFF;
-  --text: #1C2624;
-  --muted: #7C8B88;
-  --border: #E9E6DE;
-
-
-  --sidebar-bg: linear-gradient(180deg, #123832 0%, #0C2622 100%);
-  --sidebar-text: rgba(255, 255, 255, 0.68);
-  --sidebar-text-active: #FFFFFF;
-
-
-  --shadow: 0 8px 24px rgba(18, 46, 42, 0.06);
-  --shadow-hover: 0 16px 36px rgba(18, 46, 42, 0.1);
-  --radius: 18px;
-
-
-  --sidebar-width: 240px;
-  --sidebar-collapsed-width: 78px;
-
-
-  --font-display: "Fraunces", serif;
-  --font-body: "Inter", sans-serif;
-
-  /* compatibility aliases for existing styles */
-  --sidebar: var(--sidebar-bg);
-  --card-raised: #FCFBF7;
-  --line: var(--border);
-  --line-soft: #EFE9DD;
-  --emerald: var(--primary);
-  --emerald-dim: var(--primary-dark);
-  --amber: var(--warning);
-  --red: var(--danger);
-  --text-soft: var(--muted);
-  --text-faint: #81908C;
-} 
-
-  body[data-theme="dark"] {
-    --bg: #0D1F1B;
-    --card: #123832;
-    --card-raised: #17463E;
-    --text: #F3F7F5;
-    --muted: #A7B8B4;
-    --border: #234B44;
-    --sidebar-bg: linear-gradient(180deg, #081615 0%, #040C0B 100%);
-    --sidebar-text: rgba(255, 255, 255, 0.72);
-    --sidebar-text-active: #FFFFFF;
-    --shadow: 0 16px 36px rgba(2, 10, 9, 0.4);
-    --shadow-hover: 0 20px 44px rgba(2, 10, 9, 0.5);
-    --line-soft: #203F39;
-    --text-soft: #C5D0CC;
-    --text-faint: #8AA29D;
-  }
-
-  *{ box-sizing:border-box; }
-
-  body{
-    margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .app{
-    display:grid;
-    grid-template-columns: 216px 1fr;
-    min-height:100vh;
-  }
-
-  .sidebar{
-    background: var(--sidebar);
-    border-right: 1px solid var(--line-soft);
-    padding: 22px 14px;
-    display:flex;
-    flex-direction:column;
-  }
-
-  .brand{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding: 2px 8px 26px;
-  }
-  .brand-mark{
-    width:30px; height:30px;
-    border-radius:6px;
-    background: var(--emerald);
-    display:flex; align-items:center; justify-content:center;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:700;
-    font-weight:700;
-    color:#08130D;
-    font-size:14px;
-  }
-  .brand-name{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:700;
-    font-weight:600;
-    font-size:14.5px;
-    letter-spacing:0.2px;
-  }
-
-  .nav-group-label{
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color: var(--text-faint);
-    font-weight:600;
-    padding: 14px 12px 8px;
-  }
-
-  .nav-item{
-    display:flex;
-    align-items:center;
-    gap:11px;
-    padding: 9px 12px;
-    border-radius:6px;
-    color: var(--text-soft);
-    font-size:13.5px;
-    font-weight:500;
-    position:relative;
-    cursor:pointer;
-    text-decoration:none;
-  }
-  .nav-item:hover{ background: var(--card); color: var(--text); }
-  .nav-item.active{
-    color: var(--text);
-    background: var(--card-raised);
-  }
-  .nav-item.active::before{
-    content:'';
-    position:absolute;
-    left:-14px; top:8px; bottom:8px;
-    width:3px;
-    background: var(--emerald);
-    border-radius: 2px;
-  }
-  .nav-item svg{ width:16px; height:16px; flex-shrink:0; opacity:0.9; }
-  .nav-badge{
-    margin-left:auto;
-    background: var(--emerald-dim);
-    color: #D8F5E6;
-    font-size:10.5px;
-    font-weight:700;
-    border-radius:9px;
-    padding:1px 6px;
-  }
-
-  .sidebar-fill{ flex:1; }
-
-  .main{ display:flex; flex-direction:column; }
-
-  .topbar{
-    display:flex;
-    align-items:center;
-    gap:16px;
-    padding: 20px 32px 0;
-  }
-  .crumb{
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size:11.5px;
-    color: var(--text-faint);
-    letter-spacing:0.3px;
-  }
-  .crumb b{ color: var(--text-soft); font-weight:400; }
-  .topbar-fill{ flex:1; }
-  .run-btn{
-    background: transparent;
-    border: 1px solid var(--emerald-dim);
-    color: var(--emerald);
-    font-size:12.5px;
-    font-weight:600;
-    padding: 8px 14px;
-    border-radius:7px;
-    cursor:pointer;
-    display:flex; align-items:center; gap:7px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  }
-  .theme-toggle{
-    background: var(--card);
-    border: 1px solid var(--line);
-    color: var(--text);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-  }
-  .theme-toggle:hover{ background: rgba(0,0,0,0.04); }
-  .run-btn:hover{ background: rgba(47,191,131,0.08); }
-  .avatar-chip{
-    width:32px; height:32px;
-    border-radius:50%;
-    background: var(--card-raised);
-    border: 1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    font-size:11.5px;
-    font-weight:600;
-    color: var(--text-soft);
-  }
-
-  .content{ padding: 18px 32px 60px; }
-
-  .page-title{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:700;
-    font-size:26px;
-    font-weight:600;
-    margin: 6px 0 2px;
-  }
-  .page-sub{
-    font-size:13px;
-    color: var(--text-soft);
-    margin: 0 0 24px;
-  }
-
-  .top-row{
-    display:flex;
-    align-items:center;
-    gap: 14px;
-    margin-bottom: 22px;
-    flex-wrap:wrap;
-  }
-  select{
-    height:38px;
-    background: var(--card-raised);
-    border:1px solid var(--line);
-    border-radius:6px;
-    color: var(--text);
-    font-size:13px;
-    padding: 0 10px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-    min-width: 260px;
-  }
-
-  .kpi-row{
-    display:grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 22px;
-  }
-  .kpi-card{
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 18px 20px;
-  }
-  .kpi-label{
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:0.6px;
-    color: var(--text-faint);
-    font-weight:600;
-    margin-bottom: 10px;
-  }
-  .kpi-value{
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size:26px;
-    font-weight:700;
-    color: var(--text);
-  }
-  .kpi-value.accent{ color: var(--emerald); }
-  .kpi-sub{
-    font-size:11.5px;
-    color: var(--text-faint);
-    margin-top: 6px;
-  }
-
-  .stars{ display:flex; gap:3px; margin-top:4px; }
-  .stars svg{ width:14px; height:14px; }
-
-  .panel-row{
-    display:grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 22px;
-    margin-bottom: 22px;
-  }
-  .panel{
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 22px 24px;
-  }
-  .panel-title{
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-weight:700;
-    font-size:15px;
-    font-weight:600;
-    margin: 0 0 4px;
-  }
-  .panel-sub{
-    font-size:11.5px;
-    color: var(--text-faint);
-    margin: 0 0 18px;
-  }
-
-  /* bar chart */
-  .bar-chart{
-    display:flex;
-    align-items:flex-end;
-    gap: 18px;
-    height: 140px;
-    padding-top: 10px;
-  }
-  .bar-col{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    height:100%;
-    justify-content:flex-end;
-  }
-  .bar{
-    width: 100%;
-    max-width: 46px;
-    border-radius: 5px 5px 3px 3px;
-    background: var(--emerald-dim);
-    position:relative;
-    transition: height 0.3s ease;
-  }
-  .bar .bar-value{
-    position:absolute;
-    top:-20px;
-    left:0; right:0;
-    text-align:center;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size:11px;
-    color: var(--text-soft);
-  }
-  .bar-label{
-    font-size:11px;
-    color: var(--text-faint);
-    margin-top: 10px;
-    text-transform:uppercase;
-    letter-spacing:0.4px;
-  }
-
-  /* goals */
-  .goal-row{
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line-soft);
-  }
-  .goal-row:last-child{ border-bottom:none; }
-  .goal-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom: 8px;
-  }
-  .goal-title{ font-size:13.5px; color: var(--text); }
-  .status-pill{
-    font-size:10.5px;
-    font-weight:600;
-    padding: 3px 9px;
-    border-radius: 20px;
-    white-space:nowrap;
-  }
-  .status-pill.complete{ background: rgba(47,191,131,0.14); color: var(--emerald); }
-  .status-pill.ontrack{ background: rgba(226,169,62,0.14); color: var(--amber); }
-  .status-pill.atrisk{ background: rgba(226,96,79,0.14); color: var(--red); }
-
-  .progress-track{
-    height:6px;
-    background: var(--card-raised);
-    border-radius:4px;
-    overflow:hidden;
-  }
-  .progress-fill{
-    height:100%;
-    background: var(--emerald);
-    border-radius:4px;
-  }
-  .progress-fill.amber{ background: var(--amber); }
-  .progress-fill.red{ background: var(--red); }
-  .progress-pct{
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size:11px;
-    color: var(--text-faint);
-    margin-top: 5px;
-    text-align:right;
-  }
-
-  .review-panel{
-    grid-column: 1 / -1;
-  }
-  .review-note{
-    font-size:13.5px;
-    color: var(--text-soft);
-    line-height:1.6;
-    background: var(--card-raised);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 14px;
-  }
-  .review-meta{
-    display:flex;
-    gap: 24px;
-    flex-wrap:wrap;
-  }
-  .review-meta-item .l{
-    font-size:10.5px;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    color: var(--text-faint);
-    margin-bottom: 4px;
-  }
-  .review-meta-item .v{
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-    font-size:13.5px;
-    color: var(--text);
-  }
-
-  @media (max-width: 980px){
-    .app{ grid-template-columns: 1fr; }
-    .sidebar{ display:none; }
-    .kpi-row{ grid-template-columns: 1fr 1fr; }
-    .panel-row{ grid-template-columns: 1fr; }
-  }
-</style>
-</head>
-<body>
-<div class="app">
-
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">L</div>
-      <div class="brand-name">Ledgerline</div>
-    </div>
-
-    <div class="nav-group-label">Workspace</div>
-    <a class="nav-item" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
-      Overview
-    </a>
-    <a class="nav-item" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
-      People
-    </a>
-    <a class="nav-item" href="Payroll.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-      Payroll
-    </a>
-    <a class="nav-item" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg>
-      Time off
-      <span class="nav-badge">3</span>
-    </a>
-    <a class="nav-item" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l4 4 10-10"/></svg>
-      Attendance
-    </a>
-    <a class="nav-item active" href="Performance.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
-      Performance
-    </a>
-    <a class="nav-item" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
-      Reports
-    </a>
-
-    <div class="sidebar-fill"></div>
-
-    <div class="nav-item" href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z"/></svg>
-      Settings
-    </div>
-  </aside>
-
-  <div class="main">
-    <div class="topbar">
-      <div class="crumb">Performance <b>/</b> Review <b>/</b> <span id="crumbName">&nbsp;</span></div>
-      <div class="topbar-fill"></div>
-      <button class="run-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-6"/></svg>
-        Start review cycle
-      </button>
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">☾</button>
-      <div class="avatar-chip" id="userAvatar">--</div>
-    </div>
-
-    <div class="content">
-      <p class="page-title">Performance</p>
-      <p class="page-sub">Review ratings, quarterly trends, and goal progress for each employee.</p>
-
-      <div class="top-row">
-        <select id="empSelect"></select>
-      </div>
-
-      <div class="kpi-row">
-        <div class="kpi-card">
-          <div class="kpi-label">Overall rating</div>
-          <div class="kpi-value accent" id="kpiRating">0.0</div>
-          <div class="stars" id="kpiStars"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRflow | Performance</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+    <div id="wrapper">
+      <!-- SIDEBAR: Updated to match Version 1 Teal Theme -->
+      <aside id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo-box">
+            <i class="bi bi-buildings-fill"></i>
+          </div>
+          <div class="sidebar-brand-text">
+            <span class="brand-name">HR<span>Flow</span></span>
+            <span class="brand-sub">Modern HR Platform</span>
+          </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Goals complete</div>
-          <div class="kpi-value" id="kpiGoals">0/0</div>
-          <div class="kpi-sub">This review cycle</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Latest quarter score</div>
-          <div class="kpi-value" id="kpiQuarter">0</div>
-          <div class="kpi-sub" id="kpiQuarterTrend">vs. last quarter</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Next review</div>
-          <div class="kpi-value" id="kpiNext" style="font-size:18px;">--</div>
-          <div class="kpi-sub">Scheduled</div>
-        </div>
-      </div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="dashboard.html"
+              ><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a
+            >
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="employees.html"
+              ><i class="bi bi-people-fill"></i><span>Employees</span></a
+            >
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="payroll.html"
+              ><i class="bi bi-cash-stack"></i><span>Payroll</span></a
+            >
+            <li class="sidebar-item">
+            <a class="sidebar-link active" href="Performance.html"
+              ><i class="bi bi-calendar-check"></i><span>Performance</span></a
+            >
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="leave.html"
+              ><i class="bi bi-calendar2-x"></i><span>Leave</span></a
+            >
+          </li>
+            <li class="sidebar-item">
+            <a class="sidebar-link" href="reports.html"
+              ><i class="bi bi-bar-chart-line-fill"></i><span>Reports</span></a
+            >
+          </li>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="settings.html"
+              ><i class="bi bi-gear-fill"></i><span>Settings</span></a
+            >
+          </li>
+        </ul>
+        <div class="sidebar-footer"></div>
+      </aside>
 
-      <div class="panel-row">
-        <div class="panel">
-          <p class="panel-title">Quarterly performance score</p>
-          <p class="panel-sub">Score out of 100, based on manager and peer input</p>
-          <div class="bar-chart" id="barChart"></div>
-        </div>
-
-        <div class="panel">
-          <p class="panel-title">Current goals</p>
-          <p class="panel-sub">Progress toward this cycle's objectives</p>
-          <div id="goalsList"></div>
-        </div>
-
-        <div class="panel review-panel">
-          <p class="panel-title">Manager review notes</p>
-          <p class="panel-sub">Most recent written feedback on file</p>
-          <div class="review-note" id="reviewNote">--</div>
-          <div class="review-meta">
-            <div class="review-meta-item">
-              <div class="l">Employee</div>
-              <div class="v" id="metaName">--</div>
-            </div>
-            <div class="review-meta-item">
-              <div class="l">Position</div>
-              <div class="v" id="metaPosition">--</div>
-            </div>
-            <div class="review-meta-item">
-              <div class="l">Department</div>
-              <div class="v" id="metaDept">--</div>
-            </div>
-            <div class="review-meta-item">
-              <div class="l">Next review</div>
-              <div class="v" id="metaNext">--</div>
+      <main id="page-content-wrapper">
+        <!-- TOPBAR: Deep Teal UI -->
+        <div class="content-topbar">
+          <div class="page-titles">
+            <button
+              class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
+              id="mobile-toggle"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <h1>Performance</h1>
+            <p>Daily presence and monthly trends.</p>
+          </div>
+          <div class="topbar-tools">
+            <button class="theme-toggle-btn" id="themeToggleBtn" type="button" title="Toggle dark mode">
+              <i class="bi bi-moon-fill"></i>
+            </button>
+            <button class="btn btn-custom btn-custom-primary" id="exportBtn">
+              <i class="bi bi-download"></i> Export CSV
+            </button>
+            <div class="topbar-datetime" id="topbarDatetime">
+              <div class="t-date">--</div>
+              <div class="t-time">--</div>
             </div>
           </div>
         </div>
-      </div>
+
+        <div class="main-container">
+          <!-- STATS: Teal Accents -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-success">
+                      <i class="bi bi-check-circle text-success"></i>
+                    </div>
+                  </div>
+                  <h2>7</h2>
+                  <small>Present Today</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-danger">
+                      <i class="bi bi-x-circle text-danger"></i>
+                    </div>
+                  </div>
+                  <h2>1</h2>
+                  <small>Absent Today</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-warning">
+                      <i class="bi bi-clock-history text-warning"></i>
+                    </div>
+                  </div>
+                  <h2>2</h2>
+                  <small>On Leave</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-primary">
+                      <i class="bi bi-graph-up text-primary"></i>
+                    </div>
+                  </div>
+                  <h2>70%</h2>
+                  <small>Monthly Rate</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-custom">
+            <div class="card-body">
+              <h5 class="fw-bold mb-3 text-primary">Daily Log</h5>
+              <div class="table-responsive">
+                <table class="table custom-table-styles align-middle">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>ID</th>
+                      <th>Status</th>
+                      <th>Check-in</th>
+                      <th>Check-out</th>
+                    </tr>
+                  </thead>
+                  <tbody id="PerformanceTable">
+                    <!-- JS Data here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
-  </div>
 
-</div>
-
-<script>
-  const employees = [
-  {
-    "id": 1,
-    "name": "Sibongile Nkosi",
-    "position": "Software Engineer",
-    "department": "Development",
-    "rating": 4.3,
-    "quarters": [
-      56,
-      67,
-      65,
-      87
-    ],
-    "goals": [
-      {
-        "title": "Deliver Q3 budget forecast accuracy",
-        "progress": 60,
-        "status": "At risk"
-      },
-      {
-        "title": "Increase client retention rate",
-        "progress": 70,
-        "status": "On track"
-      },
-      {
-        "title": "Reduce onboarding time for new hires",
-        "progress": 100,
-        "status": "Complete"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="data.js"></script>
+    <script>
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      function applyTheme(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+        if (themeToggleBtn) {
+          themeToggleBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        }
       }
-    ],
-    "note": "Consistently exceeds expectations and takes initiative on cross-team work.",
-    "nextReview": "Aug 2026"
-  },
-  {
-    "id": 2,
-    "name": "Lungile Moyo",
-    "position": "HR Manager",
-    "department": "HR",
-    "rating": 3.5,
-    "quarters": [
-      77,
-      56,
-      64,
-      83
-    ],
-    "goals": [
-      {
-        "title": "Increase client retention rate",
-        "progress": 70,
-        "status": "On track"
-      },
-      {
-        "title": "Launch internal process documentation",
-        "progress": 60,
-        "status": "At risk"
-      },
-      {
-        "title": "Complete leadership training track",
-        "progress": 85,
-        "status": "On track"
-      }
-    ],
-    "note": "Consistently exceeds expectations and takes initiative on cross-team work.",
-    "nextReview": "Aug 2026"
-  },
-  {
-    "id": 3,
-    "name": "Thabo Molefe",
-    "position": "Quality Analyst",
-    "department": "QA",
-    "rating": 4.4,
-    "quarters": [
-      70,
-      62,
-      96,
-      69
-    ],
-    "goals": [
-      {
-        "title": "Reduce onboarding time for new hires",
-        "progress": 85,
-        "status": "On track"
-      },
-      {
-        "title": "Launch internal process documentation",
-        "progress": 85,
-        "status": "On track"
-      },
-      {
-        "title": "Redesign internal dashboard UX",
-        "progress": 60,
-        "status": "At risk"
-      }
-    ],
-    "note": "Strong technical contributor; encouraged to take on more mentorship.",
-    "nextReview": "Aug 2026"
-  },
-  {
-    "id": 4,
-    "name": "Keshav Naidoo",
-    "position": "Sales Representative",
-    "department": "Sales",
-    "rating": 4.4,
-    "quarters": [
-      78,
-      97,
-      71,
-      79
-    ],
-    "goals": [
-      {
-        "title": "Deliver Q3 budget forecast accuracy",
-        "progress": 60,
-        "status": "At risk"
-      },
-      {
-        "title": "Lead cross-team process audit",
-        "progress": 100,
-        "status": "Complete"
-      },
-      {
-        "title": "Cut reporting turnaround by 20%",
-        "progress": 40,
-        "status": "At risk"
-      }
-    ],
-    "note": "Consistently exceeds expectations and takes initiative on cross-team work.",
-    "nextReview": "Aug 2026"
-  },
-  {
-    "id": 5,
-    "name": "Zanele Khumalo",
-    "position": "Marketing Specialist",
-    "department": "Marketing",
-    "rating": 4.3,
-    "quarters": [
-      88,
-      97,
-      92,
-      92
-    ],
-    "goals": [
-      {
-        "title": "Launch internal process documentation",
-        "progress": 40,
-        "status": "At risk"
-      },
-      {
-        "title": "Mentor two junior team members",
-        "progress": 85,
-        "status": "On track"
-      },
-      {
-        "title": "Improve code review turnaround",
-        "progress": 100,
-        "status": "Complete"
-      }
-    ],
-    "note": "Strong technical contributor; encouraged to take on more mentorship.",
-    "nextReview": "Sep 2026"
-  },
-  {
-    "id": 6,
-    "name": "Sipho Zulu",
-    "position": "UI/UX Designer",
-    "department": "Design",
-    "rating": 3.5,
-    "quarters": [
-      66,
-      95,
-      83,
-      81
-    ],
-    "goals": [
-      {
-        "title": "Improve customer response SLA",
-        "progress": 100,
-        "status": "Complete"
-      },
-      {
-        "title": "Increase client retention rate",
-        "progress": 70,
-        "status": "On track"
-      },
-      {
-        "title": "Complete leadership training track",
-        "progress": 70,
-        "status": "On track"
-      }
-    ],
-    "note": "Strong technical contributor; encouraged to take on more mentorship.",
-    "nextReview": "Oct 2026"
-  },
-  {
-    "id": 7,
-    "name": "Naledi Moeketsi",
-    "position": "DevOps Engineer",
-    "department": "IT",
-    "rating": 4.3,
-    "quarters": [
-      64,
-      69,
-      88,
-      57
-    ],
-    "goals": [
-      {
-        "title": "Ship quarterly feature roadmap on time",
-        "progress": 85,
-        "status": "On track"
-      },
-      {
-        "title": "Cut reporting turnaround by 20%",
-        "progress": 100,
-        "status": "Complete"
-      },
-      {
-        "title": "Launch internal process documentation",
-        "progress": 100,
-        "status": "Complete"
-      }
-    ],
-    "note": "Exceptional ownership over recent projects \u2014 ready for more scope.",
-    "nextReview": "Oct 2026"
-  },
-  {
-    "id": 8,
-    "name": "Farai Gumbo",
-    "position": "Content Strategist",
-    "department": "Marketing",
-    "rating": 3.7,
-    "quarters": [
-      83,
-      72,
-      94,
-      75
-    ],
-    "goals": [
-      {
-        "title": "Mentor two junior team members",
-        "progress": 40,
-        "status": "At risk"
-      },
-      {
-        "title": "Improve customer response SLA",
-        "progress": 60,
-        "status": "At risk"
-      },
-      {
-        "title": "Complete leadership training track",
-        "progress": 60,
-        "status": "At risk"
-      }
-    ],
-    "note": "Strong technical contributor; encouraged to take on more mentorship.",
-    "nextReview": "Oct 2026"
-  },
-  {
-    "id": 9,
-    "name": "Karabo Dlamini",
-    "position": "Accountant",
-    "department": "Finance",
-    "rating": 4.2,
-    "quarters": [
-      94,
-      72,
-      64,
-      98
-    ],
-    "goals": [
-      {
-        "title": "Increase client retention rate",
-        "progress": 100,
-        "status": "Complete"
-      },
-      {
-        "title": "Improve code review turnaround",
-        "progress": 100,
-        "status": "Complete"
-      },
-      {
-        "title": "Reduce onboarding time for new hires",
-        "progress": 100,
-        "status": "Complete"
-      }
-    ],
-    "note": "Steady performer, would benefit from clearer goal-setting next cycle.",
-    "nextReview": "Aug 2026"
-  },
-  {
-    "id": 10,
-    "name": "Fatima Patel",
-    "position": "Customer Support Lead",
-    "department": "Support",
-    "rating": 4.5,
-    "quarters": [
-      73,
-      58,
-      71,
-      98
-    ],
-    "goals": [
-      {
-        "title": "Increase client retention rate",
-        "progress": 100,
-        "status": "Complete"
-      },
-      {
-        "title": "Mentor two junior team members",
-        "progress": 40,
-        "status": "At risk"
-      },
-      {
-        "title": "Redesign internal dashboard UX",
-        "progress": 40,
-        "status": "At risk"
-      }
-    ],
-    "note": "Consistently exceeds expectations and takes initiative on cross-team work.",
-    "nextReview": "Oct 2026"
-  }
-];
+      applyTheme(localStorage.getItem('darkMode') === 'true');
+      themeToggleBtn?.addEventListener('click', () => applyTheme(!document.body.classList.contains('dark-mode')));
 
-  const select = document.getElementById('empSelect');
-  employees.forEach((emp, i) => {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = `${emp.name} · EMP-${emp.id}`;
-    select.appendChild(opt);
-  });
+      document
+        .getElementById("mobile-toggle")
+        ?.addEventListener("click", () => {
+          document.getElementById("wrapper").classList.toggle("toggled");
+        });
 
-  const initials = name => name.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+        
+      setInterval(() => {
+          const now = new Date();
+          const dateEl = document.querySelector("#topbarDatetime .t-date");
+          const timeEl = document.querySelector("#topbarDatetime .t-time");
+          if (dateEl) dateEl.textContent = now.toLocaleDateString();
+          if (timeEl) timeEl.textContent = now.toLocaleTimeString();
+        }, 1000);
 
-  const starSvg = filled => {
-    const color = filled ? 'var(--emerald)' : 'var(--line)';
-    return `<svg viewBox="0 0 24 24" fill="${color}"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.3l7.1-.7L12 2z"/></svg>`;
-  };
-
-  const statusMap = {
-    'Complete': { cls: 'complete', fill: '' },
-    'On track': { cls: 'ontrack', fill: 'amber' },
-    'default': { cls: 'atrisk', fill: 'red' }
-  };
-
-  const render = () => {
-    const emp = employees[Number(select.value) || 0];
-
-    document.getElementById('crumbName').textContent = emp.name;
-    document.getElementById('userAvatar').textContent = initials(emp.name);
-
-    document.getElementById('kpiRating').textContent = emp.rating.toFixed(1);
-    const full = Math.round(emp.rating);
-    document.getElementById('kpiStars').innerHTML = Array.from({length:5}, (_,i) => starSvg(i < full)).join('');
-
-    const completeCount = emp.goals.filter(g => g.progress === 100).length;
-    document.getElementById('kpiGoals').textContent = `${completeCount}/${emp.goals.length}`;
-
-    const q = emp.quarters;
-    const latest = q[q.length-1];
-    const prev = q[q.length-2] ?? latest;
-    const diff = latest - prev;
-    document.getElementById('kpiQuarter').textContent = latest;
-    document.getElementById('kpiQuarterTrend').textContent = `${diff >= 0 ? '+' : ''}${diff} vs. last quarter`;
-
-    document.getElementById('kpiNext').textContent = emp.nextReview;
-
-    const labels = ['Q1','Q2','Q3','Q4'];
-    const barChart = document.getElementById('barChart');
-    barChart.innerHTML = q.map((val,i) =>
-      `<div class="bar-col"><div class="bar" style="height:${val}%;"><span class="bar-value">${val}</span></div><div class="bar-label">${labels[i]}</div></div>`
-    ).join('');
-
-    const goalsList = document.getElementById('goalsList');
-    goalsList.innerHTML = emp.goals.map(g => {
-      const s = statusMap[g.status] || statusMap['default'];
-      return `<div class="goal-row"><div class="goal-top"><span class="goal-title">${g.title}</span><span class="status-pill ${s.cls}">${g.status}</span></div><div class="progress-track"><div class="progress-fill ${s.fill}" style="width:${g.progress}%;"></div></div><div class="progress-pct">${g.progress}%</div></div>`;
-    }).join('');
-
-    document.getElementById('reviewNote').textContent = emp.note;
-    document.getElementById('metaName').textContent = emp.name;
-    document.getElementById('metaPosition').textContent = emp.position;
-    document.getElementById('metaDept').textContent = emp.department;
-    document.getElementById('metaNext').textContent = emp.nextReview;
-  };
-
-  select.addEventListener('change', render);
-  render();
-
-  // theme toggle logic
-  const themeToggle = document.getElementById('themeToggle');
-  const savedTheme = localStorage.getItem('hrflow-theme') || 'light';
-  document.body.setAttribute('data-theme', savedTheme);
-  if (themeToggle) themeToggle.textContent = savedTheme === 'dark' ? '☀' : '☾';
-
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const isDark = document.body.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        document.body.setAttribute('data-theme', 'light');
-        localStorage.setItem('hrflow-theme', 'light');
-        themeToggle.textContent = '☾';
-      } else {
-        document.body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('hrflow-theme', 'dark');
-        themeToggle.textContent = '☀';
-      }
-    });
-  }
-</script>
-</body>
+      (function renderPerformance() {
+        const table = document.getElementById("PerformanceTable");
+        if (!table || !window.dummyData || !window.dummyData.Performance) return;
+        window.dummyData.Performance.forEach((a) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            a.name +
+            "</td><td>" +
+            a.id +
+            "</td><td>" +
+            a.status +
+            "</td><td>" +
+            a.checkin +
+            "</td><td>" +
+            a.checkout +
+            "</td>";
+          table.appendChild(tr);
+        });
+      })();
+    </script>
+  </body>
 </html>

@@ -1,10 +1,10 @@
 let currentFilteredList = [];
 const dummyData = window.__DUMMY_DATA__ || {};
 const employees = dummyData.employees || [];
-const attendance = dummyData.attendance || [];
+const Performance = dummyData.Performance || [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (employees.length && attendance.length) {
+  if (employees.length && Performance.length) {
     currentFilteredList = [...employees];
     initReportSystem();
   } else {
@@ -25,18 +25,18 @@ function updateDashboardMetrics() {
 
   let totalDays = 0,
     presentDays = 0;
-  attendance.forEach((record) => {
-    record.attendance.forEach((day) => {
+  Performance.forEach((record) => {
+    record.Performance.forEach((day) => {
       totalDays++;
       if (day.status === "Present") presentDays++;
     });
   });
 
   const rate = totalDays > 0 ? Math.round((presentDays / totalDays) * 100) : 0;
-  document.getElementById("attendanceRate").textContent = rate + "%";
+  document.getElementById("PerformanceRate").textContent = rate + "%";
 
   let pendingCount = 0;
-  attendance.forEach((record) => {
+  Performance.forEach((record) => {
     record.leaveRequests.forEach((req) => {
       if (req.status === "Pending") pendingCount++;
     });
@@ -101,16 +101,15 @@ function setActiveFilterChip(label) {
 }
 
 function renderAnalyticalGraphs() {
-
-  // Attendance Pie
+  // Performance Pie
 
   let pres = 0,
     abs = 0;
-  attendance.forEach((r) =>
-    r.attendance.forEach((d) => (d.status === "Present" ? pres++ : abs++)),
+  Performance.forEach((r) =>
+    r.Performance.forEach((d) => (d.status === "Present" ? pres++ : abs++)),
   );
 
-  new Chart(document.getElementById("attendanceChart"), {
+  new Chart(document.getElementById("PerformanceChart"), {
     type: "doughnut",
     data: {
       labels: ["Present", "Absent"],
@@ -130,7 +129,7 @@ function renderAnalyticalGraphs() {
   });
 
   // Department Bar
-  
+
   const depts = {};
   employees.forEach(
     (e) => (depts[e.department] = (depts[e.department] || 0) + 1),

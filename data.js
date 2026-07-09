@@ -1,5 +1,5 @@
 window.dummyData = {
-  attendance: [
+  Performance: [
     {
       name: "Sibongile Nkosi",
       id: "E001",

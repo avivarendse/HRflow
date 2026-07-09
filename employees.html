@@ -50,8 +50,8 @@
             >
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link" href="attendance.html"
-              ><i class="bi bi-calendar-check"></i><span>Attendance</span></a
+            <a class="sidebar-link" href="Performance.html"
+              ><i class="bi bi-calendar-check"></i><span>Performance</span></a
             >
           </li>
           <li class="sidebar-item">
@@ -107,6 +107,10 @@
             >
               <i class="bi bi-moon-fill"></i>
             </button>
+            <div class="topbar-datetime" id="topbarDatetime">
+              <div class="t-date">--</div>
+              <div class="t-time">--</div>
+            </div>
           </div>
         </div>
 
@@ -178,6 +182,14 @@
       themeToggleBtn?.addEventListener("click", () =>
         applyTheme(!document.body.classList.contains("dark-mode")),
       );
+
+      setInterval(() => {
+        const now = new Date();
+        const dateEl = document.querySelector("#topbarDatetime .t-date");
+        const timeEl = document.querySelector("#topbarDatetime .t-time");
+        if (dateEl) dateEl.textContent = now.toLocaleDateString();
+        if (timeEl) timeEl.textContent = now.toLocaleTimeString();
+      }, 1000);
 
       document
         .getElementById("sidebar-toggle-btn")

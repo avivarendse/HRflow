@@ -48,8 +48,8 @@
             >
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link" href="attendance.html"
-              ><i class="bi bi-calendar-check"></i><span>Attendance</span></a
+            <a class="sidebar-link" href="Performance.html"
+              ><i class="bi bi-calendar-check"></i><span>Performance</span></a
             >
           </li>
           <li class="sidebar-item">
@@ -244,17 +244,8 @@
           const now = new Date();
           const dateEl = document.querySelector("#topbarDatetime .t-date");
           const timeEl = document.querySelector("#topbarDatetime .t-time");
-          if (dateEl)
-            dateEl.textContent = now.toLocaleDateString(undefined, {
-              weekday: "long",
-              month: "short",
-              day: "numeric",
-            });
-          if (timeEl)
-            timeEl.textContent = now.toLocaleTimeString(undefined, {
-              hour: "2-digit",
-              minute: "2-digit",
-            });
+          if (dateEl) dateEl.textContent = now.toLocaleDateString();
+          if (timeEl) timeEl.textContent = now.toLocaleTimeString();
         }
         updateClock();
         setInterval(updateClock, 1000);

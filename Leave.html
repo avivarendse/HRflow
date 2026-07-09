@@ -48,8 +48,8 @@
             >
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link" href="attendance.html"
-              ><i class="bi bi-calendar-check"></i><span>Attendance</span></a
+            <a class="sidebar-link" href="Performance.html"
+              ><i class="bi bi-calendar-check"></i><span>Performance</span></a
             >
           </li>
           <li class="sidebar-item">
@@ -100,6 +100,10 @@
             >
               <i class="bi bi-moon-fill"></i>
             </button>
+            <div class="topbar-datetime" id="topbarDatetime">
+              <div class="t-date">--</div>
+              <div class="t-time">--</div>
+            </div>
           </div>
         </div>
 
@@ -204,16 +208,24 @@
         const list = document.getElementById("requestList");
 
         // Fixed target parsing reference below
-        if (data.attendance && empSelect) {
-          data.attendance.forEach((emp) => {
+        if (data.Performance && empSelect) {
+          data.Performance.forEach((emp) => {
             let opt = new Option(emp.name, emp.employeeId);
             empSelect.add(opt);
           });
         }
 
-        if (list && data.attendance) {
+        setInterval(() => {
+          const now = new Date();
+          const dateEl = document.querySelector("#topbarDatetime .t-date");
+          const timeEl = document.querySelector("#topbarDatetime .t-time");
+          if (dateEl) dateEl.textContent = now.toLocaleDateString();
+          if (timeEl) timeEl.textContent = now.toLocaleTimeString();
+        }, 1000);
+
+        if (list && data.Performance) {
           list.innerHTML = "";
-          data.attendance.forEach((record) => {
+          data.Performance.forEach((record) => {
             if (record.leaveRequests) {
               record.leaveRequests.forEach((req) => {
                 const item = document.createElement("div");

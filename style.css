@@ -76,19 +76,19 @@ body {
   z-index: 1000;
   position: relative;
 }
-/* Dedicated bottom navigation container */
+
 .sidebar-menu-bottom {
   list-style: none;
-  padding: 0 12px 14px; /* Matches sidebar-menu horizontal padding */
-  margin-top: auto; /* Pushes this entire block to the absolute bottom */
+  padding: 0 12px 14px;
+  margin-top: auto;
 }
 
-/* Fixes spacing issues when the sidebar is collapsed */
 #wrapper.toggled #sidebar .sidebar-menu-bottom .sidebar-link {
   justify-content: center;
   padding: 12px 0;
   border-left: none;
 }
+
 .sidebar-header {
   padding: 20px 18px;
   display: flex;
@@ -251,7 +251,6 @@ body {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Pushes the settings item to the bottom of the menu container */
 .sidebar-item-bottom {
   margin-top: auto;
 }
@@ -708,7 +707,7 @@ body {
 }
 
 /* ===========================================================
-   DARK MODE (settings toggle)
+   DARK MODE CONFIGURATION
 =========================================================== */
 
 body.dark-mode {
@@ -732,9 +731,10 @@ body.dark-mode span:not(.badge),
 body.dark-mode td,
 body.dark-mode th,
 body.dark-mode label,
+body.dark-mode strong,
 body.dark-mode .fw-bold,
 body.dark-mode .fw-semibold {
-  color: var(--text);
+  color: var(--text) !important;
 }
 
 body.dark-mode .form-control-custom,
@@ -745,20 +745,15 @@ body.dark-mode .topbar-notif,
 body.dark-mode .btn-custom-outline,
 body.dark-mode .custom-table-styles,
 body.dark-mode .custom-table-styles thead {
-  background: var(--card);
-  color: var(--text);
-  border-color: var(--border);
-}
-
-body.dark-mode .custom-table-styles thead th {
-  background: #1a2a26;
-  color: var(--muted);
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
 }
 
 body.dark-mode .text-muted,
 body.dark-mode .text-secondary,
 body.dark-mode .brand-sub {
-  color: var(--muted);
+  color: var(--muted) !important;
 }
 
 body.dark-mode .card-custom:hover {
@@ -766,40 +761,10 @@ body.dark-mode .card-custom:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
-/* ==============================================================
-   EMPLOYEE OVERVIEW: BLACK TEXT ON LIGHT BACKGROUND (DARK MODE)
-================================================================== */
-
-body.dark-mode #reportTable,
-body.dark-mode .custom-table-styles,
-body.dark-mode .custom-table-styles thead {
-  background-color: #f8f9fa;
-}
-
-body.dark-mode .custom-table-styles td,
-body.dark-mode .custom-table-styles th,
-body.dark-mode .custom-table-styles .fw-bold,
-body.dark-mode .custom-table-styles .fw-semibold {
-  color: #000000;
-  --bs-table-color: #000000;
-}
-
-body.dark-mode .custom-table-styles .text-secondary {
-  color: #444444;
-}
-
-body.dark-mode .custom-table-styles td,
-body.dark-mode .custom-table-styles th {
-  border-color: #dee2e6;
-}
-
-body.dark-mode .custom-table-styles tbody tr:hover {
-  background-color: #e9ecef;
-}
-
-body.dark-mode .badge-dept {
-  background-color: #12766b;
-  color: #ffffff;
+body.dark-mode .theme-toggle-btn {
+  background-color: var(--card) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--border) !important;
 }
 
 /* ===========================================================
@@ -841,27 +806,41 @@ body.dark-mode .badge-dept {
   }
 }
 
-/* Dark Mode Table Fixes */
+/* ===========================================================
+   GLOBAL DARK MODE TABLE COMPONENT RULES
+=========================================================== */
 body.dark-mode .custom-table-styles {
   background-color: var(--card) !important;
   color: var(--text) !important;
 }
 
 body.dark-mode .custom-table-styles thead th {
-  background-color: rgba(255, 255, 255, 0.05) !important;
+  background-color: #1a2a26 !important;
   color: var(--muted) !important;
+  border-color: var(--border) !important;
 }
 
-/* Payroll Mobile Responsiveness */
+body.dark-mode .custom-table-styles tbody td {
+  border-color: var(--border) !important;
+  background-color: transparent !important;
+}
+
+body.dark-mode .custom-table-styles tbody tr:hover {
+  background-color: var(--primary-light) !important;
+}
+
+/* ===========================================================
+   PAYROLL PAGE COMPONENT RESPONSIVENESS
+=========================================================== */
 @media (max-width: 992px) {
   .input-strip-grid {
-    grid-template-columns: 1fr 1fr !important; /* Stack inputs in 2 columns on tablets */
+    grid-template-columns: 1fr 1fr !important;
   }
 }
 
 @media (max-width: 576px) {
   .input-strip-grid {
-    grid-template-columns: 1fr !important; /* Stack inputs in 1 column on phones */
+    grid-template-columns: 1fr !important;
   }
   .net-pay-header {
     flex-direction: column;
