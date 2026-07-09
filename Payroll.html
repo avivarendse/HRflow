@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Payroll — Statement</title>
+<head>
+  <style>
+  :root {
+    --primary: #12766B;
+    --primary-dark: #0D2E2A;
+    --primary-light: #E6F5F2;
+    --accent: #EF7D5C;
+    --accent-light: #FDE6DD;
+    --success: #22A35D;
+    --success-light: #DFF5E6;
+    --danger: #D5493A;
+    --danger-light: #FBE6E3;
+    --warning: #E2942A;
+    --warning-light: #FDECD2;
+    --bg: #F5F4EF;
+    --card: #FFFFFF;
+    --text: #1C2624;
+    --muted: #7C8B88;
+    --border: #E9E6DE;
+    --sidebar-bg: linear-gradient(180deg, #123832 0%, #0C2622 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.68);
+    --sidebar-text-active: #FFFFFF;
+    --shadow: 0 8px 24px rgba(18, 46, 42, 0.06);
+    --shadow-hover: 0 16px 36px rgba(18, 46, 42, 0.1);
+    --radius: 18px;
+    --sidebar-width: 240px;
+    --sidebar-collapsed-width: 78px;
+    --font-display: "Fraunces", serif;
+    --font-body: "Inter", sans-serif;
+    --sidebar: var(--sidebar-bg);
+    --card-raised: #FCFBF7;
+    --line: var(--border);
+    --line-soft: #EFE9DD;
+    --emerald: var(--primary);
+    --emerald-dim: var(--primary-dark);
+    --amber: var(--warning);
+    --red: var(--danger);
+    --text-soft: var(--muted);
+    --text-faint: #81908C;
+  }
+ 
+  body[data-theme="dark"] {
+    --bg: #0D1F1B;
+    --card: #123832;
+    --card-raised: #17463E;
+    --text: #F3F7F5;
+    --muted: #A7B8B4;
+    --border: #234B44;
+    --sidebar-bg: linear-gradient(180deg, #081615 0%, #040C0B 100%);
+    --sidebar-text: rgba(255, 255, 255, 0.72);
+    --sidebar-text-active: #FFFFFF;
+    --shadow: 0 16px 36px rgba(2, 10, 9, 0.4);
+    --shadow-hover: 0 20px 44px rgba(2, 10, 9, 0.5);
+    --line-soft: #203F39;
+    --text-soft: #C5D0CC;
+    --text-faint: #8AA29D;
+  }
+ 
+  *{ box-sizing:border-box; }
+ 
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+ 
+  .app{
+    display:grid;
+    grid-template-columns: 216px 1fr;
+    min-height:100vh;
+  }
+ 
+  .sidebar{
+    background: var(--sidebar);
+    border-right: none;
+    padding: 28px 18px;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    box-shadow: inset -1px 0 0 rgba(255,255,255,0.08);
+  }
+ 
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 0 0 28px;
+  }
+  .brand-mark{
+    width:40px; height:40px;
+    border-radius:12px;
+    background: var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    color:#fff;
+    font-size:16px;
+  }
+  .brand-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    letter-spacing:0.2px;
+    color: #fff;
+  }
+ 
+  .nav-group-label{
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color: var(--sidebar-text);
+    font-weight:600;
+    padding: 16px 12px 10px;
+  }
+ 
+  .nav-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 12px 14px;
+    border-radius:14px;
+    color: var(--sidebar-text);
+    font-size:14px;
+    font-weight:500;
+    position:relative;
+    cursor:pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .nav-item:hover{ background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-item.active{
+    color: #fff;
+    background: rgba(255,255,255,0.14);
+  }
+  .nav-item.active::before{
+    content:'';
+    position:absolute;
+    left:0; top:8px; bottom:8px;
+    width:4px;
+    background: #F5A25F;
+    border-radius: 999px;
+  }
+  .nav-item svg{ width:18px; height:18px; flex-shrink:0; opacity:0.95; }
+  .nav-badge{
+    margin-left:auto;
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+    font-size:10.5px;
+    font-weight:700;
+    border-radius:999px;
+    padding:4px 8px;
+  }
+ 
+  .sidebar-fill{ flex:1; }
+ 
+  .main{ display:flex; flex-direction:column; }
+ 
+  .topbar{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding: 20px 32px 0;
+  }
+  .crumb{
+    font-family:'Space Mono', monospace;
+    font-size:11.5px;
+    color: var(--text-faint);
+    letter-spacing:0.3px;
+  }
+  .crumb b{ color: var(--text-soft); font-weight:400; }
+  .topbar-fill{ flex:1; }
+  .run-btn{
+    background: transparent;
+    border: 1px solid var(--primary-dark);
+    color: var(--primary);
+    font-size:12.5px;
+    font-weight:600;
+    padding: 8px 14px;
+    border-radius:7px;
+    cursor:pointer;
+    display:flex; align-items:center; gap:7px;
+    font-family: var(--font-body);
+  }
+  .run-btn:hover{ background: var(--primary-light); }
+  .theme-toggle{
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    box-shadow: var(--shadow);
+  }
+  .theme-toggle:hover{ background: var(--primary-light); color: var(--primary-dark); }
+  .avatar-chip{
+    width:32px; height:32px;
+    border-radius:50%;
+    background: var(--card-raised);
+    border: 1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:11.5px;
+    font-weight:600;
+    color: var(--text-soft);
+  }
+ 
+  .content{ padding: 18px 32px 60px; }
+ 
+  .page-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:26px;
+    font-weight:600;
+    margin: 6px 0 2px;
+  }
+  .page-sub{
+    font-size:13px;
+    color: var(--text-soft);
+    margin: 0 0 26px;
+  }
+ 
+  .input-strip{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display:grid;
+    grid-template-columns: 1.5fr repeat(5, 1fr);
+    gap: 14px;
+    align-items:end;
+    margin-bottom: 22px;
+  }
+  .field label{
+    display:block;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color: var(--text-faint);
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  select{
+    width:100%;
+    height:38px;
+    background: var(--card-raised);
+    border:1px solid var(--line);
+    border-radius:6px;
+    color: var(--text);
+    font-size:13px;
+    padding: 0 10px;
+    font-family:'Inter', sans-serif;
+  }
+  .num-wrap{
+    display:flex;
+    align-items:center;
+    background: var(--card-raised);
+    border:1px solid var(--line);
+    border-radius:6px;
+    height:38px;
+    padding: 0 10px;
+  }
+  .num-wrap span{
+    color: var(--text-faint);
+    font-size:12px;
+    font-family:'Space Mono', monospace;
+  }
+  .num-wrap input{
+    border:none; outline:none; background:transparent;
+    width:100%;
+    color: var(--text);
+    font-family:'Space Mono', monospace;
+    font-size:13.5px;
+    padding-left:2px;
+  }
+ 
+  .statement{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow:hidden;
+    margin-bottom: 22px;
+  }
+  .statement-head{
+    padding: 26px 28px 22px;
+    border-bottom: 1px solid var(--line-soft);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    gap: 20px;
+  }
+  .net-block .eyebrow{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color: var(--text-faint);
+    font-weight:600;
+    margin-bottom:8px;
+  }
+  .net-figure{
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size:44px;
+    color: var(--emerald);
+    line-height:1;
+  }
+  .net-period{
+    font-size:12px;
+    color: var(--text-faint);
+    margin-top:8px;
+  }
+  .net-period .ref{
+    color: var(--text-soft);
+  }
+ 
+  .who-block{ text-align:right; }
+  .who-name{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:16px;
+    font-weight:600;
+  }
+  .who-meta{
+    font-size:12px;
+    color: var(--text-soft);
+    margin-top:3px;
+  }
+  .who-meta .sep{ color: var(--text-faint); margin: 0 6px; }
+  .who-contact{
+    font-size:11.5px;
+    color: var(--text-faint);
+    margin-top:4px;
+    font-family:'Space Mono', monospace;
+  }
+  .who-history{
+    font-size:11.5px;
+    color: var(--text-faint);
+    margin-top:6px;
+    max-width: 260px;
+  }
+ 
+  .statement-body{
+    padding: 24px 28px 28px;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+ 
+  .col-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color: var(--text-faint);
+    font-weight:600;
+    margin-bottom: 14px;
+  }
+ 
+  .receipt-line{
+    display:flex;
+    align-items:baseline;
+    gap: 8px;
+    padding: 7px 0;
+  }
+  .receipt-line .lbl{
+    font-size:13.5px;
+    color: var(--text-soft);
+    white-space:nowrap;
+  }
+  .receipt-line .leader{
+    flex:1;
+    border-bottom: 1px dotted var(--line);
+    transform: translateY(-3px);
+  }
+  .receipt-line .amt{
+    font-family:'Space Mono', monospace;
+    font-size:13.5px;
+    color: var(--text);
+    white-space:nowrap;
+  }
+  .receipt-line.ded .amt{ color: var(--amber); }
+  .receipt-line.total{
+    border-top: 1px solid var(--line);
+    margin-top: 6px;
+    padding-top: 12px;
+    font-weight:700;
+  }
+  .receipt-line.total .lbl{ color: var(--text); font-weight:600; }
+  .receipt-line.total .amt{ font-size:15px; font-weight:700; }
+ 
+  .rate-chips{
+    display:flex;
+    gap:10px;
+    margin-top: 20px;
+    flex-wrap:wrap;
+  }
+  .chip{
+    background: var(--card-raised);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    flex:1;
+    min-width: 90px;
+  }
+  .chip .chip-label{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    color: var(--text-faint);
+    margin-bottom:4px;
+  }
+  .chip .chip-value{
+    font-family:'Space Mono', monospace;
+    font-size:13.5px;
+    color: var(--text);
+  }
+ 
+  .panel-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .panel{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 24px;
+  }
+  .panel-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    margin: 0 0 4px;
+  }
+  .panel-sub{
+    font-size:11.5px;
+    color: var(--text-faint);
+    margin: 0 0 16px;
+  }
+ 
+  .print-modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 20, 18, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+  }
+  .print-modal.hidden{ display: none; }
+  .print-modal-card{
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-hover);
+    width: min(420px, 100%);
+    padding: 24px;
+  }
+  .print-modal-card h3{
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-family: var(--font-display);
+  }
+  .print-modal-card p{
+    margin: 0 0 18px;
+    color: var(--text-soft);
+    line-height: 1.5;
+  }
+  .print-modal-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .print-choice{
+    border: 1px solid var(--border);
+    background: var(--card-raised);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .print-choice.primary{
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .print-choice.secondary{
+    margin-left: auto;
+    background: transparent;
+  }
+  .print-choice:hover{ transform: translateY(-1px); }
+ 
+  .att-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size:13px;
+  }
+  .att-row:last-child{ border-bottom:none; }
+  .att-date{
+    font-family:'Space Mono', monospace;
+    color: var(--text-soft);
+    font-size:12px;
+  }
+  .status-pill{
+    font-size:11px;
+    font-weight:600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .status-pill.present, .status-pill.approved{
+    background: rgba(47,191,131,0.14);
+    color: var(--emerald);
+  }
+  .status-pill.absent, .status-pill.denied{
+    background: rgba(226,96,79,0.14);
+    color: var(--red);
+  }
+  .status-pill.pending{
+    background: rgba(226,169,62,0.14);
+    color: var(--amber);
+  }
+ 
+  .leave-reason{
+    font-size:13px;
+    color: var(--text);
+  }
+ 
+  @media (max-width: 980px){
+    .app{ grid-template-columns: 1fr; }
+    .sidebar{ display:none; }
+    .input-strip{ grid-template-columns: 1fr 1fr; }
+    .statement-body{ grid-template-columns: 1fr; }
+    .panel-row{ grid-template-columns: 1fr; }
+    .who-block{ text-align:left; }
+  }
+  </style>
+</head>
+<body>
+<div class="app">
+ 
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-name">ModernTech</div>
+    </div>
+ 
+    <div class="nav-group-label">Workspace</div>
+    <a class="nav-item" href="login%20(1).html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Overview
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+      Employees
+    </a>
+    <a class="nav-item active" href="Payroll.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      Payroll
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 3v3M16 3v3"/></svg>
+      Time off
+      <span class="nav-badge">3</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l4 4 10-10"/></svg>
+      Attendance
+    </a>
+        <a class="nav-item" href="Performance.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12l4 4 10-10"/></svg>
+      Performance
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+      Reports
+    </a>
+ 
+    <div class="sidebar-fill"></div>
+ 
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 11-4 0v-.2a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 110-4h.2a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 114 0v.2a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 110 4h-.2a1.7 1.7 0 00-1.6 1z"/></svg>
+      Settings
+    </div>
+  </aside>
+ 
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb">Payroll <b>/</b> Run <b>/</b> <span id="crumbName">Sibongile Nkosi</span></div>
+      <div class="topbar-fill"></div>
+      <button class="run-btn" id="runBatchBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+        Run batch payroll
+      </button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">☾</button>
+      <div class="avatar-chip" id="userAvatar">SN</div>
+    </div>
+ 
+    <div class="content">
+      <p class="page-title">Payroll statement</p>
+      <p class="page-sub">10 employees loaded from your uploaded records — pick one, adjust figures, and the statement recalculates.</p>
+ 
+      <div class="input-strip">
+        <div class="field">
+          <label>Employee</label>
+          <select id="empSelect"></select>
+        </div>
+        <div class="field">
+          <label>Monthly base</label>
+          <div class="num-wrap"><span>ZAR</span><input type="number" id="monthlyBase" /></div>
+        </div>
+        <div class="field">
+          <label>Hours worked</label>
+          <div class="num-wrap"><input type="number" id="hoursWorked" /><span>hrs</span></div>
+        </div>
+        <div class="field">
+          <label>Leave deducted</label>
+          <div class="num-wrap"><input type="number" id="leaveHours" /><span>hrs</span></div>
+        </div>
+        <div class="field">
+          <label>Bonus</label>
+          <div class="num-wrap"><span>ZAR</span><input type="number" id="bonus" value="0" /></div>
+        </div>
+        <div class="field">
+          <label>Tax rate</label>
+          <div class="num-wrap"><input type="number" id="taxRate" value="18" /><span>%</span></div>
+        </div>
+      </div>
+ 
+      <div class="statement">
+        <div class="statement-head">
+          <div class="net-block">
+            <div class="eyebrow">Net pay</div>
+            <div class="net-figure" id="netFigure">ZAR0</div>
+            <div class="net-period">This period &middot; on-file annual final salary: <span class="ref" id="refSalary">ZAR0</span></div>
+          </div>
+          <div class="who-block">
+            <div class="who-name" id="psName">Sibongile Nkosi</div>
+            <div class="who-meta">
+              <span id="psPosition">Software Engineer</span>
+              <span class="sep">&middot;</span>
+              <span id="psDept">Development</span>
+              <span class="sep">&middot;</span>
+              <span id="psId">EMP-1</span>
+            </div>
+            <div class="who-contact" id="psContact">sibongile.nkosi@moderntech.com</div>
+            <div class="who-history" id="psHistory">Joined in 2015, promoted to Senior in 2018</div>
+          </div>
+        </div>
+ 
+        <div class="statement-body">
+          <div>
+            <div class="col-label">Earnings</div>
+            <div class="receipt-line"><span class="lbl">Base pay</span><span class="leader"></span><span class="amt" id="psBase">ZAR 0</span></div>
+            <div class="receipt-line"><span class="lbl">Bonus</span><span class="leader"></span><span class="amt" id="psBonus">ZAR 0</span></div>
+            <div class="receipt-line total"><span class="lbl">Gross</span><span class="leader"></span><span class="amt" id="psGross">ZAR 0</span></div>
+ 
+            <div class="rate-chips">
+              <div class="chip"><div class="chip-label">Annual salary</div><div class="chip-value" id="chipSalary">ZAR 0</div></div>
+              <div class="chip"><div class="chip-label">Hours this period</div><div class="chip-value" id="chipHours">0</div></div>
+            </div>
+          </div>
+ 
+          <div>
+            <div class="col-label">Deductions</div>
+            <div class="receipt-line ded"><span class="lbl" id="psLeaveLabel">Leave (0 hrs)</span><span class="leader"></span><span class="amt">-<span id="psLeave">ZAR 0</span></span></div>
+            <div class="receipt-line ded"><span class="lbl" id="psTaxLabel">Income tax (18%)</span><span class="leader"></span><span class="amt">-<span id="psTax">ZAR 0</span></span></div>
+            <div class="receipt-line total"><span class="lbl">Net pay</span><span class="leader"></span><span class="amt" id="psNet">ZAR 0</span></div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="panel-row">
+        <div class="panel">
+          <p class="panel-title">Recent attendance</p>
+          <p class="panel-sub">Last 5 recorded days</p>
+          <div id="attList"></div>
+        </div>
+        <div class="panel">
+          <p class="panel-title">Leave requests</p>
+          <p class="panel-sub">Submitted by this employee</p>
+          <div id="leaveList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</div>
+
+<div class="print-modal hidden" id="printModal" aria-hidden="true">
+  <div class="print-modal-card" role="dialog" aria-modal="true" aria-labelledby="printModalTitle">
+    <h3 id="printModalTitle">Print payroll receipts</h3>
+    <p>Select whether to print the current receipt or all employee receipts.</p>
+    <div class="print-modal-actions">
+      <button class="print-choice" data-choice="single" type="button">Current receipt</button>
+      <button class="print-choice primary" data-choice="all" type="button">All receipts</button>
+      <button class="print-choice secondary" id="printCancel" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+  var employees = [
+  {
+    id: 1,
+    name: "Sibongile Nkosi",
+    position: "Software Engineer",
+    department: "Development",
+    salary: 70000,
+    history: "Joined in 2015, promoted to Senior in 2018",
+    contact: "sibongile.nkosi@moderntech.com",
+    hoursWorked: 160,
+    leaveDeductions: 8,
+    finalSalary: 69500,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-27",
+        status: "Present",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-22",
+        reason: "Sick Leave",
+        status: "Approved",
+      },
+      {
+        date: "2024-12-01",
+        reason: "Personal",
+        status: "Pending",
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Lungile Moyo",
+    position: "HR Manager",
+    department: "HR",
+    salary: 80000,
+    history: "Joined in 2013, promoted to Manager in 2017",
+    contact: "lungile.moyo@moderntech.com",
+    hoursWorked: 150,
+    leaveDeductions: 10,
+    finalSalary: 79000,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-15",
+        reason: "Family Responsibility",
+        status: "Denied",
+      },
+      {
+        date: "2024-12-02",
+        reason: "Vacation",
+        status: "Approved",
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Thabo Molefe",
+    position: "Quality Analyst",
+    department: "QA",
+    salary: 55000,
+    history: "Joined in 2018",
+    contact: "thabo.molefe@moderntech.com",
+    hoursWorked: 170,
+    leaveDeductions: 4,
+    finalSalary: 54800,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Present",
+      },
+      {
+        date: "2025-07-28",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-10",
+        reason: "Medical Appointment",
+        status: "Approved",
+      },
+      {
+        date: "2024-12-05",
+        reason: "Personal",
+        status: "Pending",
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: "Keshav Naidoo",
+    position: "Sales Representative",
+    department: "Sales",
+    salary: 60000,
+    history: "Joined in 2020",
+    contact: "keshav.naidoo@moderntech.com",
+    hoursWorked: 165,
+    leaveDeductions: 6,
+    finalSalary: 59700,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Present",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-20",
+        reason: "Bereavement",
+        status: "Approved",
+      },
+    ],
+  },
+  {
+    id: 5,
+    name: "Zanele Khumalo",
+    position: "Marketing Specialist",
+    department: "Marketing",
+    salary: 58000,
+    history: "Joined in 2019",
+    contact: "zanele.khumalo@moderntech.com",
+    hoursWorked: 158,
+    leaveDeductions: 5,
+    finalSalary: 57850,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2024-12-01",
+        reason: "Childcare",
+        status: "Pending",
+      },
+    ],
+  },
+  {
+    id: 6,
+    name: "Sipho Zulu",
+    position: "UI/UX Designer",
+    department: "Design",
+    salary: 65000,
+    history: "Joined in 2016",
+    contact: "sipho.zulu@moderntech.com",
+    hoursWorked: 168,
+    leaveDeductions: 2,
+    finalSalary: 64800,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-18",
+        reason: "Sick Leave",
+        status: "Approved",
+      },
+    ],
+  },
+  {
+    id: 7,
+    name: "Naledi Moeketsi",
+    position: "DevOps Engineer",
+    department: "IT",
+    salary: 72000,
+    history: "Joined in 2017",
+    contact: "naledi.moeketsi@moderntech.com",
+    hoursWorked: 175,
+    leaveDeductions: 3,
+    finalSalary: 71800,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Present",
+      },
+      {
+        date: "2025-07-28",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-22",
+        reason: "Vacation",
+        status: "Pending",
+      },
+    ],
+  },
+  {
+    id: 8,
+    name: "Farai Gumbo",
+    position: "Content Strategist",
+    department: "Marketing",
+    salary: 56000,
+    history: "Joined in 2021",
+    contact: "farai.gumbo@moderntech.com",
+    hoursWorked: 160,
+    leaveDeductions: 0,
+    finalSalary: 56000,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-27",
+        status: "Present",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2024-12-02",
+        reason: "Medical Appointment",
+        status: "Approved",
+      },
+    ],
+  },
+  {
+    id: 9,
+    name: "Karabo Dlamini",
+    position: "Accountant",
+    department: "Finance",
+    salary: 62000,
+    history: "Joined in 2018",
+    contact: "karabo.dlamini@moderntech.com",
+    hoursWorked: 155,
+    leaveDeductions: 5,
+    finalSalary: 61500,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Present",
+      },
+      {
+        date: "2025-07-28",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2025-07-19",
+        reason: "Childcare",
+        status: "Denied",
+      },
+    ],
+  },
+  {
+    id: 10,
+    name: "Fatima Patel",
+    position: "Customer Support Lead",
+    department: "Support",
+    salary: 58000,
+    history: "Joined in 2016",
+    contact: "fatima.patel@moderntech.com",
+    hoursWorked: 162,
+    leaveDeductions: 4,
+    finalSalary: 57750,
+    attendance: [
+      {
+        date: "2025-07-25",
+        status: "Present",
+      },
+      {
+        date: "2025-07-26",
+        status: "Present",
+      },
+      {
+        date: "2025-07-27",
+        status: "Absent",
+      },
+      {
+        date: "2025-07-28",
+        status: "Present",
+      },
+      {
+        date: "2025-07-29",
+        status: "Present",
+      },
+    ],
+    leaveRequests: [
+      {
+        date: "2024-12-03",
+        reason: "Vacation",
+        status: "Pending",
+      },
+    ],
+  },
+];
+
+var select = document.getElementById("empSelect");
+employees.forEach(function (emp, i) {
+  var opt = document.createElement("option");
+  opt.value = i;
+  opt.textContent = emp.name + " \u00B7 EMP-" + emp.id;
+  select.appendChild(opt);
+});
+
+function formatMoney(n) {
+  var rounded = Math.round(n);
+  return "ZAR" + rounded.toLocaleString("en-SA");
+}
+
+function initials(name) {
+  return name
+    .split(" ")
+    .map(function (p) {
+      return p[0];
+    })
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function loadEmployee() {
+  var emp = employees[parseInt(select.value, 10) || 0];
+  document.getElementById("monthlyBase").value = Math.round(emp.salary / 12);
+  document.getElementById("hoursWorked").value = emp.hoursWorked;
+  document.getElementById("leaveHours").value = emp.leaveDeductions;
+  document.getElementById("bonus").value = 0;
+  document.getElementById("taxRate").value = 18;
+
+  document.getElementById("psName").textContent = emp.name;
+  document.getElementById("psId").textContent = "EMP-" + emp.id;
+  document.getElementById("psPosition").textContent = emp.position;
+  document.getElementById("psDept").textContent = emp.department;
+  document.getElementById("psContact").textContent = emp.contact;
+  document.getElementById("psHistory").textContent = emp.history;
+  document.getElementById("refSalary").textContent = formatMoney(
+    emp.finalSalary,
+  );
+  document.getElementById("chipSalary").textContent = formatMoney(emp.salary);
+  document.getElementById("crumbName").textContent = emp.name;
+  document.getElementById("userAvatar").textContent = initials(emp.name);
+
+  var attList = document.getElementById("attList");
+  attList.innerHTML = "";
+  emp.attendance.forEach(function (a) {
+    var row = document.createElement("div");
+    row.className = "att-row";
+    row.innerHTML =
+      '<span class="att-date">' +
+      a.date +
+      '</span><span class="status-pill ' +
+      a.status.toLowerCase() +
+      '">' +
+      a.status +
+      "</span>";
+    attList.appendChild(row);
+  });
+
+  var leaveList = document.getElementById("leaveList");
+  leaveList.innerHTML = "";
+  if (emp.leaveRequests.length === 0) {
+    leaveList.innerHTML =
+      '<div class="att-row"><span class="leave-reason">No leave requests on file</span></div>';
+  } else {
+    emp.leaveRequests.forEach(function (l) {
+      var row = document.createElement("div");
+      row.className = "att-row";
+      row.innerHTML =
+        '<span class="leave-reason">' +
+        l.reason +
+        '<br><span class="att-date">' +
+        l.date +
+        '</span></span><span class="status-pill ' +
+        l.status.toLowerCase() +
+        '">' +
+        l.status +
+        "</span>";
+      leaveList.appendChild(row);
+    });
+  }
+
+  calculate();
+}
+
+function calculate() {
+  var monthlyBase =
+    parseFloat(document.getElementById("monthlyBase").value) || 0;
+  var hoursWorked =
+    parseFloat(document.getElementById("hoursWorked").value) || 0;
+  var leaveHours = parseFloat(document.getElementById("leaveHours").value) || 0;
+  var bonus = parseFloat(document.getElementById("bonus").value) || 0;
+  var taxRate = parseFloat(document.getElementById("taxRate").value) || 0;
+
+  var standardHours = 160;
+  var hourlyRate = monthlyBase / standardHours;
+  var leaveDeductionAmt = leaveHours * hourlyRate;
+  var proratedBase = hourlyRate * hoursWorked;
+
+  var gross = proratedBase + bonus;
+  var tax = gross * (taxRate / 100);
+  var net = gross - tax - leaveDeductionAmt;
+
+  document.getElementById("netFigure").textContent = formatMoney(net);
+
+  document.getElementById("psBase").textContent = formatMoney(proratedBase);
+  document.getElementById("psBonus").textContent = formatMoney(bonus);
+  document.getElementById("psGross").textContent = formatMoney(gross);
+
+  document.getElementById("psLeaveLabel").textContent =
+    "Leave (" + leaveHours + " hrs)";
+  document.getElementById("psLeave").textContent =
+    formatMoney(leaveDeductionAmt);
+  document.getElementById("psTaxLabel").textContent =
+    "Income tax (" + taxRate + "%)";
+  document.getElementById("psTax").textContent = formatMoney(tax);
+  document.getElementById("psNet").textContent = formatMoney(net);
+
+  document.getElementById("chipHours").textContent = hoursWorked;
+}
+
+function buildReceiptData(emp, values) {
+  var monthlyBase =
+    values && values.monthlyBase !== undefined
+      ? values.monthlyBase
+      : Math.round(emp.salary / 12);
+  var hoursWorked =
+    values && values.hoursWorked !== undefined
+      ? values.hoursWorked
+      : emp.hoursWorked;
+  var leaveHours =
+    values && values.leaveHours !== undefined
+      ? values.leaveHours
+      : emp.leaveDeductions;
+  var bonus = values && values.bonus !== undefined ? values.bonus : 0;
+  var taxRate = values && values.taxRate !== undefined ? values.taxRate : 18;
+  var standardHours = 160;
+  var hourlyRate = monthlyBase / standardHours;
+  var leaveDeductionAmt = leaveHours * hourlyRate;
+  var proratedBase = hourlyRate * hoursWorked;
+  var gross = proratedBase + bonus;
+  var tax = gross * (taxRate / 100);
+  var net = gross - tax - leaveDeductionAmt;
+
+  return {
+    monthlyBase: proratedBase,
+    hoursWorked: hoursWorked,
+    leaveHours: leaveHours,
+    bonus: bonus,
+    taxRate: taxRate,
+    gross: gross,
+    tax: tax,
+    net: net,
+    leaveDeductionAmt: leaveDeductionAmt,
+  };
+}
+
+function buildReceiptMarkup(emp, data) {
+  return (
+    "" +
+    '<section class="receipt-print-card">' +
+    "  <h2>" +
+    emp.name +
+    "</h2>" +
+    "  <p>" +
+    emp.position +
+    " · " +
+    emp.department +
+    "</p>" +
+    '  <div class="receipt-print-row"><span>Base pay</span><strong>' +
+    formatMoney(data.monthlyBase) +
+    "</strong></div>" +
+    '  <div class="receipt-print-row"><span>Bonus</span><strong>' +
+    formatMoney(data.bonus) +
+    "</strong></div>" +
+    '  <div class="receipt-print-row total"><span>Gross</span><strong>' +
+    formatMoney(data.gross) +
+    "</strong></div>" +
+    '  <div class="receipt-print-row"><span>Leave (' +
+    data.leaveHours +
+    " hrs)</span><strong>- " +
+    formatMoney(data.leaveDeductionAmt) +
+    "</strong></div>" +
+    '  <div class="receipt-print-row"><span>Income tax (' +
+    data.taxRate +
+    "%)</span><strong>- " +
+    formatMoney(data.tax) +
+    "</strong></div>" +
+    '  <div class="receipt-print-row total"><span>Net pay</span><strong>' +
+    formatMoney(data.net) +
+    "</strong></div>" +
+    "</section>"
+  );
+}
+
+function openReceiptPrint(mode) {
+  var printWindow = window.open("", "_blank", "width=900,height=800");
+  if (!printWindow) {
+    alert("Please allow pop-ups so the receipts can be printed.");
+    return;
+  }
+
+  var sections = [];
+  if (mode === "single") {
+    var activeEmployee = employees[parseInt(select.value, 10) || 0];
+    var currentValues = {
+      monthlyBase:
+        parseFloat(document.getElementById("monthlyBase").value) || 0,
+      hoursWorked:
+        parseFloat(document.getElementById("hoursWorked").value) || 0,
+      leaveHours: parseFloat(document.getElementById("leaveHours").value) || 0,
+      bonus: parseFloat(document.getElementById("bonus").value) || 0,
+      taxRate: parseFloat(document.getElementById("taxRate").value) || 0,
+    };
+    sections.push(
+      buildReceiptMarkup(
+        activeEmployee,
+        buildReceiptData(activeEmployee, currentValues),
+      ),
+    );
+  } else {
+    employees.forEach(function (emp) {
+      sections.push(buildReceiptMarkup(emp, buildReceiptData(emp)));
+    });
+  }
+
+  const printStyles = [
+    "body{font-family: Arial, sans-serif; margin:24px; color:#1c2624; background:#fff;}",
+    ".receipt-print-card{border:1px solid #e9e6de; border-radius:14px; padding:20px; margin:0 0 18px; page-break-inside:avoid;}",
+    "h2{margin:0 0 4px; font-size:20px;}",
+    "p{margin:0 0 12px; color:#7c8b88;}",
+    ".receipt-print-row{display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0ece4; font-size:14px;}",
+    ".receipt-print-row.total{font-weight:700; border-bottom:none; padding-top:10px;}",
+    "@media print{body{margin:0;} .receipt-print-card{box-shadow:none;}}",
+  ].join("\n");
+
+  var printDoc = printWindow.document;
+  var titleEl = printDoc.createElement("title");
+  titleEl.textContent = "Payroll receipts";
+  printDoc.head.appendChild(titleEl);
+  var styleEl = printDoc.createElement("style");
+  styleEl.textContent = printStyles;
+  printDoc.head.appendChild(styleEl);
+
+  var heading = printDoc.createElement("h1");
+  heading.textContent = "Payroll receipts";
+  printDoc.body.appendChild(heading);
+
+  var wrapper = printDoc.createElement("div");
+  wrapper.innerHTML = sections.join("");
+  while (wrapper.firstChild) {
+    printDoc.body.appendChild(wrapper.firstChild);
+  }
+
+  printWindow.focus();
+  printWindow.print();
+}
+
+["monthlyBase", "hoursWorked", "leaveHours", "bonus", "taxRate"].forEach(
+  function (id) {
+    document.getElementById(id).addEventListener("input", calculate);
+  },
+);
+select.addEventListener("change", loadEmployee);
+
+var runBatchBtn = document.getElementById("runBatchBtn");
+var printModal = document.getElementById("printModal");
+var printCancelBtn = document.getElementById("printCancel");
+
+function closePrintModal() {
+  if (printModal) {
+    printModal.classList.add("hidden");
+    printModal.setAttribute("aria-hidden", "true");
+  }
+}
+
+function openPrintModal() {
+  if (printModal) {
+    printModal.classList.remove("hidden");
+    printModal.setAttribute("aria-hidden", "false");
+  }
+}
+
+if (runBatchBtn) {
+  runBatchBtn.addEventListener("click", openPrintModal);
+}
+
+if (printCancelBtn) {
+  printCancelBtn.addEventListener("click", closePrintModal);
+}
+
+if (printModal) {
+  printModal.addEventListener("click", function (e) {
+    if (e.target === printModal) {
+      closePrintModal();
+    }
+  });
+}
+
+document.querySelectorAll(".print-choice").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    var choice = btn.getAttribute("data-choice");
+    closePrintModal();
+    openReceiptPrint(choice);
+  });
+});
+
+const themeToggle = document.getElementById("themeToggle");
+if (themeToggle) {
+  const storedTheme = localStorage.getItem("hrflow-theme") || "light";
+  document.body.setAttribute("data-theme", storedTheme);
+  themeToggle.textContent = storedTheme === "dark" ? "☀" : "☾";
+
+  themeToggle.addEventListener("click", function () {
+    const nextTheme =
+      document.body.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    document.body.setAttribute("data-theme", nextTheme);
+    localStorage.setItem("hrflow-theme", nextTheme);
+    themeToggle.textContent = nextTheme === "dark" ? "☀" : "☾";
+  });
+}
+
+loadEmployee();
+</script>
+</body>
+</html>
