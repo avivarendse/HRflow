@@ -1,7 +1,7 @@
 (function () {
   const dummyData = window.__DUMMY_DATA__ || {};
-  const employeeRecords = Array.isArray(dummyData.attendance)
-    ? dummyData.attendance
+  const employeeRecords = Array.isArray(dummyData.Performance)
+    ? dummyData.Performance
     : [];
   const tableBody = document.getElementById("employee-table-body");
   const departmentFilter = document.getElementById("department-filter");
@@ -26,14 +26,22 @@
     "Sales Executive",
   ];
 
-  const employees = employeeRecords.map((employee, index) => ({
-    id: employee.employeeId || index + 1,
-    name: employee.name || `Employee ${index + 1}`,
-    position: positions[index % positions.length],
-    department: departments[index % departments.length],
-    salary: `R${(45000 + index * 5000).toLocaleString("en-ZA")}`,
-    contact: `+27 82 000 ${1000 + index}`,
-  }));
+  const employees = employeeRecords.map((employee, index) => {
+    // Look up the matching employee object from dummy data to grab their actual email address
+    const baseEmployees = dummyData.employees || [];
+    const matchingEmployee = baseEmployees.find(e => e.employeeId === employee.employeeId);
+    
+    return {
+      id: employee.employeeId || index + 1,
+      name: employee.name || `Employee ${index + 1}`,
+      position: positions[index % positions.length],
+      department: departments[index % departments.length],
+      salary: `R${(45000 + index * 5000).toLocaleString("en-ZA")}`,
+      
+      // Pulls the real email from dummy data, falls back to a clean generated email if not found
+      contact: matchingEmployee && matchingEmployee.contact ? matchingEmployee.contact : `${(employee.name || '').toLowerCase().replace(/\s+/g, '.')}@hrflow.com`
+    };
+  });
 
   let currentPage = 1;
   const pageSize = 6;
@@ -146,3 +154,5 @@
     }
   });
 })();
+
+
