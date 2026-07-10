@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRflow | Performance</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+    <div id="wrapper">
+      <!-- SIDEBAR: Updated to match Version 1 Teal Theme -->
+      <aside id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo-box">
+            <i class="bi bi-buildings-fill"></i>
+          </div>
+          <div class="sidebar-brand-text">
+            <span class="brand-name">HR<span>Flow</span></span>
+            <span class="brand-sub">Modern HR Platform</span>
+          </div>
+        </div>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="dashboard.html"
+              ><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a
+            >
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="employees.html"
+              ><i class="bi bi-people-fill"></i><span>Employees</span></a
+            >
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="payroll.html"
+              ><i class="bi bi-cash-stack"></i><span>Payroll</span></a
+            >
+            <li class="sidebar-item">
+            <a class="sidebar-link active" href="Performance.html"
+              ><i class="bi bi-calendar-check"></i><span>Performance</span></a
+            >
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="leave.html"
+              ><i class="bi bi-calendar2-x"></i><span>Leave</span></a
+            >
+          </li>
+            <li class="sidebar-item">
+            <a class="sidebar-link" href="reports.html"
+              ><i class="bi bi-bar-chart-line-fill"></i><span>Reports</span></a
+            >
+          </li>
+          </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="settings.html"
+              ><i class="bi bi-gear-fill"></i><span>Settings</span></a
+            >
+          </li>
+        </ul>
+        <div class="sidebar-footer"></div>
+      </aside>
+
+      <main id="page-content-wrapper">
+        <!-- TOPBAR: Deep Teal UI -->
+        <div class="content-topbar">
+          <div class="page-titles">
+            <button
+              class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
+              id="mobile-toggle"
+            >
+              <i class="bi bi-list"></i>
+            </button>
+            <h1>Performance</h1>
+            <p>Daily presence and monthly trends.</p>
+          </div>
+          <div class="topbar-tools">
+            <button class="theme-toggle-btn" id="themeToggleBtn" type="button" title="Toggle dark mode">
+              <i class="bi bi-moon-fill"></i>
+            </button>
+            <button class="btn btn-custom btn-custom-primary" id="exportBtn">
+              <i class="bi bi-download"></i> Export CSV
+            </button>
+            <div class="topbar-datetime" id="topbarDatetime">
+              <div class="t-date">--</div>
+              <div class="t-time">--</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-container">
+          <!-- STATS: Teal Accents -->
+          <div class="row g-4 mb-4">
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-success">
+                      <i class="bi bi-check-circle text-success"></i>
+                    </div>
+                  </div>
+                  <h2>7</h2>
+                  <small>Present Today</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-danger">
+                      <i class="bi bi-x-circle text-danger"></i>
+                    </div>
+                  </div>
+                  <h2>1</h2>
+                  <small>Absent Today</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-warning">
+                      <i class="bi bi-clock-history text-warning"></i>
+                    </div>
+                  </div>
+                  <h2>2</h2>
+                  <small>On Leave</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card card-custom stat-card">
+                <div class="card-body">
+                  <div class="stat-top">
+                    <div class="icon-shape bg-soft-primary">
+                      <i class="bi bi-graph-up text-primary"></i>
+                    </div>
+                  </div>
+                  <h2>70%</h2>
+                  <small>Monthly Rate</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-custom">
+            <div class="card-body">
+              <h5 class="fw-bold mb-3 text-primary">Daily Log</h5>
+              <div class="table-responsive">
+                <table class="table custom-table-styles align-middle">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>ID</th>
+                      <th>Status</th>
+                      <th>Check-in</th>
+                      <th>Check-out</th>
+                    </tr>
+                  </thead>
+                  <tbody id="PerformanceTable">
+                    <!-- JS Data here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="data.js"></script>
+    <script>
+      const themeToggleBtn = document.getElementById('themeToggleBtn');
+      function applyTheme(isDark) {
+        document.body.classList.toggle('dark-mode', isDark);
+        localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+        if (themeToggleBtn) {
+          themeToggleBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        }
+      }
+      applyTheme(localStorage.getItem('darkMode') === 'true');
+      themeToggleBtn?.addEventListener('click', () => applyTheme(!document.body.classList.contains('dark-mode')));
+
+      document
+        .getElementById("mobile-toggle")
+        ?.addEventListener("click", () => {
+          document.getElementById("wrapper").classList.toggle("toggled");
+        });
+
+        
+      setInterval(() => {
+          const now = new Date();
+          const dateEl = document.querySelector("#topbarDatetime .t-date");
+          const timeEl = document.querySelector("#topbarDatetime .t-time");
+          if (dateEl) dateEl.textContent = now.toLocaleDateString();
+          if (timeEl) timeEl.textContent = now.toLocaleTimeString();
+        }, 1000);
+
+      (function renderPerformance() {
+        const table = document.getElementById("PerformanceTable");
+        if (!table || !window.dummyData || !window.dummyData.Performance) return;
+        window.dummyData.Performance.forEach((a) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" +
+            a.name +
+            "</td><td>" +
+            a.id +
+            "</td><td>" +
+            a.status +
+            "</td><td>" +
+            a.checkin +
+            "</td><td>" +
+            a.checkout +
+            "</td>";
+          table.appendChild(tr);
+        });
+      })();
+    </script>
+  </body>
+</html>
