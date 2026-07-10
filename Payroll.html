@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HR Flow | Leave Management</title>
+    <title>HR Flow | Payroll</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -15,11 +15,6 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <script>
-      if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
-      }
-    </script>
     <div id="wrapper">
       <aside id="sidebar">
         <div class="sidebar-header">
@@ -43,7 +38,7 @@
             >
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link" href="payroll.html"
+            <a class="sidebar-link active" href="payroll.html"
               ><i class="bi bi-cash-stack"></i><span>Payroll</span></a
             >
           </li>
@@ -53,7 +48,7 @@
             >
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link active" href="leave.html"
+            <a class="sidebar-link" href="leave.html"
               ><i class="bi bi-calendar2-x"></i><span>Leave</span></a
             >
           </li>
@@ -69,11 +64,7 @@
           </li>
         </ul>
         <div class="sidebar-footer">
-          <button
-            id="sidebar-toggle-btn"
-            class="sidebar-collapse-btn"
-            title="Toggle Sidebar"
-          >
+          <button id="sidebar-toggle-btn" class="sidebar-collapse-btn">
             <i class="bi bi-chevron-left"></i>
           </button>
         </div>
@@ -88,15 +79,16 @@
             >
               <i class="bi bi-list"></i>
             </button>
-            <h1>Leave Management</h1>
-            <p>Submit and approve time-off requests.</p>
+            <h1>Payroll Statement</h1>
+            <p id="empCountText">Adjust figures to recalculate totals.</p>
           </div>
           <div class="topbar-tools">
             <button
-              class="theme-toggle-btn"
               id="themeToggleBtn"
+              class="theme-toggle-btn"
               type="button"
-              title="Toggle dark mode"
+              aria-label="Toggle dark mode"
+              style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12)"
             >
               <i class="bi bi-moon-fill"></i>
             </button>
@@ -108,64 +100,156 @@
         </div>
 
         <div class="main-container">
-          <div class="row g-4">
-            <div class="col-lg-5">
-              <div class="card card-custom">
-                <div class="card-body">
-                  <h5 class="fw-bold mb-3 text-primary">
-                    <i class="bi bi-send me-2"></i>New Request
-                  </h5>
-                  <form id="leaveForm">
-                    <div class="mb-3">
-                      <label class="form-label small fw-bold">Employee</label>
-                      <select
-                        class="form-select form-control-custom"
-                        id="leaveEmpSelect"
-                      ></select>
-                    </div>
-                    <div class="row g-2 mb-3">
-                      <div class="col-6">
-                        <label class="form-label small fw-bold"
-                          >Start Date</label
-                        >
-                        <input
-                          type="date"
-                          class="form-control form-control-custom"
-                        />
-                      </div>
-                      <div class="col-6">
-                        <label class="form-label small fw-bold">End Date</label>
-                        <input
-                          type="date"
-                          class="form-control form-control-custom"
-                        />
-                      </div>
-                    </div>
-                    <div class="mb-3">
-                      <label class="form-label small fw-bold">Reason</label>
-                      <textarea
-                        class="form-control form-control-custom"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                    <button
-                      type="submit"
-                      class="btn btn-custom btn-custom-primary w-100"
-                    >
-                      Submit Request
-                    </button>
-                  </form>
-                </div>
+          <div class="card card-custom mb-4">
+            <div
+              class="card-body input-strip-grid"
+              style="
+                display: grid;
+                grid-template-columns: 1.5fr repeat(5, 1fr);
+                gap: 15px;
+                align-items: end;
+              "
+            >
+              <div>
+                <label class="small fw-bold text-muted text-uppercase"
+                  >Employee</label
+                >
+                <select
+                  id="empSelect"
+                  class="form-select form-control-custom"
+                  style="cursor: pointer"
+                ></select>
+              </div>
+              <div>
+                <label class="small fw-bold text-muted text-uppercase"
+                  >Monthly Base</label
+                >
+                <input
+                  type="number"
+                  id="monthlyBase"
+                  class="form-control form-control-custom"
+                  style="cursor: text"
+                />
+              </div>
+              <div>
+                <label class="small fw-bold text-muted text-uppercase"
+                  >Hours</label
+                >
+                <input
+                  type="number"
+                  id="hoursWorked"
+                  class="form-control form-control-custom"
+                  style="cursor: text"
+                />
+              </div>
+              <div>
+                <label class="small fw-bold text-muted text-uppercase"
+                  >Leave (Hrs)</label
+                >
+                <input
+                  type="number"
+                  id="leaveHours"
+                  class="form-control form-control-custom"
+                  style="cursor: text"
+                />
+              </div>
+              <div>
+                <label class="small fw-bold text-muted text-uppercase"
+                  >Bonus</label
+                >
+                <input
+                  type="number"
+                  id="bonus"
+                  class="form-control form-control-custom"
+                  value="0"
+                  style="cursor: text"
+                />
+              </div>
+              <div>
+                <label class="small fw-bold text-muted text-uppercase"
+                  >Tax (%)</label
+                >
+                <input
+                  type="number"
+                  id="taxRate"
+                  class="form-control form-control-custom"
+                  value="18"
+                  style="cursor: text"
+                />
               </div>
             </div>
+          </div>
 
-            <div class="col-lg-7">
-              <div class="card card-custom">
-                <div class="card-body">
-                  <h5 class="fw-bold mb-3 text-primary">
-                    <i class="bi bi-list-check me-2"></i>Approval Queue
-                  </h5>
-                  <div id="requestList"></div>
+          <div class="card card-custom mb-4">
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-start net-pay-header mb-4"
+              >
+                <div>
+                  <small class="text-uppercase fw-bold text-muted"
+                    >Net Pay</small
+                  >
+                  <h2 class="text-primary fw-bold display-4" id="netFigure">
+                    ZAR 0
+                  </h2>
+                  <p class="text-muted small">
+                    Final Salary:
+                    <span id="refSalary" class="fw-bold">ZAR 0</span>
+                  </p>
+                </div>
+                <div class="text-end">
+                  <h4 class="fw-bold mb-1" id="psName">--</h4>
+                  <p class="text-muted small mb-0" id="psPosition">--</p>
+                  <p class="text-muted small mb-0">
+                    <span id="psDept">--</span> · <span id="psId">--</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="row g-5">
+                <div class="col-md-6">
+                  <p
+                    class="fw-bold text-muted small text-uppercase border-bottom pb-2"
+                  >
+                    Earnings
+                  </p>
+                  <div class="d-flex justify-content-between py-2">
+                    <span>Base pay</span
+                    ><span id="psBase" class="fw-bold">ZAR 0</span>
+                  </div>
+                  <div class="d-flex justify-content-between py-2">
+                    <span>Bonus</span
+                    ><span id="psBonus" class="fw-bold">ZAR 0</span>
+                  </div>
+                  <div
+                    class="d-flex justify-content-between py-3 border-top mt-2"
+                  >
+                    <strong>Gross</strong
+                    ><strong id="psGross" class="text-primary">ZAR 0</strong>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <p
+                    class="fw-bold text-muted small text-uppercase border-bottom pb-2"
+                  >
+                    Deductions
+                  </p>
+                  <div class="d-flex justify-content-between py-2">
+                    <span id="psLeaveLabel">Leave</span
+                    ><span id="psLeave" class="text-danger fw-bold"
+                      >- ZAR 0</span
+                    >
+                  </div>
+                  <div class="d-flex justify-content-between py-2">
+                    <span id="psTaxLabel">Tax</span
+                    ><span id="psTax" class="text-danger fw-bold">- ZAR 0</span>
+                  </div>
+                  <div
+                    class="d-flex justify-content-between py-3 border-top mt-2"
+                  >
+                    <strong>Net</strong
+                    ><strong id="psNet" class="text-primary">ZAR 0</strong>
+                  </div>
                 </div>
               </div>
             </div>
@@ -173,48 +257,109 @@
         </div>
       </main>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="dummy-data.js"></script>
     <script>
-      const themeToggleBtn = document.getElementById("themeToggleBtn");
-      function applyTheme(isDark) {
-        document.body.classList.toggle("dark-mode", isDark);
-        localStorage.setItem("darkMode", isDark ? "true" : "false");
-        if (themeToggleBtn) {
-          themeToggleBtn.innerHTML = isDark
-            ? '<i class="bi bi-sun-fill"></i>'
-            : '<i class="bi bi-moon-fill"></i>';
-        }
-      }
-      applyTheme(localStorage.getItem("darkMode") === "true");
-      themeToggleBtn?.addEventListener("click", () =>
-        applyTheme(!document.body.classList.contains("dark-mode")),
-      );
-
-      document
-        .getElementById("sidebar-toggle-btn")
-        ?.addEventListener("click", () => {
-          document.getElementById("wrapper").classList.toggle("toggled");
-        });
-      document
-        .getElementById("mobile-toggle")
-        ?.addEventListener("click", () => {
-          document.getElementById("wrapper").classList.toggle("toggled");
-        });
-
       document.addEventListener("DOMContentLoaded", function () {
         const data = window.__DUMMY_DATA__ || {};
-        const empSelect = document.getElementById("leaveEmpSelect");
-        const list = document.getElementById("requestList");
+        const empSelect = document.getElementById("empSelect");
 
-        // Fixed target parsing reference below
-        if (data.Performance && empSelect) {
+        // --- THEME LOGIC ---
+        const themeToggleBtn = document.getElementById("themeToggleBtn");
+        function applyThemeState() {
+          const isDark = localStorage.getItem("darkMode") === "true";
+          document.body.classList.toggle("dark-mode", isDark);
+          if (themeToggleBtn)
+            themeToggleBtn.innerHTML = isDark
+              ? '<i class="bi bi-sun-fill"></i>'
+              : '<i class="bi bi-moon-fill"></i>';
+        }
+        themeToggleBtn?.addEventListener("click", () => {
+          const toggledState = !document.body.classList.contains("dark-mode");
+          localStorage.setItem("darkMode", toggledState ? "true" : "false");
+          applyThemeState();
+        });
+        applyThemeState();
+
+        // --- PAYROLL LOGIC ---
+        function formatMoney(v) {
+          return "ZAR " + Math.round(v).toLocaleString("en-ZA");
+        }
+
+        function calculate() {
+          const base =
+            parseFloat(document.getElementById("monthlyBase").value) || 0;
+          const leaveHrs =
+            parseFloat(document.getElementById("leaveHours").value) || 0;
+          const bonus = parseFloat(document.getElementById("bonus").value) || 0;
+          const taxRate =
+            parseFloat(document.getElementById("taxRate").value) || 0;
+
+          const hourlyRate = base / 160;
+          const leaveDed = leaveHrs * hourlyRate;
+          const gross = base + bonus;
+          const taxDed = gross * (taxRate / 100);
+          const net = gross - taxDed - leaveDed;
+
+          document.getElementById("netFigure").textContent = formatMoney(net);
+          document.getElementById("psBase").textContent = formatMoney(base);
+          document.getElementById("psBonus").textContent = formatMoney(bonus);
+          document.getElementById("psGross").textContent = formatMoney(gross);
+          document.getElementById("psTax").textContent =
+            "- " + formatMoney(taxDed);
+          document.getElementById("psLeave").textContent =
+            "- " + formatMoney(leaveDed);
+          document.getElementById("psNet").textContent = formatMoney(net);
+        }
+
+        // Fallback tracking logic added here
+        if (data.Performance) {
           data.Performance.forEach((emp) => {
             let opt = new Option(emp.name, emp.employeeId);
             empSelect.add(opt);
           });
         }
 
+        empSelect.addEventListener("change", () => {
+          const selectedId = empSelect.value;
+          const emp = data.Performance
+            ? data.Performance.find((e) => e.employeeId == selectedId)
+            : null;
+          const payroll = data.payroll
+            ? data.payroll.find((p) => p.employeeId == selectedId)
+            : null;
+
+          if (emp) {
+            // Simulating fallback fields safely
+            const calculatedSalary = emp.salary || 500000;
+            document.getElementById("monthlyBase").value = Math.round(
+              calculatedSalary / 12,
+            );
+            document.getElementById("leaveHours").value = payroll
+              ? payroll.leaveDeductions
+              : 0;
+            document.getElementById("psName").textContent = emp.name;
+            document.getElementById("psPosition").textContent =
+              emp.position || "Staff Member";
+            document.getElementById("psDept").textContent =
+              emp.department || "Operations";
+            document.getElementById("psId").textContent =
+              "EMP-" + emp.employeeId;
+            document.getElementById("refSalary").textContent =
+              formatMoney(calculatedSalary);
+            calculate();
+          }
+        });
+
+        ["monthlyBase", "leaveHours", "bonus", "taxRate"].forEach((id) => {
+          document.getElementById(id).addEventListener("input", calculate);
+        });
+
+        if (empSelect.options.length > 0) {
+          empSelect.dispatchEvent(new Event("change"));
+        }
+
+        // Clock Logic Fixed Target Elements
         setInterval(() => {
           const now = new Date();
           const dateEl = document.querySelector("#topbarDatetime .t-date");
@@ -223,29 +368,14 @@
           if (timeEl) timeEl.textContent = now.toLocaleTimeString();
         }, 1000);
 
-        if (list && data.Performance) {
-          list.innerHTML = "";
-          data.Performance.forEach((record) => {
-            if (record.leaveRequests) {
-              record.leaveRequests.forEach((req) => {
-                const item = document.createElement("div");
-                item.className =
-                  "p-3 border rounded mb-2 d-flex justify-content-between align-items-center";
-                item.innerHTML = `
-                  <div>
-                    <div class="fw-bold">${record.name}</div>
-                    <div class="text-muted small">${req.reason} · ${req.date} (${req.status})</div>
-                  </div>
-                  <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-outline-danger">Reject</button>
-                    <button class="btn btn-sm btn-custom-primary">Approve</button>
-                  </div>`;
-                list.appendChild(item);
-              });
-            }
-          });
-        }
+        document.getElementById("sidebar-toggle-btn").onclick = () =>
+          document.getElementById("wrapper").classList.toggle("toggled");
+        document.getElementById("mobile-toggle").onclick = () =>
+          document.getElementById("wrapper").classList.toggle("toggled");
       });
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
     </script>
   </body>
 </html>
