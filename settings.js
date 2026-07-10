@@ -4,6 +4,57 @@ document.addEventListener("DOMContentLoaded", () => {
   setupButtons();
 });
 
+// Helper utility to replace native alert() with Bootstrap Modals
+function showUiAlert(title, message, isSuccess = true) {
+  const modalEl = document.getElementById("hrflowModal");
+  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalMessage").textContent = message;
+  document.getElementById("modalCancelBtn").classList.add("d-none");
+  
+  const iconBox = document.getElementById("modalIcon");
+  if (isSuccess) {
+    iconBox.className = "mb-3 fs-1 text-success";
+    iconBox.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+  } else {
+    iconBox.className = "mb-3 fs-1 text-danger";
+    iconBox.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
+  }
+  
+  // Clear old event listener mappings
+  const confirmBtn = document.getElementById("modalConfirmBtn");
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+  modal.show();
+}
+
+// Helper utility to replace native confirm() with Bootstrap Modals
+function showUiConfirm(title, message, onConfirm) {
+  const modalEl = document.getElementById("hrflowModal");
+  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  
+  document.getElementById("modalTitle").textContent = title;
+  document.getElementById("modalMessage").textContent = message;
+  
+  const iconBox = document.getElementById("modalIcon");
+  iconBox.className = "mb-3 fs-1 text-warning";
+  iconBox.innerHTML = '<i class="bi bi-question-circle-fill"></i>';
+  
+  document.getElementById("modalCancelBtn").classList.remove("d-none");
+  
+  const confirmBtn = document.getElementById("modalConfirmBtn");
+  const newConfirmBtn = confirmBtn.cloneNode(true);
+  confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+  
+  newConfirmBtn.addEventListener("click", () => {
+    onConfirm();
+  });
+  
+  modal.show();
+}
+
 function loadSettings() {
   document.getElementById("companyName").value =
     localStorage.getItem("companyName") || "ModernTech Solutions";
@@ -14,7 +65,8 @@ function loadSettings() {
   document.getElementById("notifications").checked = notifications !== "false";
 
   const darkMode = localStorage.getItem("darkMode") === "true";
-  document.getElementById("darkMode").checked = darkMode;
+  const cb = document.getElementById("darkMode");
+  if (cb) cb.checked = darkMode;
 }
 
 function saveSettings() {
@@ -22,7 +74,7 @@ function saveSettings() {
   const confirm = document.getElementById("confirmPassword").value;
 
   if (pass && pass !== confirm) {
-    alert("Passwords do not match!");
+    showUiAlert("Validation Error", "Passwords do not match!", false);
     return;
   }
 
@@ -39,7 +91,7 @@ function saveSettings() {
     document.getElementById("notifications").checked,
   );
 
-  alert("Settings saved successfully!");
+  showUiAlert("Success", "Settings saved successfully!", true);
   if (pass) {
     document.getElementById("newPassword").value = "";
     document.getElementById("confirmPassword").value = "";
@@ -54,7 +106,6 @@ function setupDarkMode() {
     localStorage.setItem("darkMode", isDark);
   });
 
-  // respond to theme changes from other tabs/windows
   window.addEventListener("storage", (e) => {
     if (e.key !== "darkMode") return;
     const isDark = e.newValue === "true";
@@ -66,10 +117,19 @@ function setupDarkMode() {
 
 function setupButtons() {
   document.getElementById("saveBtn")?.addEventListener("click", saveSettings);
+  
   document.getElementById("resetBtn")?.addEventListener("click", () => {
-    if (confirm("Reset all settings to default?")) {
+    showUiConfirm("Reset Defaults", "Are you sure you want to restore factory default configuration states?", () => {
       localStorage.clear();
       location.reload();
-    }
+    });
+  });
+
+  document.getElementById("logoutBtn")?.addEventListener("click", function(e) {
+    e.preventDefault();
+    showUiConfirm("Confirm Log Out", "Are you sure you want to sign out of the HRflow gateway?", () => {
+      sessionStorage.removeItem("isAuthenticated");
+      window.location.href = "login.html";
+    });
   });
 }
