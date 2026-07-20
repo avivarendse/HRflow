@@ -1,7 +1,10 @@
 # HRFlow - HR Management System
 
-HRFlow is a simple Human Resource Management System built using **HTML,
+HRFlow is a simple Human Resource Management System built using **HTML, Bootstrap,
 CSS, and JavaScript**.
+
+- Username: admin
+- Password: admin123
 
 ## Features
 
@@ -45,6 +48,7 @@ HRflow/
 -   HTML5
 -   CSS3
 -   JavaScript (Vanilla JS)
+-   Bootstrap
 
 ## Getting Started
 
