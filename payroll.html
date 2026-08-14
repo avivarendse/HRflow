@@ -43,9 +43,20 @@
             >
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link" href="Performance.html"
-              ><i class="bi bi-calendar-check"></i><span>Performance</span></a
+            <a class="sidebar-link" href="performance.html">
+              <i class="bi bi-graph-up-arrow"></i>
+              <span>Performance</span>
+            </a>
+          </li>
+          
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="attendance.html"
             >
+              <i class="bi bi-calendar-check"></i>
+              <span>Attendance</span>
+            </a>
           </li>
           <li class="sidebar-item">
             <a class="sidebar-link" href="leave.html"
@@ -360,13 +371,19 @@
         }
 
         // Clock Logic Fixed Target Elements
-        setInterval(() => {
-          const now = new Date();
-          const dateEl = document.querySelector("#topbarDatetime .t-date");
-          const timeEl = document.querySelector("#topbarDatetime .t-time");
-          if (dateEl) dateEl.textContent = now.toLocaleDateString();
-          if (timeEl) timeEl.textContent = now.toLocaleTimeString();
-        }, 1000);
+      function updateClock() {
+        const now = new Date();
+        document.querySelector(".t-date").textContent = now.toLocaleDateString(
+          undefined,
+          { weekday: "long", month: "short", day: "numeric" },
+        );
+        document.querySelector(".t-time").textContent = now.toLocaleTimeString(
+          undefined,
+          { hour: "2-digit", minute: "2-digit" },
+        );
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
 
         document.getElementById("sidebar-toggle-btn").onclick = () =>
           document.getElementById("wrapper").classList.toggle("toggled");
