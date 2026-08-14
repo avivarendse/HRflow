@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
-  --primary: #12766b;
-  --primary-dark: #0d2e2a;
-  --primary-light: #e6f5f2;
+  --primary: #1b6b44;
+  --primary-dark: #104229;
+  --primary-light: #e8f4ed;
   --accent: #ef7d5c;
   --accent-light: #fde6dd;
 
@@ -20,12 +20,12 @@
   --muted: #7c8b88;
   --border: #e9e6de;
 
-  --sidebar-bg: linear-gradient(180deg, #123832 0%, #0c2622 100%);
+  --sidebar-bg: linear-gradient(180deg, #12382c 0%, #0c261e 100%);
   --sidebar-text: rgba(255, 255, 255, 0.68);
   --sidebar-text-active: #ffffff;
 
-  --shadow: 0 8px 24px rgba(18, 46, 42, 0.06);
-  --shadow-hover: 0 16px 36px rgba(18, 46, 42, 0.1);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 16px 36px rgba(0, 0, 0, 0.08);
   --radius: 18px;
 
   --sidebar-width: 240px;
@@ -52,6 +52,16 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* Strips default browser blue links */
+a, 
+a:visited, 
+a:hover, 
+a:active, 
+a:focus {
+  color: inherit !important;
+  text-decoration: none;
 }
 
 #wrapper {
@@ -284,6 +294,7 @@ body {
   font-size: 1.85rem;
   font-weight: 600;
   letter-spacing: -0.3px;
+  color: var(--text);
 }
 
 .content-topbar .page-titles p {
@@ -315,7 +326,7 @@ body {
 .topbar-search input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(18, 118, 107, 0.12);
+  box-shadow: 0 0 0 3px rgba(27, 107, 68, 0.12);
 }
 
 .topbar-search i {
@@ -369,7 +380,7 @@ body {
 .theme-toggle-btn:focus-visible {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(18, 118, 107, 0.16);
+  box-shadow: 0 0 0 3px rgba(27, 107, 68, 0.16);
 }
 
 .theme-toggle-btn:active {
@@ -467,7 +478,7 @@ body {
 
 .card-custom:hover {
   box-shadow: var(--shadow-hover);
-  border-color: rgba(18, 118, 107, 0.15);
+  border-color: rgba(27, 107, 68, 0.15);
 }
 
 .card-body {
@@ -495,6 +506,7 @@ body {
   font-size: 1.9rem;
   font-weight: 800;
   margin-bottom: 2px;
+  color: var(--text);
 }
 
 .stat-card .stat-sub {
@@ -513,8 +525,8 @@ body {
 }
 
 .bg-soft-primary {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: var(--primary-light) !important;
+  color: var(--primary) !important;
 }
 .bg-soft-success {
   background: var(--success-light);
@@ -553,14 +565,24 @@ body {
   color: var(--danger);
 }
 
+/* Overrides Bootstrap text-primary default blue */
 .text-primary {
-  color: var(--primary);
+  color: var(--primary) !important;
 }
 .text-success {
   color: var(--success);
 }
 .text-danger {
   color: var(--danger);
+}
+
+/* Direct override for Net Pay / Gross amount displays */
+.net-pay-amount,
+.net-pay-display,
+.gross-pay-amount,
+[class*="net-pay"],
+[class*="gross-pay"] {
+  color: var(--primary) !important;
 }
 
 /* ===========================================================
@@ -578,7 +600,7 @@ body {
 .form-control-custom:focus {
   background: #ffffff;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(18, 118, 107, 0.12);
+  box-shadow: 0 0 0 3px rgba(27, 107, 68, 0.12);
 }
 
 .input-group-text {
@@ -716,7 +738,7 @@ body.dark-mode {
   --text: #eef3f1;
   --muted: #8a9c98;
   --border: #24322e;
-  --primary-light: #17332e;
+  --primary-light: #163827;
 }
 
 body.dark-mode,
@@ -734,6 +756,14 @@ body.dark-mode label,
 body.dark-mode strong,
 body.dark-mode .fw-bold,
 body.dark-mode .fw-semibold {
+  color: var(--text) !important;
+}
+
+body.dark-mode a,
+body.dark-mode a:visited,
+body.dark-mode a:hover,
+body.dark-mode a:active,
+body.dark-mode a:focus {
   color: var(--text) !important;
 }
 
