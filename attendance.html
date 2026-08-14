@@ -3,101 +3,154 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>HRFlow | Attendance</title>
 
+    <!-- Bootstrap -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
 
+    <!-- Bootstrap Icons -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
       rel="stylesheet"
     />
 
+    <!-- Main CSS -->
     <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
 
+    <!-- ================= DARK MODE INITIAL LOAD ================= -->
     <script>
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark-mode");
       }
     </script>
 
+
     <div id="wrapper">
 
-      <!-- ================= SIDEBAR ================= -->
+      <!-- ======================================================
+           SIDEBAR
+      ======================================================= -->
+
       <aside id="sidebar">
 
         <div class="sidebar-header">
+
           <div class="sidebar-logo-box">
             <i class="bi bi-buildings-fill"></i>
           </div>
 
           <div class="sidebar-brand-text">
-            <span class="brand-name">HR<span>Flow</span></span>
-            <span class="brand-sub">Modern HR Platform</span>
+            <span class="brand-name">
+              HR<span>Flow</span>
+            </span>
+
+            <span class="brand-sub">
+              Modern HR Platform
+            </span>
           </div>
+
         </div>
+
 
         <ul class="sidebar-menu">
 
+          <!-- Dashboard -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="dashboard.html">
+            <a
+              class="sidebar-link"
+              href="dashboard.html"
+            >
               <i class="bi bi-grid-1x2-fill"></i>
               <span>Dashboard</span>
             </a>
           </li>
 
+
+          <!-- Employees -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="employees.html">
+            <a
+              class="sidebar-link"
+              href="employees.html"
+            >
               <i class="bi bi-people-fill"></i>
               <span>Employees</span>
             </a>
           </li>
 
+
+          <!-- Payroll -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="payroll.html">
+            <a
+              class="sidebar-link"
+              href="payroll.html"
+            >
               <i class="bi bi-cash-stack"></i>
               <span>Payroll</span>
             </a>
           </li>
 
-          <!-- PERFORMANCE -->
+
+          <!-- Performance -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="performance.html">
+            <a
+              class="sidebar-link"
+              href="performance.html"
+            >
               <i class="bi bi-graph-up-arrow"></i>
               <span>Performance</span>
             </a>
           </li>
 
 
-          <!-- ATTENDANCE -->
+          <!-- Attendance -->
           <li class="sidebar-item">
-            <a class="sidebar-link active" href="attendance.html">
+            <a
+              class="sidebar-link active"
+              href="attendance.html"
+            >
               <i class="bi bi-calendar-check"></i>
               <span>Attendance</span>
             </a>
           </li>
 
+
+          <!-- Leave -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="leave.html">
+            <a
+              class="sidebar-link"
+              href="leave.html"
+            >
               <i class="bi bi-calendar2-x"></i>
               <span>Leave</span>
             </a>
           </li>
 
+
+          <!-- Reports -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="reports.html">
+            <a
+              class="sidebar-link"
+              href="reports.html"
+            >
               <i class="bi bi-bar-chart-line-fill"></i>
               <span>Reports</span>
             </a>
           </li>
 
+
+          <!-- Settings -->
           <li class="sidebar-item">
-            <a class="sidebar-link" href="settings.html">
+            <a
+              class="sidebar-link"
+              href="settings.html"
+            >
               <i class="bi bi-gear-fill"></i>
               <span>Settings</span>
             </a>
@@ -105,19 +158,34 @@
 
         </ul>
 
-        <div class="sidebar-footer"><div class="sidebar-footer">
-  <button id="sidebar-toggle-btn" class="sidebar-collapse-btn" title="Toggle Sidebar">
-    <i class="bi bi-chevron-left"></i>
-  </button>
-</div></div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+
+          <button
+            id="sidebar-toggle-btn"
+            class="sidebar-collapse-btn"
+            title="Toggle Sidebar"
+            type="button"
+          >
+            <i class="bi bi-chevron-left"></i>
+          </button>
+
+        </div>
 
       </aside>
 
 
-      <!-- ================= MAIN CONTENT ================= -->
+
+      <!-- ======================================================
+           MAIN CONTENT
+      ======================================================= -->
+
       <main id="page-content-wrapper">
 
-        <!-- TOPBAR -->
+
+        <!-- ================= TOPBAR ================= -->
+
         <div class="content-topbar">
 
           <div class="page-titles">
@@ -125,6 +193,7 @@
             <button
               class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
               id="mobile-toggle"
+              type="button"
             >
               <i class="bi bi-list"></i>
             </button>
@@ -132,7 +201,7 @@
             <h1>Attendance</h1>
 
             <p>
-              Monitor employee attendance, working hours and daily presence.
+              Monitor employee attendance and daily presence.
             </p>
 
           </div>
@@ -140,6 +209,7 @@
 
           <div class="topbar-tools">
 
+            <!-- Dark Mode -->
             <button
               class="theme-toggle-btn"
               id="themeToggleBtn"
@@ -149,17 +219,32 @@
               <i class="bi bi-moon-fill"></i>
             </button>
 
+
+            <!-- Export -->
             <button
               class="btn btn-custom btn-custom-primary"
               id="exportAttendanceBtn"
+              type="button"
             >
               <i class="bi bi-download"></i>
               Export CSV
             </button>
 
-            <div class="topbar-datetime" id="topbarDatetime">
-              <div class="t-date">--</div>
-              <div class="t-time">--</div>
+
+            <!-- Date / Time -->
+            <div
+              class="topbar-datetime"
+              id="topbarDatetime"
+            >
+
+              <div class="t-date">
+                --
+              </div>
+
+              <div class="t-time">
+                --
+              </div>
+
             </div>
 
           </div>
@@ -167,149 +252,281 @@
         </div>
 
 
+
+        <!-- ======================================================
+             MAIN CONTAINER
+        ======================================================= -->
+
         <div class="main-container">
 
-          <!-- ================= ATTENDANCE STATS ================= -->
+
+          <!-- ====================================================
+               STATISTICS
+          ===================================================== -->
 
           <div class="row g-4 mb-4">
 
+
             <!-- PRESENT -->
             <div class="col-md-3">
+
               <div class="card card-custom stat-card">
+
                 <div class="card-body">
 
                   <div class="stat-top">
+
                     <div class="icon-shape bg-soft-success">
-                      <i class="bi bi-check-circle text-success"></i>
+
+                      <i
+                        class="bi bi-check-circle text-success"
+                      ></i>
+
                     </div>
+
                   </div>
 
-                  <h2 id="presentCount">0</h2>
 
-                  <small>Present Today</small>
+                  <h2 id="presentCount">
+                    0
+                  </h2>
+
+                  <small>
+                    Present Records
+                  </small>
 
                 </div>
+
               </div>
+
             </div>
+
 
 
             <!-- ABSENT -->
             <div class="col-md-3">
+
               <div class="card card-custom stat-card">
+
                 <div class="card-body">
 
                   <div class="stat-top">
+
                     <div class="icon-shape bg-soft-danger">
-                      <i class="bi bi-x-circle text-danger"></i>
+
+                      <i
+                        class="bi bi-x-circle text-danger"
+                      ></i>
+
                     </div>
+
                   </div>
 
-                  <h2 id="absentCount">0</h2>
 
-                  <small>Absent Today</small>
+                  <h2 id="absentCount">
+                    0
+                  </h2>
+
+                  <small>
+                    Absent Records
+                  </small>
 
                 </div>
+
               </div>
+
             </div>
+
 
 
             <!-- LATE -->
             <div class="col-md-3">
+
               <div class="card card-custom stat-card">
+
                 <div class="card-body">
 
                   <div class="stat-top">
+
                     <div class="icon-shape bg-soft-warning">
-                      <i class="bi bi-clock-history text-warning"></i>
+
+                      <i
+                        class="bi bi-clock-history text-warning"
+                      ></i>
+
                     </div>
+
                   </div>
 
-                  <h2 id="lateCount">0</h2>
 
-                  <small>Late Today</small>
+                  <h2 id="lateCount">
+                    0
+                  </h2>
+
+                  <small>
+                    Late Records
+                  </small>
 
                 </div>
+
               </div>
+
             </div>
+
 
 
             <!-- RATE -->
             <div class="col-md-3">
+
               <div class="card card-custom stat-card">
+
                 <div class="card-body">
 
                   <div class="stat-top">
+
                     <div class="icon-shape bg-soft-primary">
-                      <i class="bi bi-calendar-check text-primary"></i>
+
+                      <i
+                        class="bi bi-calendar-check text-primary"
+                      ></i>
+
                     </div>
+
                   </div>
 
-                  <h2 id="attendanceRate">0%</h2>
 
-                  <small>Attendance Rate</small>
+                  <h2 id="attendanceRate">
+                    0%
+                  </h2>
+
+                  <small>
+                    Overall Attendance
+                  </small>
 
                 </div>
+
               </div>
+
             </div>
 
           </div>
 
 
-          <!-- ================= DAILY ATTENDANCE ================= -->
+
+          <!-- ====================================================
+               EMPLOYEE ATTENDANCE
+          ===================================================== -->
 
           <div class="card card-custom mb-4">
 
             <div class="card-body">
 
+
+              <!-- Heading -->
               <div
-                class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2"
+                class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
               >
 
                 <div>
+
                   <h5 class="fw-bold mb-1 text-primary">
-                    Daily Attendance
+                    Employee Attendance
                   </h5>
 
                   <p class="text-muted mb-0">
-                    Employee attendance and working hours for today.
+                    Search employees and review their attendance history.
                   </p>
+
                 </div>
 
               </div>
 
 
-              <div class="table-responsive">
 
-                <table class="table custom-table-styles align-middle">
+              <!-- ==================================================
+                   SEARCH + FILTER
+              =================================================== -->
 
-                  <thead>
-                    <tr>
-                      <th>Employee</th>
-                      <th>ID</th>
-                      <th>Status</th>
-                      <th>Check-in</th>
-                      <th>Check-out</th>
-                      <th>Hours Worked</th>
-                    </tr>
-                  </thead>
+              <div class="row g-3 mb-4">
 
-                  <tbody id="AttendanceTable">
-                    <!-- Attendance data inserted by JavaScript -->
-                  </tbody>
 
-                </table>
+                <!-- Search -->
+                <div class="col-lg-8">
+
+                  <div class="input-group">
+
+                    <span class="input-group-text">
+                      <i class="bi bi-search"></i>
+                    </span>
+
+                    <input
+                      type="text"
+                      id="attendanceSearch"
+                      class="form-control"
+                      placeholder="Search by employee name or ID..."
+                    />
+
+                  </div>
+
+                </div>
+
+
+                <!-- Status Filter -->
+                <div class="col-lg-4">
+
+                  <select
+                    id="statusFilter"
+                    class="form-select"
+                  >
+
+                    <option value="all">
+                      All Attendance
+                    </option>
+
+                    <option value="Present">
+                      Present
+                    </option>
+
+                    <option value="Absent">
+                      Absent
+                    </option>
+
+                  </select>
+
+                </div>
 
               </div>
+
+
+
+              <!-- ==================================================
+                   EMPLOYEE CARDS
+              =================================================== -->
+
+              <div
+                id="employeeAttendanceContainer"
+                class="row g-4"
+              >
+
+                <!-- JavaScript inserts employee cards here -->
+
+              </div>
+
 
             </div>
 
           </div>
 
 
-          <!-- ================= ATTENDANCE SUMMARY ================= -->
+
+          <!-- ====================================================
+               ATTENDANCE SUMMARY
+          ===================================================== -->
 
           <div class="row g-4">
 
+
+            <!-- Overview -->
             <div class="col-lg-7">
 
               <div class="card card-custom h-100">
@@ -321,36 +538,70 @@
                   </h5>
 
                   <p class="text-muted mb-4">
-                    Current attendance breakdown for employees.
+                    Summary of the available employee attendance records.
                   </p>
+
 
                   <div class="row g-3">
 
+
+                    <!-- Present -->
                     <div class="col-sm-4">
-                      <div class="p-3 rounded-3 bg-soft-success">
+
+                      <div
+                        class="p-3 rounded-3 bg-soft-success"
+                      >
+
                         <small class="d-block mb-1">
                           Present
                         </small>
-                        <strong id="summaryPresent">0 employees</strong>
+
+                        <strong id="summaryPresent">
+                          0 records
+                        </strong>
+
                       </div>
+
                     </div>
 
+
+                    <!-- Absent -->
                     <div class="col-sm-4">
-                      <div class="p-3 rounded-3 bg-soft-danger">
+
+                      <div
+                        class="p-3 rounded-3 bg-soft-danger"
+                      >
+
                         <small class="d-block mb-1">
                           Absent
                         </small>
-                        <strong id="summaryAbsent">0 employees</strong>
+
+                        <strong id="summaryAbsent">
+                          0 records
+                        </strong>
+
                       </div>
+
                     </div>
 
+
+                    <!-- Late -->
                     <div class="col-sm-4">
-                      <div class="p-3 rounded-3 bg-soft-warning">
+
+                      <div
+                        class="p-3 rounded-3 bg-soft-warning"
+                      >
+
                         <small class="d-block mb-1">
                           Late
                         </small>
-                        <strong id="summaryLate">0 employees</strong>
+
+                        <strong id="summaryLate">
+                          0 records
+                        </strong>
+
                       </div>
+
                     </div>
 
                   </div>
@@ -362,6 +613,8 @@
             </div>
 
 
+
+            <!-- Reminder -->
             <div class="col-lg-5">
 
               <div class="card card-custom h-100">
@@ -373,23 +626,31 @@
                   </h5>
 
                   <p class="text-muted mb-3">
-                    Keep track of employees who have not checked in.
+                    Employees with absent attendance records.
                   </p>
+
 
                   <div class="d-flex align-items-center gap-3">
 
                     <div class="icon-shape bg-soft-warning">
-                      <i class="bi bi-bell text-warning"></i>
+
+                      <i
+                        class="bi bi-bell text-warning"
+                      ></i>
+
                     </div>
 
+
                     <div>
+
                       <strong id="attendanceReminder">
                         No attendance issues
                       </strong>
 
                       <small class="d-block text-muted">
-                        Review the daily attendance log regularly.
+                        Review attendance records regularly.
                       </small>
+
                     </div>
 
                   </div>
@@ -402,6 +663,7 @@
 
           </div>
 
+
         </div>
 
       </main>
@@ -409,18 +671,41 @@
     </div>
 
 
-    <!-- ================= SCRIPTS ================= -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- =========================================================
+         BOOTSTRAP JS
+    ========================================================== -->
 
-    <script src="data.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+
+
+    <!-- =========================================================
+         YOUR DUMMY DATA
+         
+         IMPORTANT:
+         Keep this BEFORE the attendance JavaScript below.
+    ========================================================== -->
+
+    <script src="dummy-data.js"></script>
+
+
+
+    <!-- =========================================================
+         ATTENDANCE JAVASCRIPT
+    ========================================================== -->
 
     <script>
 
-      /* ================= DARK MODE ================= */
+      /* =========================================================
+         DARK MODE
+      ========================================================== */
 
       const themeToggleBtn =
         document.getElementById("themeToggleBtn");
+
 
       function applyTheme(isDark) {
 
@@ -429,10 +714,12 @@
           isDark
         );
 
+
         localStorage.setItem(
           "darkMode",
           isDark ? "true" : "false"
         );
+
 
         if (themeToggleBtn) {
 
@@ -443,6 +730,7 @@
         }
 
       }
+
 
       applyTheme(
         localStorage.getItem("darkMode") === "true"
@@ -461,321 +749,968 @@
       );
 
 
-      /* ================= MOBILE SIDEBAR ================= */
+
+      /* =========================================================
+         MOBILE SIDEBAR
+      ========================================================== */
 
       document
         .getElementById("mobile-toggle")
-        ?.addEventListener("click", () => {
+        ?.addEventListener(
+          "click",
+          () => {
 
-          document
-            .getElementById("wrapper")
-            .classList.toggle("toggled");
+            document
+              .getElementById("wrapper")
+              .classList.toggle("toggled");
 
-        });
+          }
+        );
 
 
-      /* ================= DATE & TIME ================= */
 
-            function updateClock() {
+      /* =========================================================
+         DATE & TIME
+      ========================================================== */
+
+      function updateClock() {
+
         const now = new Date();
-        document.querySelector(".t-date").textContent = now.toLocaleDateString(
-          undefined,
-          { weekday: "long", month: "short", day: "numeric" },
-        );
-        document.querySelector(".t-time").textContent = now.toLocaleTimeString(
-          undefined,
-          { hour: "2-digit", minute: "2-digit" },
-        );
-      }
-      updateClock();
-      setInterval(updateClock, 1000);
-      
-      /* ================= ATTENDANCE ================= */
-
-      (function renderAttendance() {
-
-        const table =
-          document.getElementById("AttendanceTable");
-
-        if (!table) return;
-
-        const data =
-          window.dummyData?.Attendance ||
-          window.dummyData?.Performance ||
-          [];
-
-        let present = 0;
-        let absent = 0;
-        let late = 0;
-
-        data.forEach((employee) => {
-
-          const status =
-            String(employee.status || "")
-              .toLowerCase();
-
-          if (status === "present") {
-            present++;
-          }
-
-          if (status === "absent") {
-            absent++;
-          }
-
-          if (
-            status === "late" ||
-            status === "late arrival"
-          ) {
-            late++;
-          }
 
 
-          const tr =
-            document.createElement("tr");
+        const dateElement =
+          document.querySelector(".t-date");
 
 
-          let statusClass =
-            "bg-soft-primary";
-
-          if (status === "present") {
-            statusClass = "bg-soft-success";
-          }
-
-          if (status === "absent") {
-            statusClass = "bg-soft-danger";
-          }
-
-          if (
-            status === "late" ||
-            status === "late arrival"
-          ) {
-            statusClass = "bg-soft-warning";
-          }
+        const timeElement =
+          document.querySelector(".t-time");
 
 
-          const hours =
-            employee.hoursWorked ??
-            employee.hours ??
-            "--";
+        if (dateElement) {
 
-
-          tr.innerHTML = `
-
-            <td>
-              <strong>${employee.name || "--"}</strong>
-            </td>
-
-            <td>
-              ${employee.id || employee.employeeId || "--"}
-            </td>
-
-            <td>
-              <span
-                class="badge-dept ${statusClass}"
-              >
-                ${employee.status || "--"}
-              </span>
-            </td>
-
-            <td>
-              ${employee.checkin || employee.checkIn || "--"}
-            </td>
-
-            <td>
-              ${employee.checkout || employee.checkOut || "--"}
-            </td>
-
-            <td>
-              ${hours}
-            </td>
-
-          `;
-
-          table.appendChild(tr);
-
-        });
-
-
-        /* ================= STATISTICS ================= */
-
-        const total =
-          data.length;
-
-        const attendanceRate =
-          total > 0
-            ? Math.round(
-                ((present + late) / total) * 100
-              )
-            : 0;
-
-
-        document.getElementById(
-          "presentCount"
-        ).textContent = present;
-
-
-        document.getElementById(
-          "absentCount"
-        ).textContent = absent;
-
-
-        document.getElementById(
-          "lateCount"
-        ).textContent = late;
-
-
-        document.getElementById(
-          "attendanceRate"
-        ).textContent =
-          attendanceRate + "%";
-
-
-        document.getElementById(
-          "summaryPresent"
-        ).textContent =
-          present + " employees";
-
-
-        document.getElementById(
-          "summaryAbsent"
-        ).textContent =
-          absent + " employees";
-
-
-        document.getElementById(
-          "summaryLate"
-        ).textContent =
-          late + " employees";
-
-
-        const reminder =
-          document.getElementById(
-            "attendanceReminder"
-          );
-
-
-        if (absent > 0) {
-
-          reminder.textContent =
-            absent +
-            " employee" +
-            (absent === 1 ? "" : "s") +
-            " absent today";
-
-        } else if (late > 0) {
-
-          reminder.textContent =
-            late +
-            " employee" +
-            (late === 1 ? "" : "s") +
-            " arrived late";
-
-        } else {
-
-          reminder.textContent =
-            "No attendance issues";
+          dateElement.textContent =
+            now.toLocaleDateString(
+              undefined,
+              {
+                weekday: "long",
+                month: "short",
+                day: "numeric"
+              }
+            );
 
         }
 
-      })();
+
+        if (timeElement) {
+
+          timeElement.textContent =
+            now.toLocaleTimeString(
+              undefined,
+              {
+                hour: "2-digit",
+                minute: "2-digit"
+              }
+            );
+
+        }
+
+      }
 
 
-      /* ================= EXPORT CSV ================= */
+      updateClock();
 
-      document
-        .getElementById("exportAttendanceBtn")
-        ?.addEventListener("click", () => {
+      setInterval(
+        updateClock,
+        1000
+      );
 
-          const data =
-            window.dummyData?.Attendance ||
-            window.dummyData?.Performance ||
-            [];
 
-          if (!data.length) {
 
-            alert("No attendance data available.");
+      /* =========================================================
+         GET ATTENDANCE DATA
+         
+         Your data.js uses:
 
-            return;
+         window.__DUMMY_DATA__.Performance
+
+         Each employee contains:
+         - employeeId
+         - name
+         - Performance[]
+         - leaveRequests[]
+      ========================================================== */
+
+      const attendanceEmployees =
+        window.__DUMMY_DATA__?.Performance || [];
+
+
+
+      /* =========================================================
+         GLOBAL COUNTERS
+      ========================================================== */
+
+      let totalPresent = 0;
+
+      let totalAbsent = 0;
+
+      let totalLate = 0;
+
+      let totalRecords = 0;
+
+
+
+      /* =========================================================
+         CALCULATE OVERALL STATISTICS
+      ========================================================== */
+
+      attendanceEmployees.forEach(
+        (employee) => {
+
+          const records =
+            Array.isArray(
+              employee.Performance
+            )
+              ? employee.Performance
+              : [];
+
+
+          records.forEach(
+            (record) => {
+
+              totalRecords++;
+
+
+              const status =
+                String(
+                  record.status || ""
+                ).toLowerCase();
+
+
+              if (status === "present") {
+
+                totalPresent++;
+
+              }
+
+
+              if (status === "absent") {
+
+                totalAbsent++;
+
+              }
+
+
+              if (
+                status === "late" ||
+                status === "late arrival"
+              ) {
+
+                totalLate++;
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+
+
+      /* =========================================================
+         OVERALL ATTENDANCE RATE
+      ========================================================== */
+
+      const overallAttendanceRate =
+        totalRecords > 0
+          ? Math.round(
+              (totalPresent / totalRecords) * 100
+            )
+          : 0;
+
+
+
+      /* =========================================================
+         UPDATE STATISTICS
+      ========================================================== */
+
+      document.getElementById(
+        "presentCount"
+      ).textContent =
+        totalPresent;
+
+
+      document.getElementById(
+        "absentCount"
+      ).textContent =
+        totalAbsent;
+
+
+      document.getElementById(
+        "lateCount"
+      ).textContent =
+        totalLate;
+
+
+      document.getElementById(
+        "attendanceRate"
+      ).textContent =
+        overallAttendanceRate + "%";
+
+
+
+      /* =========================================================
+         UPDATE SUMMARY
+      ========================================================== */
+
+      document.getElementById(
+        "summaryPresent"
+      ).textContent =
+        totalPresent + " records";
+
+
+      document.getElementById(
+        "summaryAbsent"
+      ).textContent =
+        totalAbsent + " records";
+
+
+      document.getElementById(
+        "summaryLate"
+      ).textContent =
+        totalLate + " records";
+
+
+
+      /* =========================================================
+         REMINDER
+      ========================================================== */
+
+      const attendanceReminder =
+        document.getElementById(
+          "attendanceReminder"
+        );
+
+
+      if (totalAbsent > 0) {
+
+        attendanceReminder.textContent =
+          totalAbsent +
+          " absent attendance records";
+
+      } else {
+
+        attendanceReminder.textContent =
+          "No attendance issues";
+
+      }
+
+
+
+      /* =========================================================
+         EMPLOYEE ATTENDANCE CARDS
+      ========================================================== */
+
+      const employeeContainer =
+        document.getElementById(
+          "employeeAttendanceContainer"
+        );
+
+
+
+      function renderEmployeeCards() {
+
+        if (!employeeContainer) return;
+
+
+        employeeContainer.innerHTML = "";
+
+
+        const searchInput =
+          document.getElementById(
+            "attendanceSearch"
+          );
+
+
+        const statusFilter =
+          document.getElementById(
+            "statusFilter"
+          );
+
+
+        const searchTerm =
+          searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+        const selectedStatus =
+          statusFilter
+            ? statusFilter.value
+            : "all";
+
+
+
+        /* =======================================================
+           FILTER EMPLOYEES
+        ======================================================== */
+
+        const filteredEmployees =
+          attendanceEmployees.filter(
+            (employee) => {
+
+              const employeeName =
+                String(
+                  employee.name || ""
+                ).toLowerCase();
+
+
+              const employeeId =
+                String(
+                  employee.employeeId || ""
+                ).toLowerCase();
+
+
+              const matchesSearch =
+                employeeName.includes(
+                  searchTerm
+                ) ||
+                employeeId.includes(
+                  searchTerm
+                );
+
+
+              const records =
+                Array.isArray(
+                  employee.Performance
+                )
+                  ? employee.Performance
+                  : [];
+
+
+              const matchesStatus =
+                selectedStatus === "all"
+                  ? true
+                  : records.some(
+                      (record) =>
+                        record.status ===
+                        selectedStatus
+                    );
+
+
+              return (
+                matchesSearch &&
+                matchesStatus
+              );
+
+            }
+          );
+
+
+
+        /* =======================================================
+           NO RESULTS
+        ======================================================== */
+
+        if (
+          filteredEmployees.length === 0
+        ) {
+
+          employeeContainer.innerHTML = `
+
+            <div class="col-12">
+
+              <div class="text-center py-5">
+
+                <div
+                  class="icon-shape bg-soft-primary mx-auto mb-3"
+                >
+
+                  <i class="bi bi-search text-primary"></i>
+
+                </div>
+
+                <h5 class="fw-bold">
+                  No employees found
+                </h5>
+
+                <p class="text-muted mb-0">
+                  Try a different employee name, ID or status.
+                </p>
+
+              </div>
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+
+        /* =======================================================
+           CREATE EMPLOYEE CARDS
+        ======================================================== */
+
+        filteredEmployees.forEach(
+          (employee) => {
+
+            const records =
+              Array.isArray(
+                employee.Performance
+              )
+                ? employee.Performance
+                : [];
+
+
+            const present =
+              records.filter(
+                (record) =>
+                  String(
+                    record.status
+                  ).toLowerCase() ===
+                  "present"
+              ).length;
+
+
+            const absent =
+              records.filter(
+                (record) =>
+                  String(
+                    record.status
+                  ).toLowerCase() ===
+                  "absent"
+              ).length;
+
+
+            const late =
+              records.filter(
+                (record) =>
+                  String(
+                    record.status
+                  ).toLowerCase() ===
+                    "late" ||
+                  String(
+                    record.status
+                  ).toLowerCase() ===
+                    "late arrival"
+              ).length;
+
+
+            const employeeRate =
+              records.length > 0
+                ? Math.round(
+                    (present /
+                      records.length) *
+                      100
+                  )
+                : 0;
+
+
+
+            /* ===================================================
+               EMPLOYEE CARD
+            ==================================================== */
+
+            const cardColumn =
+              document.createElement(
+                "div"
+              );
+
+
+            cardColumn.className =
+              "col-12 col-xl-6";
+
+
+
+            cardColumn.innerHTML = `
+
+              <div
+                class="card card-custom h-100"
+              >
+
+                <div class="card-body">
+
+
+                  <!-- EMPLOYEE HEADER -->
+                  <div
+                    class="d-flex justify-content-between align-items-start gap-3 mb-4"
+                  >
+
+                    <div
+                      class="d-flex align-items-center gap-3"
+                    >
+
+                      <div
+                        class="icon-shape bg-soft-primary"
+                      >
+
+                        <i
+                          class="bi bi-person-fill text-primary"
+                        ></i>
+
+                      </div>
+
+
+                      <div>
+
+                        <h5 class="fw-bold mb-1">
+                          ${employee.name}
+                        </h5>
+
+                        <small class="text-muted">
+                          Employee #${employee.employeeId}
+                        </small>
+
+                      </div>
+
+                    </div>
+
+
+                    <!-- RATE -->
+                    <div class="text-end">
+
+                      <strong class="d-block">
+                        ${employeeRate}%
+                      </strong>
+
+                      <small class="text-muted">
+                        Attendance
+                      </small>
+
+                    </div>
+
+                  </div>
+
+
+
+                  <!-- RECORD SUMMARY -->
+                  <div
+                    class="d-flex flex-wrap gap-2 mb-4"
+                  >
+
+                    <span
+                      class="badge-dept bg-soft-success"
+                    >
+                      <i class="bi bi-check-circle me-1"></i>
+                      ${present} Present
+                    </span>
+
+
+                    <span
+                      class="badge-dept bg-soft-danger"
+                    >
+                      <i class="bi bi-x-circle me-1"></i>
+                      ${absent} Absent
+                    </span>
+
+
+                    ${
+                      late > 0
+                        ? `
+                          <span
+                            class="badge-dept bg-soft-warning"
+                          >
+                            <i class="bi bi-clock me-1"></i>
+                            ${late} Late
+                          </span>
+                        `
+                        : ""
+                    }
+
+                  </div>
+
+
+
+                  <!-- ATTENDANCE HISTORY -->
+                  <div>
+
+                    <div
+                      class="d-flex justify-content-between align-items-center mb-2"
+                    >
+
+                      <small
+                        class="fw-bold text-uppercase"
+                      >
+                        Attendance History
+                      </small>
+
+                      <small class="text-muted">
+                        ${records.length} records
+                      </small>
+
+                    </div>
+
+
+                    <div
+                      class="attendance-history"
+                    >
+
+                      ${
+                        records
+                          .map(
+                            (record) => {
+
+                              const status =
+                                String(
+                                  record.status || ""
+                                ).toLowerCase();
+
+
+                              let icon =
+                                "bi-circle";
+
+
+                              let statusClass =
+                                "bg-soft-primary";
+
+
+                              if (
+                                status ===
+                                "present"
+                              ) {
+
+                                icon =
+                                  "bi-check-circle-fill";
+
+                                statusClass =
+                                  "bg-soft-success";
+
+                              }
+
+
+                              if (
+                                status ===
+                                "absent"
+                              ) {
+
+                                icon =
+                                  "bi-x-circle-fill";
+
+                                statusClass =
+                                  "bg-soft-danger";
+
+                              }
+
+
+                              if (
+                                status ===
+                                  "late" ||
+                                status ===
+                                  "late arrival"
+                              ) {
+
+                                icon =
+                                  "bi-clock-fill";
+
+                                statusClass =
+                                  "bg-soft-warning";
+
+                              }
+
+
+                              return `
+
+                                <div
+                                  class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                                >
+
+                                  <span>
+                                    ${formatDate(
+                                      record.date
+                                    )}
+                                  </span>
+
+
+                                  <span
+                                    class="badge-dept ${statusClass}"
+                                  >
+
+                                    <i
+                                      class="bi ${icon} me-1"
+                                    ></i>
+
+                                    ${record.status}
+
+                                  </span>
+
+                                </div>
+
+                              `;
+
+                            }
+                          )
+                          .join("")
+                      }
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            `;
+
+
+            employeeContainer.appendChild(
+              cardColumn
+            );
 
           }
+        );
+
+      }
 
 
-          const headers = [
-            "Employee",
-            "ID",
-            "Status",
-            "Check-in",
-            "Check-out",
-            "Hours Worked"
-          ];
+
+      /* =========================================================
+         DATE FORMATTER
+      ========================================================== */
+
+      function formatDate(dateString) {
+
+        if (!dateString) {
+
+          return "--";
+
+        }
 
 
-          const rows =
-            data.map((employee) => [
-
-              employee.name || "",
-
-              employee.id ||
-                employee.employeeId ||
-                "",
-
-              employee.status || "",
-
-              employee.checkin ||
-                employee.checkIn ||
-                "",
-
-              employee.checkout ||
-                employee.checkOut ||
-                "",
-
-              employee.hoursWorked ||
-                employee.hours ||
-                ""
-
-            ]);
+        const date =
+          new Date(
+            dateString + "T00:00:00"
+          );
 
 
-          const csv = [
-            headers,
-            ...rows
-          ]
-            .map((row) =>
-              row
-                .map((value) =>
-                  `"${String(value).replace(/"/g, '""')}"`
-                )
-                .join(",")
-            )
-            .join("\n");
+        if (
+          Number.isNaN(
+            date.getTime()
+          )
+        ) {
+
+          return dateString;
+
+        }
 
 
-          const blob =
-            new Blob([csv], {
-              type: "text/csv;charset=utf-8;"
-            });
+        return date.toLocaleDateString(
+          undefined,
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+          }
+        );
+
+      }
 
 
-          const url =
-            URL.createObjectURL(blob);
+
+      /* =========================================================
+         SEARCH
+      ========================================================== */
+
+      document
+        .getElementById(
+          "attendanceSearch"
+        )
+        ?.addEventListener(
+          "input",
+          renderEmployeeCards
+        );
 
 
-          const link =
-            document.createElement("a");
 
-          link.href = url;
+      /* =========================================================
+         STATUS FILTER
+      ========================================================== */
 
-          link.download =
-            "attendance-report.csv";
+      document
+        .getElementById(
+          "statusFilter"
+        )
+        ?.addEventListener(
+          "change",
+          renderEmployeeCards
+        );
 
-          link.click();
 
-          URL.revokeObjectURL(url);
 
-        });
-        document.getElementById("sidebar-toggle-btn")?.addEventListener("click", () => {
-    document.getElementById("wrapper").classList.toggle("toggled");
-});
+      /* =========================================================
+         EXPORT CSV
+      ========================================================== */
+
+      document
+        .getElementById(
+          "exportAttendanceBtn"
+        )
+        ?.addEventListener(
+          "click",
+          () => {
+
+            if (
+              attendanceEmployees.length ===
+              0
+            ) {
+
+              alert(
+                "No attendance data available."
+              );
+
+              return;
+
+            }
+
+
+            const headers = [
+              "Employee",
+              "Employee ID",
+              "Date",
+              "Status"
+            ];
+
+
+            const rows = [];
+
+
+            attendanceEmployees.forEach(
+              (employee) => {
+
+                const records =
+                  Array.isArray(
+                    employee.Performance
+                  )
+                    ? employee.Performance
+                    : [];
+
+
+                records.forEach(
+                  (record) => {
+
+                    rows.push([
+                      employee.name,
+                      employee.employeeId,
+                      record.date,
+                      record.status
+                    ]);
+
+                  }
+                );
+
+              }
+            );
+
+
+            const csv = [
+              headers,
+              ...rows
+            ]
+
+              .map(
+                (row) =>
+                  row
+                    .map(
+                      (value) =>
+                        `"${String(
+                          value
+                        ).replace(
+                          /"/g,
+                          '""'
+                        )}"`
+                    )
+                    .join(",")
+              )
+
+              .join("\n");
+
+
+            const blob =
+              new Blob(
+                [csv],
+                {
+                  type:
+                    "text/csv;charset=utf-8;"
+                }
+              );
+
+
+            const url =
+              URL.createObjectURL(
+                blob
+              );
+
+
+            const link =
+              document.createElement(
+                "a"
+              );
+
+
+            link.href = url;
+
+
+            link.download =
+              "attendance-report.csv";
+
+
+            document.body.appendChild(
+              link
+            );
+
+
+            link.click();
+
+
+            document.body.removeChild(
+              link
+            );
+
+
+            URL.revokeObjectURL(
+              url
+            );
+
+          }
+        );
+
+
+
+      /* =========================================================
+         SIDEBAR COLLAPSE
+      ========================================================== */
+
+      document
+        .getElementById(
+          "sidebar-toggle-btn"
+        )
+        ?.addEventListener(
+          "click",
+          () => {
+
+            document
+              .getElementById(
+                "wrapper"
+              )
+              .classList.toggle(
+                "toggled"
+              );
+
+          }
+        );
+
+
+
+      /* =========================================================
+         INITIALISE PAGE
+      ========================================================== */
+
+      renderEmployeeCards();
 
     </script>
 
