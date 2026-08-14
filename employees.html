@@ -48,8 +48,18 @@
             </a>
           </li>
           <li class="sidebar-item">
-            <a class="sidebar-link" href="Performance.html">
-              <i class="bi bi-calendar-check"></i><span>Performance</span>
+            <a class="sidebar-link" href="performance.html">
+              <i class="bi bi-graph-up-arrow"></i>
+              <span>Performance</span>
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="attendance.html"
+            >
+              <i class="bi bi-calendar-check"></i>
+              <span>Attendance</span>
             </a>
           </li>
           <li class="sidebar-item">
@@ -166,8 +176,8 @@
     <script src="dummy-data.js"></script>
     <script>
       // Verify global scope dataset from dummy-data.js exists safely
-      if (!window.__DUMMY_DATA__) window.__DUMMY_DATA__ = {};
-      if (!window.__DUMMY_DATA__.employees) window.__DUMMY_DATA__.employees = [];
+    if (!window.dummyData) window.dummyData = {};
+    if (!window.dummyData.employees) window.dummyData.employees = [];
 
       // Theme context operations
       const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -189,13 +199,19 @@
         });
 
       // Topbar DateTime Sync Loop
-      setInterval(() => {
+      function updateClock() {
         const now = new Date();
-        const dateEl = document.querySelector("#topbarDatetime .t-date");
-        const timeEl = document.querySelector("#topbarDatetime .t-time");
-        if (dateEl) dateEl.textContent = now.toLocaleDateString();
-        if (timeEl) timeEl.textContent = now.toLocaleTimeString();
-      }, 1000);
+        document.querySelector(".t-date").textContent = now.toLocaleDateString(
+          undefined,
+          { weekday: "long", month: "short", day: "numeric" },
+        );
+        document.querySelector(".t-time").textContent = now.toLocaleTimeString(
+          undefined,
+          { hour: "2-digit", minute: "2-digit" },
+        );
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
 
       // Core UI Generation Engine
       function renderEmployees() {
