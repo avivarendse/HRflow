@@ -42,7 +42,6 @@
           </div>
 
           <div class="sidebar-brand-text">
-
             <span class="brand-name">
               HR<span>Flow</span>
             </span>
@@ -50,7 +49,6 @@
             <span class="brand-sub">
               Modern HR Platform
             </span>
-
           </div>
 
         </div>
@@ -122,6 +120,7 @@
         </ul>
 
         <div class="sidebar-footer">
+
           <button
             id="sidebar-toggle-btn"
             class="sidebar-collapse-btn"
@@ -129,9 +128,11 @@
           >
             <i class="bi bi-chevron-left"></i>
           </button>
+
         </div>
 
       </aside>
+
 
       <!-- ================= MAIN CONTENT ================= -->
 
@@ -158,6 +159,7 @@
             </p>
 
           </div>
+
 
           <div class="topbar-tools">
 
@@ -191,6 +193,7 @@
 
         </div>
 
+
         <div class="main-container">
 
           <!-- ================= PERFORMANCE STATS ================= -->
@@ -223,6 +226,7 @@
 
             </div>
 
+
             <!-- HIGH PERFORMERS -->
 
             <div class="col-md-3">
@@ -249,6 +253,7 @@
 
             </div>
 
+
             <!-- GOALS -->
 
             <div class="col-md-3">
@@ -274,6 +279,7 @@
               </div>
 
             </div>
+
 
             <!-- NEEDS REVIEW -->
 
@@ -303,6 +309,7 @@
 
           </div>
 
+
           <!-- ================= PERFORMANCE TABLE ================= -->
 
           <div class="card card-custom mb-4">
@@ -327,6 +334,7 @@
 
               </div>
 
+
               <div class="table-responsive">
 
                 <table class="table custom-table-styles align-middle">
@@ -345,7 +353,29 @@
                   </thead>
 
                   <tbody id="PerformanceTable">
-                    <!-- JavaScript inserts data here -->
+
+                    <tr>
+
+                      <td
+                        colspan="6"
+                        class="text-center py-4"
+                      >
+
+                        <div class="text-muted">
+
+                          <div
+                            class="spinner-border spinner-border-sm me-2"
+                            role="status"
+                          ></div>
+
+                          Loading performance data...
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
                   </tbody>
 
                 </table>
@@ -355,6 +385,7 @@
             </div>
 
           </div>
+
 
           <!-- ================= PERFORMANCE OVERVIEW ================= -->
 
@@ -376,15 +407,14 @@
                     Employees currently achieving the strongest results.
                   </p>
 
-                  <div id="topPerformersList">
-                    <!-- JavaScript inserts top performers -->
-                  </div>
+                  <div id="topPerformersList"></div>
 
                 </div>
 
               </div>
 
             </div>
+
 
             <!-- PERFORMANCE FOCUS -->
 
@@ -402,9 +432,7 @@
                     Employees who may benefit from additional support.
                   </p>
 
-                  <div id="performanceFocusList">
-                    <!-- JavaScript inserts employees needing review -->
-                  </div>
+                  <div id="performanceFocusList"></div>
 
                 </div>
 
@@ -420,142 +448,32 @@
 
     </div>
 
+
     <!-- ================= BOOTSTRAP ================= -->
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    ></script>
 
-    <!-- IMPORTANT: dummy-data.js MUST load before the Performance JavaScript -->
-
-    <script src="dummy-data.js"></script>
 
     <!-- ================= PERFORMANCE JAVASCRIPT ================= -->
 
     <script>
 
       /* =========================================================
-         DATA CONNECTION
-         =========================================================
+         BACKEND CONNECTION
+         ========================================================= */
 
-         Your dummy-data.js uses:
-
-         window.__DUMMY_DATA__ = {
-             employees: [...]
-         }
-
-         Therefore we get employee information from:
-
-         window.__DUMMY_DATA__.employees
-      ========================================================= */
-
-      function getEmployees() {
-
-        if (
-          window.__DUMMY_DATA__ &&
-          Array.isArray(window.__DUMMY_DATA__.employees)
-        ) {
-          return window.__DUMMY_DATA__.employees;
-        }
-
-        console.error(
-          "HRFlow: employees data could not be found in dummy-data.js"
-        );
-
-        return [];
-      }
+      const API_URL =
+        "http://localhost:5000/api/performance";
 
 
-
-      function createPerformanceData() {
-
-        const employees = getEmployees();
-
-        const scores = [
-          92,
-          87,
-          84,
-          78,
-          90,
-          81,
-          95,
-          76,
-          88,
-          83
-        ];
-
-        const goalProgress = [
-          94,
-          88,
-          82,
-          74,
-          91,
-          79,
-          96,
-          72,
-          86,
-          84
-        ];
-
-        return employees.map((employee, index) => {
-
-          const score =
-            scores[index % scores.length];
-
-          const goals =
-            goalProgress[index % goalProgress.length];
-
-          let rating = "Satisfactory";
-          let ratingClass = "bg-soft-warning text-warning";
-
-          if (score >= 90) {
-
-            rating = "Excellent";
-            ratingClass = "bg-soft-success text-success";
-
-          } else if (score >= 80) {
-
-            rating = "Good";
-            ratingClass = "bg-soft-primary text-primary";
-
-          } else if (score >= 70) {
-
-            rating = "Satisfactory";
-            ratingClass = "bg-soft-warning text-warning";
-
-          } else {
-
-            rating = "Needs Review";
-            ratingClass = "bg-soft-danger text-danger";
-
-          }
-
-          return {
-
-            employeeId: employee.employeeId,
-
-            name: employee.name || "Unknown Employee",
-
-            department: employee.department || "Not Assigned",
-
-            position: employee.position || "Employee",
-
-            score: score,
-
-            goals: goals,
-
-            rating: rating,
-
-            ratingClass: ratingClass
-
-          };
-
-        });
-
-      }
+      let performanceData = [];
 
 
       /* =========================================================
          DARK MODE
-      ========================================================= */
+         ========================================================= */
 
       const themeToggleBtn =
         document.getElementById("themeToggleBtn");
@@ -603,7 +521,7 @@
 
       /* =========================================================
          SIDEBAR
-      ========================================================= */
+         ========================================================= */
 
       function toggleSidebar() {
 
@@ -632,25 +550,201 @@
 
       /* =========================================================
          DATE & TIME
-      ========================================================= */
+         ========================================================= */
 
-            function updateClock() {
+      function updateClock() {
+
         const now = new Date();
-        document.querySelector(".t-date").textContent = now.toLocaleDateString(
-          undefined,
-          { weekday: "long", month: "short", day: "numeric" },
-        );
-        document.querySelector(".t-time").textContent = now.toLocaleTimeString(
-          undefined,
-          { hour: "2-digit", minute: "2-digit" },
-        );
+
+        const dateElement =
+          document.querySelector(".t-date");
+
+        const timeElement =
+          document.querySelector(".t-time");
+
+
+        if (dateElement) {
+
+          dateElement.textContent =
+            now.toLocaleDateString(
+              undefined,
+              {
+                weekday: "long",
+                month: "short",
+                day: "numeric"
+              }
+            );
+
+        }
+
+
+        if (timeElement) {
+
+          timeElement.textContent =
+            now.toLocaleTimeString(
+              undefined,
+              {
+                hour: "2-digit",
+                minute: "2-digit"
+              }
+            );
+
+        }
+
       }
+
+
       updateClock();
-      setInterval(updateClock, 1000);
-      
+
+      setInterval(
+        updateClock,
+        1000
+      );
+
+
+      /* =========================================================
+         GET PERFORMANCE DATA FROM BACKEND
+         ========================================================= */
+
+      async function loadPerformanceData() {
+
+        const table =
+          document.getElementById(
+            "PerformanceTable"
+          );
+
+
+        try {
+
+          const response =
+            await fetch(API_URL);
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              `Backend returned HTTP ${response.status}`
+            );
+
+          }
+
+
+          const result =
+            await response.json();
+
+
+          if (
+            !result.success ||
+            !Array.isArray(result.data)
+          ) {
+
+            throw new Error(
+              "Invalid performance data received from backend."
+            );
+
+          }
+
+
+          performanceData =
+            result.data;
+
+
+          renderPerformance();
+
+
+        } catch (error) {
+
+          console.error(
+            "Performance API error:",
+            error
+          );
+
+
+          if (table) {
+
+            table.innerHTML = `
+
+              <tr>
+
+                <td
+                  colspan="6"
+                  class="text-center py-4"
+                >
+
+                  <div class="text-danger">
+
+                    <i class="bi bi-exclamation-triangle fs-3 d-block mb-2"></i>
+
+                    <strong>
+                      Unable to load performance data
+                    </strong>
+
+                    <small class="d-block text-muted mt-1">
+                      Please make sure the backend is running on port 5000.
+                    </small>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }
+
+        }
+
+      }
+
+
+      /* =========================================================
+         GET PERFORMANCE RATING
+         ========================================================= */
+
+      function getRating(score) {
+
+        if (score >= 90) {
+
+          return {
+            name: "Excellent",
+            className: "bg-soft-success text-success"
+          };
+
+        }
+
+
+        if (score >= 80) {
+
+          return {
+            name: "Good",
+            className: "bg-soft-primary text-primary"
+          };
+
+        }
+
+
+        if (score >= 70) {
+
+          return {
+            name: "Satisfactory",
+            className: "bg-soft-warning text-warning"
+          };
+
+        }
+
+
+        return {
+          name: "Needs Review",
+          className: "bg-soft-danger text-danger"
+        };
+
+      }
+
+
       /* =========================================================
          RENDER PERFORMANCE
-      ========================================================= */
+         ========================================================= */
 
       function renderPerformance() {
 
@@ -659,10 +753,12 @@
             "PerformanceTable"
           );
 
+
         const topList =
           document.getElementById(
             "topPerformersList"
           );
+
 
         const focusList =
           document.getElementById(
@@ -672,34 +768,38 @@
 
         if (!table) {
 
-          console.error(
-            "HRFlow: PerformanceTable was not found."
-          );
-
           return;
 
         }
 
 
-        const employees =
-          createPerformanceData();
-
-
         /* =====================================================
            NO DATA
-        ===================================================== */
+           ===================================================== */
 
-        if (!employees.length) {
+        if (!performanceData.length) {
 
           table.innerHTML = `
+
             <tr>
-              <td colspan="6" class="text-center py-4">
+
+              <td
+                colspan="6"
+                class="text-center py-4"
+              >
+
                 <div class="text-muted">
+
                   <i class="bi bi-people fs-3 d-block mb-2"></i>
-                  No employee data available.
+
+                  No performance data available.
+
                 </div>
+
               </td>
+
             </tr>
+
           `;
 
           return;
@@ -709,158 +809,175 @@
 
         /* =====================================================
            TABLE
-        ===================================================== */
+           ===================================================== */
 
         table.innerHTML = "";
 
 
-        employees.forEach((employee) => {
+        performanceData.forEach(
+          (employee) => {
 
-          const tr =
-            document.createElement("tr");
-
-
-          tr.innerHTML = `
-
-            <td>
-              <strong>
-                ${employee.name}
-              </strong>
-
-              <small class="d-block text-muted">
-                ${employee.position}
-              </small>
-            </td>
-
-            <td>
-              ${employee.employeeId}
-            </td>
-
-            <td>
-
-              <span class="badge-dept">
-                ${employee.department}
-              </span>
-
-            </td>
-
-            <td>
-
-              <strong>
-                ${employee.score}%
-              </strong>
-
-            </td>
-
-            <td>
-
-              ${employee.goals}%
-
-            </td>
-
-            <td>
-
-              <span class="badge-dept ${employee.ratingClass}">
-                ${employee.rating}
-              </span>
-
-            </td>
-
-          `;
+            const score =
+              Number(employee.performance_score);
 
 
-          table.appendChild(tr);
+            const goals =
+              Number(employee.goal_completion);
 
-        });
+
+            const rating =
+              getRating(score);
+
+
+            const tr =
+              document.createElement("tr");
+
+
+            tr.innerHTML = `
+
+              <td>
+
+                <strong>
+                  ${employee.name || "Unknown Employee"}
+                </strong>
+
+                <small class="d-block text-muted">
+                  ${employee.position || "Employee"}
+                </small>
+
+              </td>
+
+
+              <td>
+                ${employee.employee_id}
+              </td>
+
+
+              <td>
+
+                <span class="badge-dept">
+                  ${employee.department || "Not Assigned"}
+                </span>
+
+              </td>
+
+
+              <td>
+
+                <strong>
+                  ${score}%
+                </strong>
+
+              </td>
+
+
+              <td>
+
+                ${goals}%
+
+              </td>
+
+
+              <td>
+
+                <span class="badge-dept ${rating.className}">
+                  ${rating.name}
+                </span>
+
+              </td>
+
+            `;
+
+
+            table.appendChild(tr);
+
+          }
+        );
 
 
         /* =====================================================
            STATISTICS
-        ===================================================== */
+           ===================================================== */
 
         const total =
-          employees.length;
+          performanceData.length;
 
 
-        const average =
+        const averageScore =
           Math.round(
-            employees.reduce(
+            performanceData.reduce(
               (sum, employee) =>
-                sum + employee.score,
+                sum +
+                Number(employee.performance_score),
               0
             ) / total
           );
 
 
         const highPerformers =
-          employees.filter(
+          performanceData.filter(
             employee =>
-              employee.score >= 85
+              Number(employee.performance_score) >= 85
           ).length;
 
 
         const averageGoals =
           Math.round(
-            employees.reduce(
+            performanceData.reduce(
               (sum, employee) =>
-                sum + employee.goals,
+                sum +
+                Number(employee.goal_completion),
               0
             ) / total
           );
 
 
         const needsReview =
-          employees.filter(
+          performanceData.filter(
             employee =>
-              employee.score < 70
+              Number(employee.performance_score) < 70
           ).length;
 
 
         document
-          .getElementById(
-            "averageScore"
-          )
+          .getElementById("averageScore")
           .textContent =
-          `${average}%`;
+          `${averageScore}%`;
 
 
         document
-          .getElementById(
-            "highPerformers"
-          )
+          .getElementById("highPerformers")
           .textContent =
           highPerformers;
 
 
         document
-          .getElementById(
-            "goalCompletion"
-          )
+          .getElementById("goalCompletion")
           .textContent =
           `${averageGoals}%`;
 
 
         document
-          .getElementById(
-            "needsReview"
-          )
+          .getElementById("needsReview")
           .textContent =
           needsReview;
 
 
         /* =====================================================
            TOP PERFORMERS
-        ===================================================== */
+           ===================================================== */
 
         if (topList) {
 
           topList.innerHTML = "";
 
+
           const topPerformers =
-            [...employees]
+            [...performanceData]
               .sort(
                 (a, b) =>
-                  b.score - a.score
+                  Number(b.performance_score) -
+                  Number(a.performance_score)
               )
               .slice(0, 3);
 
@@ -900,8 +1017,9 @@
 
                 </div>
 
+
                 <strong class="text-success">
-                  ${employee.score}%
+                  ${Number(employee.performance_score)}%
                 </strong>
 
               `;
@@ -917,7 +1035,7 @@
 
         /* =====================================================
            PERFORMANCE FOCUS
-        ===================================================== */
+           ===================================================== */
 
         if (focusList) {
 
@@ -925,14 +1043,15 @@
 
 
           const focusEmployees =
-            [...employees]
+            [...performanceData]
               .filter(
                 employee =>
-                  employee.score < 80
+                  Number(employee.performance_score) < 80
               )
               .sort(
                 (a, b) =>
-                  a.score - b.score
+                  Number(a.performance_score) -
+                  Number(b.performance_score)
               )
               .slice(0, 3);
 
@@ -988,6 +1107,7 @@
 
                     </div>
 
+
                     <div>
 
                       <strong>
@@ -1002,8 +1122,9 @@
 
                   </div>
 
+
                   <strong class="text-danger">
-                    ${employee.score}%
+                    ${Number(employee.performance_score)}%
                   </strong>
 
                 `;
@@ -1023,7 +1144,7 @@
 
       /* =========================================================
          EXPORT PERFORMANCE CSV
-      ========================================================= */
+         ========================================================= */
 
       document
         .getElementById(
@@ -1033,11 +1154,7 @@
           "click",
           () => {
 
-            const employees =
-              createPerformanceData();
-
-
-            if (!employees.length) {
+            if (!performanceData.length) {
 
               alert(
                 "No performance data available to export."
@@ -1062,24 +1179,40 @@
 
 
             const rows =
-              employees.map(
-                employee => [
+              performanceData.map(
+                employee => {
 
-                  employee.name,
+                  const score =
+                    Number(
+                      employee.performance_score
+                    );
 
-                  employee.employeeId,
 
-                  employee.department,
+                  const rating =
+                    getRating(score);
 
-                  employee.position,
 
-                  employee.score,
+                  return [
 
-                  employee.goals,
+                    employee.name,
 
-                  employee.rating
+                    employee.employee_id,
 
-                ]
+                    employee.department,
+
+                    employee.position,
+
+                    score,
+
+                    Number(
+                      employee.goal_completion
+                    ),
+
+                    rating.name
+
+                  ];
+
+                }
               );
 
 
@@ -1128,7 +1261,6 @@
 
             document.body.removeChild(link);
 
-
             URL.revokeObjectURL(url);
 
           }
@@ -1137,9 +1269,9 @@
 
       /* =========================================================
          START PERFORMANCE PAGE
-      ========================================================= */
+         ========================================================= */
 
-      renderPerformance();
+      loadPerformanceData();
 
     </script>
 
