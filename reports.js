@@ -1,13 +1,11 @@
 // ======================================================
 // HR FLOW - REPORTS
-// Connected directly to the backend API
+// Connected to the backend API
 // ======================================================
 
-const API_BASE_URL = "http://localhost:5000/api/reports";
+const API_URL = "http://localhost:4000/api/reports";
 
-let performanceData = [];
-let attendanceData = [];
-let payrollData = [];
+let reportData = [];
 let currentFilteredList = [];
 
 let performanceChart = null;
@@ -18,104 +16,48 @@ let departmentChart = null;
 // PAGE INITIALISATION
 // ======================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await loadReports();
+document.addEventListener("DOMContentLoaded", () => {
+  loadReports();
 
-    setupSearch();
-    setupExport();
-
-  } catch (error) {
-    console.error("Failed to load Reports page:", error);
-
-    showTableMessage(
-      "Unable to load report data. Please make sure the backend is running."
-    );
-  }
+  setupSearch();
+  setupExport();
 });
 
 
 // ======================================================
-// LOAD DATA FROM BACKEND
+// LOAD REPORT DATA
 // ======================================================
 
 async function loadReports() {
   try {
-    const [
-      performanceResponse,
-      attendanceResponse,
-      payrollResponse,
-      pendingLeaveResponse
-    ] = await Promise.all([
-      fetch(`${API_BASE_URL}/performance`),
-      fetch(`${API_BASE_URL}/attendance`),
-      fetch(`${API_BASE_URL}/payroll`),
-      fetch(`${API_BASE_URL}/pending-leave`)
-    ]);
+    console.log("Loading reports from:", API_URL);
 
-    // Check performance response
-    if (!performanceResponse.ok) {
-      throw new Error("Failed to retrieve performance report");
+    const response = await fetch(API_URL);
+
+    if (!response.ok) {
+      throw new Error(`Server returned ${response.status}`);
     }
 
-    // Check attendance response
-    if (!attendanceResponse.ok) {
-      throw new Error("Failed to retrieve attendance report");
+    const result = await response.json();
+
+    console.log("Reports API response:", result);
+
+    if (!result.success) {
+      throw new Error(result.message || "Failed to load reports");
     }
 
-    // Check payroll response
-    if (!payrollResponse.ok) {
-      throw new Error("Failed to retrieve payroll report");
+    reportData = result.data || [];
+
+    console.log("Report data:", reportData);
+
+    if (reportData.length === 0) {
+      showTableMessage("No report data was returned from the database.");
+      return;
     }
 
-    // Pending leave may not exist yet
-    let pendingLeaveData = 0;
+    currentFilteredList = [...reportData];
 
-    if (pendingLeaveResponse.ok) {
-      const pendingLeaveResult = await pendingLeaveResponse.json();
-
-      if (pendingLeaveResult.success) {
-        pendingLeaveData =
-          Number(
-            pendingLeaveResult.data?.pending_leave ??
-            pendingLeaveResult.data ??
-            0
-          );
-      }
-    }
-
-    const performanceResult = await performanceResponse.json();
-    const attendanceResult = await attendanceResponse.json();
-    const payrollResult = await payrollResponse.json();
-
-    if (!performanceResult.success) {
-      throw new Error(
-        performanceResult.message || "Performance report failed"
-      );
-    }
-
-    if (!attendanceResult.success) {
-      throw new Error(
-        attendanceResult.message || "Attendance report failed"
-      );
-    }
-
-    if (!payrollResult.success) {
-      throw new Error(
-        payrollResult.message || "Payroll report failed"
-      );
-    }
-
-    // Store backend data
-    performanceData = performanceResult.data || [];
-    attendanceData = attendanceResult.data || [];
-    payrollData = payrollResult.data || [];
-
-    // Build employee list from performance report
-    currentFilteredList = getUniqueEmployees(performanceData);
-
-    // Update everything on the page
-    updateDashboardMetrics(pendingLeaveData);
+    updateDashboardMetrics();
     renderTable(currentFilteredList);
     renderPerformanceChart();
     renderDepartmentChart();
@@ -123,25 +65,10 @@ async function loadReports() {
   } catch (error) {
     console.error("Reports API error:", error);
 
-    throw error;
+    showTableMessage(
+      "Unable to load report data. Please make sure the backend is running."
+    );
   }
-}
-
-
-// ======================================================
-// GET UNIQUE EMPLOYEES
-// ======================================================
-
-function getUniqueEmployees(data) {
-  const employeeMap = new Map();
-
-  data.forEach((employee) => {
-    if (!employeeMap.has(employee.employee_id)) {
-      employeeMap.set(employee.employee_id, employee);
-    }
-  });
-
-  return Array.from(employeeMap.values());
 }
 
 
@@ -149,17 +76,17 @@ function getUniqueEmployees(data) {
 // DASHBOARD METRICS
 // ======================================================
 
-function updateDashboardMetrics(pendingLeaveCount) {
-  const employees = getUniqueEmployees(performanceData);
+function updateDashboardMetrics() {
 
   // -------------------------------
   // TOTAL STAFF
   // -------------------------------
 
-  const employeeCount = document.getElementById("employeeCount");
+  const employeeCount =
+    document.getElementById("employeeCount");
 
   if (employeeCount) {
-    employeeCount.textContent = employees.length;
+    employeeCount.textContent = reportData.length;
   }
 
 
@@ -171,16 +98,26 @@ function updateDashboardMetrics(pendingLeaveCount) {
     document.getElementById("PerformanceRate");
 
   if (performanceRateElement) {
-    if (performanceData.length > 0) {
 
-      const totalPerformance = performanceData.reduce(
-        (total, employee) =>
-          total + Number(employee.performance_score || 0),
-        0
+    const employeesWithPerformance =
+      reportData.filter(
+        employee =>
+          employee.performance_score !== null &&
+          employee.performance_score !== undefined
       );
 
+    if (employeesWithPerformance.length > 0) {
+
+      const totalPerformance =
+        employeesWithPerformance.reduce(
+          (total, employee) =>
+            total + Number(employee.performance_score || 0),
+          0
+        );
+
       const averagePerformance =
-        totalPerformance / performanceData.length;
+        totalPerformance /
+        employeesWithPerformance.length;
 
       performanceRateElement.textContent =
         `${Math.round(averagePerformance)}%`;
@@ -199,8 +136,17 @@ function updateDashboardMetrics(pendingLeaveCount) {
     document.getElementById("pendingLeave");
 
   if (pendingLeaveElement) {
+
+    const pendingLeave =
+      reportData.reduce(
+        (total, employee) =>
+          total +
+          Number(employee.pending_leave || 0),
+        0
+      );
+
     pendingLeaveElement.textContent =
-      Number(pendingLeaveCount) || 0;
+      pendingLeave;
   }
 }
 
@@ -210,13 +156,17 @@ function updateDashboardMetrics(pendingLeaveCount) {
 // ======================================================
 
 function renderTable(list) {
+
   currentFilteredList = list;
 
-  const tbody = document.getElementById("reportTable");
+  const tbody =
+    document.getElementById("reportTable");
 
   if (!tbody) return;
 
+
   if (!list || list.length === 0) {
+
     tbody.innerHTML = `
       <tr>
         <td colspan="5" class="text-center py-4">
@@ -228,8 +178,9 @@ function renderTable(list) {
     return;
   }
 
+
   tbody.innerHTML = list
-    .map((employee) => {
+    .map(employee => {
 
       const employeeId =
         employee.employee_id ?? "N/A";
@@ -246,11 +197,12 @@ function renderTable(list) {
       const contact =
         employee.contact ?? "N/A";
 
+
       return `
         <tr>
 
           <td class="fw-semibold text-secondary">
-            #${employeeId}
+            #${escapeHtml(employeeId)}
           </td>
 
           <td class="fw-bold">
@@ -283,27 +235,31 @@ function renderTable(list) {
 // ======================================================
 
 function setupSearch() {
+
   const searchInput =
     document.getElementById("searchEmployee");
 
   if (!searchInput) return;
+
 
   searchInput.addEventListener("input", function () {
 
     const query =
       this.value.trim().toLowerCase();
 
-    const employees =
-      getUniqueEmployees(performanceData);
 
     if (!query) {
+
       setActiveFilterChip("");
-      renderTable(employees);
+
+      renderTable(reportData);
+
       return;
     }
 
+
     const filteredEmployees =
-      employees.filter((employee) => {
+      reportData.filter(employee => {
 
         const name =
           String(employee.employee_name || "")
@@ -325,6 +281,7 @@ function setupSearch() {
           String(employee.employee_id || "")
             .toLowerCase();
 
+
         return (
           name.includes(query) ||
           department.includes(query) ||
@@ -333,6 +290,7 @@ function setupSearch() {
           id.includes(query)
         );
       });
+
 
     setActiveFilterChip(`Search: ${query}`);
 
@@ -346,16 +304,21 @@ function setupSearch() {
 // ======================================================
 
 function setActiveFilterChip(label) {
+
   const chip =
     document.getElementById("activeFilterChip");
 
   if (!chip) return;
 
+
   if (!label) {
+
     chip.classList.add("d-none");
     chip.innerHTML = "";
+
     return;
   }
+
 
   chip.classList.remove("d-none");
 
@@ -368,7 +331,10 @@ function setActiveFilterChip(label) {
     ></i>
   `;
 
-  const closeButton = chip.querySelector("i");
+
+  const closeButton =
+    chip.querySelector("i");
+
 
   closeButton?.addEventListener("click", () => {
 
@@ -381,15 +347,13 @@ function setActiveFilterChip(label) {
 
     setActiveFilterChip("");
 
-    renderTable(
-      getUniqueEmployees(performanceData)
-    );
+    renderTable(reportData);
   });
 }
 
 
 // ======================================================
-// PERFORMANCE / ATTENDANCE PIE CHART
+// PERFORMANCE / ATTENDANCE CHART
 // ======================================================
 
 function renderPerformanceChart() {
@@ -399,31 +363,32 @@ function renderPerformanceChart() {
 
   if (!canvas) return;
 
+
   if (performanceChart) {
     performanceChart.destroy();
   }
 
 
-  // Count attendance statuses
   let presentCount = 0;
   let absentCount = 0;
 
-  attendanceData.forEach((record) => {
 
-    if (record.status === "Present") {
-      presentCount++;
-    }
+  reportData.forEach(employee => {
 
-    if (record.status === "Absent") {
-      absentCount++;
-    }
+    presentCount +=
+      Number(employee.days_present || 0);
+
+    absentCount +=
+      Number(employee.days_absent || 0);
   });
 
 
   performanceChart = new Chart(canvas, {
+
     type: "doughnut",
 
     data: {
+
       labels: [
         "Present",
         "Absent"
@@ -447,10 +412,13 @@ function renderPerformanceChart() {
     },
 
     options: {
+
       responsive: true,
+
       maintainAspectRatio: false,
 
       plugins: {
+
         legend: {
           position: "bottom"
         }
@@ -471,25 +439,25 @@ function renderDepartmentChart() {
 
   if (!canvas) return;
 
+
   if (departmentChart) {
     departmentChart.destroy();
   }
 
 
-  const employees =
-    getUniqueEmployees(performanceData);
-
   const departments = {};
 
 
-  employees.forEach((employee) => {
+  reportData.forEach(employee => {
 
     const department =
       employee.department || "Unknown";
 
+
     if (!departments[department]) {
       departments[department] = 0;
     }
+
 
     departments[department]++;
   });
@@ -530,13 +498,16 @@ function renderDepartmentChart() {
       maintainAspectRatio: false,
 
       plugins: {
+
         legend: {
           display: false
         }
       },
 
       scales: {
+
         y: {
+
           beginAtZero: true,
 
           ticks: {
@@ -545,22 +516,25 @@ function renderDepartmentChart() {
         }
       },
 
+
       onClick: function (event, elements) {
 
         if (!elements.length) {
           return;
         }
 
+
         const index =
           elements[0].index;
+
 
         const selectedDepartment =
           departmentNames[index];
 
 
         const filteredEmployees =
-          employees.filter(
-            (employee) =>
+          reportData.filter(
+            employee =>
               employee.department ===
               selectedDepartment
           );
@@ -570,14 +544,17 @@ function renderDepartmentChart() {
           `Dept: ${selectedDepartment}`
         );
 
+
         const searchInput =
           document.getElementById(
             "searchEmployee"
           );
 
+
         if (searchInput) {
           searchInput.value = "";
         }
+
 
         renderTable(filteredEmployees);
       }
@@ -598,87 +575,89 @@ function setupExport() {
   if (!exportButton) return;
 
 
-  exportButton.addEventListener(
-    "click",
-    () => {
+  exportButton.addEventListener("click", () => {
 
-      if (!currentFilteredList.length) {
-        alert("There is no report data to export.");
-        return;
-      }
+    if (!currentFilteredList.length) {
 
+      alert(
+        "There is no report data to export."
+      );
 
-      const headers = [
-        "ID",
-        "Name",
-        "Department",
-        "Position",
-        "Contact"
-      ];
-
-
-      const rows =
-        currentFilteredList.map(
-          (employee) => [
-
-            employee.employee_id ?? "",
-
-            employee.employee_name ?? "",
-
-            employee.department ?? "",
-
-            employee.position ?? "",
-
-            employee.contact ?? ""
-          ]
-        );
-
-
-      const csvRows = [
-        headers,
-        ...rows
-      ];
-
-
-      const csvContent =
-        csvRows
-          .map((row) =>
-            row
-              .map(csvEscape)
-              .join(",")
-          )
-          .join("\n");
-
-
-      const blob =
-        new Blob(
-          [csvContent],
-          {
-            type: "text/csv;charset=utf-8;"
-          }
-        );
-
-
-      const url =
-        URL.createObjectURL(blob);
-
-      const link =
-        document.createElement("a");
-
-      link.href = url;
-
-      link.download =
-        "hrflow_report.csv";
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-
-      URL.revokeObjectURL(url);
+      return;
     }
-  );
+
+
+    const headers = [
+      "ID",
+      "Name",
+      "Department",
+      "Position",
+      "Contact"
+    ];
+
+
+    const rows =
+      currentFilteredList.map(employee => [
+
+        employee.employee_id ?? "",
+
+        employee.employee_name ?? "",
+
+        employee.department ?? "",
+
+        employee.position ?? "",
+
+        employee.contact ?? ""
+      ]);
+
+
+    const csvRows = [
+      headers,
+      ...rows
+    ];
+
+
+    const csvContent =
+      csvRows
+        .map(row =>
+          row
+            .map(csvEscape)
+            .join(",")
+        )
+        .join("\n");
+
+
+    const blob =
+      new Blob(
+        [csvContent],
+        {
+          type: "text/csv;charset=utf-8;"
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(blob);
+
+
+    const link =
+      document.createElement("a");
+
+
+    link.href = url;
+
+    link.download =
+      "hrflow_report.csv";
+
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  });
 }
 
 
@@ -691,13 +670,16 @@ function csvEscape(value) {
   const stringValue =
     String(value ?? "");
 
+
   if (
     stringValue.includes(",") ||
     stringValue.includes('"') ||
     stringValue.includes("\n")
   ) {
+
     return `"${stringValue.replace(/"/g, '""')}"`;
   }
+
 
   return stringValue;
 }
@@ -728,6 +710,7 @@ function showTableMessage(message) {
     document.getElementById("reportTable");
 
   if (!tbody) return;
+
 
   tbody.innerHTML = `
     <tr>
