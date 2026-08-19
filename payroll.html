@@ -269,130 +269,307 @@
       </main>
     </div>
 
-    <script src="dummy-data.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const data = window.__DUMMY_DATA__ || {};
-        const empSelect = document.getElementById("empSelect");
+   <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // --- API CONFIGURATION ---
+    const API_BASE = 'http://localhost:5000/api/payroll';
+    
+    // Get auth token from localStorage (set during login)
+    function getAuthToken() {
+      return localStorage.getItem('token');
+    }
 
-        // --- THEME LOGIC ---
-        const themeToggleBtn = document.getElementById("themeToggleBtn");
-        function applyThemeState() {
-          const isDark = localStorage.getItem("darkMode") === "true";
-          document.body.classList.toggle("dark-mode", isDark);
-          if (themeToggleBtn)
-            themeToggleBtn.innerHTML = isDark
-              ? '<i class="bi bi-sun-fill"></i>'
-              : '<i class="bi bi-moon-fill"></i>';
-        }
-        themeToggleBtn?.addEventListener("click", () => {
-          const toggledState = !document.body.classList.contains("dark-mode");
-          localStorage.setItem("darkMode", toggledState ? "true" : "false");
-          applyThemeState();
-        });
-        applyThemeState();
-
-        // --- PAYROLL LOGIC ---
-        function formatMoney(v) {
-          return "ZAR " + Math.round(v).toLocaleString("en-ZA");
-        }
-
-        function calculate() {
-          const base =
-            parseFloat(document.getElementById("monthlyBase").value) || 0;
-          const leaveHrs =
-            parseFloat(document.getElementById("leaveHours").value) || 0;
-          const bonus = parseFloat(document.getElementById("bonus").value) || 0;
-          const taxRate =
-            parseFloat(document.getElementById("taxRate").value) || 0;
-
-          const hourlyRate = base / 160;
-          const leaveDed = leaveHrs * hourlyRate;
-          const gross = base + bonus;
-          const taxDed = gross * (taxRate / 100);
-          const net = gross - taxDed - leaveDed;
-
-          document.getElementById("netFigure").textContent = formatMoney(net);
-          document.getElementById("psBase").textContent = formatMoney(base);
-          document.getElementById("psBonus").textContent = formatMoney(bonus);
-          document.getElementById("psGross").textContent = formatMoney(gross);
-          document.getElementById("psTax").textContent =
-            "- " + formatMoney(taxDed);
-          document.getElementById("psLeave").textContent =
-            "- " + formatMoney(leaveDed);
-          document.getElementById("psNet").textContent = formatMoney(net);
-        }
-
-        // Fallback tracking logic added here
-        if (data.Performance) {
-          data.Performance.forEach((emp) => {
-            let opt = new Option(emp.name, emp.employeeId);
-            empSelect.add(opt);
-          });
-        }
-
-        empSelect.addEventListener("change", () => {
-          const selectedId = empSelect.value;
-          const emp = data.Performance
-            ? data.Performance.find((e) => e.employeeId == selectedId)
-            : null;
-          const payroll = data.payroll
-            ? data.payroll.find((p) => p.employeeId == selectedId)
-            : null;
-
-          if (emp) {
-            // Simulating fallback fields safely
-            const calculatedSalary = emp.salary || 500000;
-            document.getElementById("monthlyBase").value = Math.round(
-              calculatedSalary / 12,
-            );
-            document.getElementById("leaveHours").value = payroll
-              ? payroll.leaveDeductions
-              : 0;
-            document.getElementById("psName").textContent = emp.name;
-            document.getElementById("psPosition").textContent =
-              emp.position || "Staff Member";
-            document.getElementById("psDept").textContent =
-              emp.department || "Operations";
-            document.getElementById("psId").textContent =
-              "EMP-" + emp.employeeId;
-            document.getElementById("refSalary").textContent =
-              formatMoney(calculatedSalary);
-            calculate();
-          }
-        });
-
-        ["monthlyBase", "leaveHours", "bonus", "taxRate"].forEach((id) => {
-          document.getElementById(id).addEventListener("input", calculate);
-        });
-
-        if (empSelect.options.length > 0) {
-          empSelect.dispatchEvent(new Event("change"));
-        }
-
-        // Clock Logic Fixed Target Elements
-      function updateClock() {
-        const now = new Date();
-        document.querySelector(".t-date").textContent = now.toLocaleDateString(
-          undefined,
-          { weekday: "long", month: "short", day: "numeric" },
-        );
-        document.querySelector(".t-time").textContent = now.toLocaleTimeString(
-          undefined,
-          { hour: "2-digit", minute: "2-digit" },
-        );
-      }
-      updateClock();
-      setInterval(updateClock, 1000);
-
-        document.getElementById("sidebar-toggle-btn").onclick = () =>
-          document.getElementById("wrapper").classList.toggle("toggled");
-        document.getElementById("mobile-toggle").onclick = () =>
-          document.getElementById("wrapper").classList.toggle("toggled");
+    // Helper for API calls
+    async function apiCall(endpoint, options = {}) {
+      const token = getAuthToken();
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...options.headers
+      };
+      
+      const response = await fetch(`${API_BASE}${endpoint}`, {
+        ...options,
+        headers
       });
-      if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'API request failed');
       }
-    </script>
+      
+      return response.json();
+    }
+
+    // --- DOM ELEMENTS ---
+    const empSelect = document.getElementById("empSelect");
+    const monthlyBaseInput = document.getElementById("monthlyBase");
+    const hoursWorkedInput = document.getElementById("hoursWorked");
+    const leaveHoursInput = document.getElementById("leaveHours");
+    const bonusInput = document.getElementById("bonus");
+    const taxRateInput = document.getElementById("taxRate");
+
+    // --- THEME LOGIC ---
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    function applyThemeState() {
+      const isDark = localStorage.getItem("darkMode") === "true";
+      document.body.classList.toggle("dark-mode", isDark);
+      if (themeToggleBtn)
+        themeToggleBtn.innerHTML = isDark
+          ? '<i class="bi bi-sun-fill"></i>'
+          : '<i class="bi bi-moon-fill"></i>';
+    }
+    themeToggleBtn?.addEventListener("click", () => {
+      const toggledState = !document.body.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", toggledState ? "true" : "false");
+      applyThemeState();
+    });
+    applyThemeState();
+
+    // --- FORMAT MONEY ---
+    function formatMoney(v) {
+      return "ZAR " + Math.round(v).toLocaleString("en-ZA");
+    }
+
+    // --- CALCULATE PAYROLL (Frontend only - for display) ---
+    function calculate() {
+      const base = parseFloat(monthlyBaseInput.value) || 0;
+      const leaveHrs = parseFloat(leaveHoursInput.value) || 0;
+      const bonus = parseFloat(bonusInput.value) || 0;
+      const taxRate = parseFloat(taxRateInput.value) || 0;
+
+      const hourlyRate = base / 160;
+      const leaveDed = leaveHrs * hourlyRate;
+      const gross = base + bonus;
+      const taxDed = gross * (taxRate / 100);
+      const net = gross - taxDed - leaveDed;
+
+      document.getElementById("netFigure").textContent = formatMoney(net);
+      document.getElementById("psBase").textContent = formatMoney(base);
+      document.getElementById("psBonus").textContent = formatMoney(bonus);
+      document.getElementById("psGross").textContent = formatMoney(gross);
+      document.getElementById("psTax").textContent = "- " + formatMoney(taxDed);
+      document.getElementById("psLeave").textContent = "- " + formatMoney(leaveDed);
+      document.getElementById("psNet").textContent = formatMoney(net);
+    }
+
+    // --- LOAD EMPLOYEES FROM API ---
+    async function loadEmployees() {
+      try {
+        const employees = await apiCall('/employees');
+        empSelect.innerHTML = ''; // Clear existing options
+        
+        employees.forEach(emp => {
+          const opt = new Option(
+            `${emp.first_name} ${emp.last_name}`, 
+            emp.id
+          );
+          empSelect.add(opt);
+        });
+
+        // Auto-select first employee and load their data
+        if (employees.length > 0) {
+          empSelect.value = employees[0].id;
+          empSelect.dispatchEvent(new Event('change'));
+        }
+      } catch (error) {
+        console.error('Error loading employees:', error);
+        alert('Failed to load employees. Please make sure the server is running.');
+      }
+    }
+
+    // --- LOAD PAYROLL FOR SELECTED EMPLOYEE ---
+    async function loadPayrollForEmployee(employeeId) {
+      if (!employeeId) return;
+      
+      const currentPeriod = new Date().toISOString().slice(0, 7); // YYYY-MM
+      
+      try {
+        // Try to get existing payroll
+        const payroll = await apiCall(`/employee/${employeeId}/period/${currentPeriod}`);
+        
+        if (payroll) {
+          // Populate fields with existing payroll data
+          monthlyBaseInput.value = payroll.gross_pay || 0;
+          hoursWorkedInput.value = payroll.hours_worked || 0;
+          leaveHoursInput.value = payroll.leave_deductions || 0;
+          bonusInput.value = 0; // Default if not stored
+          
+          // Update employee info display
+          document.getElementById("psName").textContent = payroll.employee_name || '--';
+          document.getElementById("psPosition").textContent = payroll.job_title || '--';
+          document.getElementById("psDept").textContent = payroll.department || '--';
+          document.getElementById("psId").textContent = `EMP-${employeeId}`;
+          
+          const annualSalary = payroll.annual_salary || (payroll.gross_pay * 12);
+          document.getElementById("refSalary").textContent = formatMoney(annualSalary);
+          
+          calculate();
+        }
+      } catch (error) {
+        // 404 means no payroll record yet - that's fine
+        if (error.message.includes('404')) {
+          console.log('No existing payroll record for this period');
+        } else {
+          console.error('Error loading payroll:', error);
+        }
+      }
+    }
+
+    // --- EMPLOYEE SELECTION ---
+    empSelect.addEventListener("change", async () => {
+      const employeeId = empSelect.value;
+      if (!employeeId) return;
+      
+      // Reset display
+      document.getElementById("psName").textContent = '--';
+      document.getElementById("psPosition").textContent = '--';
+      document.getElementById("psDept").textContent = '--';
+      document.getElementById("psId").textContent = '--';
+      
+      await loadPayrollForEmployee(employeeId);
+    });
+
+    // --- SAVE PAYROLL TO API ---
+    async function savePayroll() {
+      const employeeId = empSelect.value;
+      if (!employeeId) {
+        alert('Please select an employee first.');
+        return;
+      }
+
+      const currentPeriod = new Date().toISOString().slice(0, 7);
+      const grossPay = parseFloat(monthlyBaseInput.value) || 0;
+      const leaveHrs = parseFloat(leaveHoursInput.value) || 0;
+      const hoursWorked = parseFloat(hoursWorkedInput.value) || 0;
+      const bonus = parseFloat(bonusInput.value) || 0;
+      const taxRate = parseFloat(taxRateInput.value) || 18;
+      
+      const hourlyRate = grossPay / 160;
+      const leaveDeductionAmount = leaveHrs * hourlyRate;
+      const totalGross = grossPay + bonus;
+      const taxDed = totalGross * (taxRate / 100);
+      const netPay = totalGross - taxDed - leaveDeductionAmount;
+
+      const payrollData = {
+        employee_id: parseInt(employeeId),
+        pay_period: currentPeriod,
+        hours_worked: hoursWorked,
+        leave_deductions: leaveHrs,
+        gross_pay: totalGross,
+        deductions: Math.round(taxDed + leaveDeductionAmount),
+        net_pay: Math.round(netPay)
+      };
+
+      try {
+        await apiCall('/', {
+          method: 'POST',
+          body: JSON.stringify(payrollData)
+        });
+        alert('Payroll saved successfully!');
+      } catch (error) {
+        console.error('Error saving payroll:', error);
+        alert('Failed to save payroll: ' + error.message);
+      }
+    }
+
+    // --- AUTO-CALCULATE FROM ATTENDANCE ---
+    async function autoCalculate() {
+      const employeeId = empSelect.value;
+      if (!employeeId) {
+        alert('Please select an employee first.');
+        return;
+      }
+
+      const currentPeriod = new Date().toISOString().slice(0, 7);
+      
+      try {
+        const result = await apiCall(`/calculate/${employeeId}/${currentPeriod}`, {
+          method: 'POST'
+        });
+        
+        // Update fields with calculated values
+        if (result.payroll) {
+          monthlyBaseInput.value = result.payroll.gross_pay || 0;
+          hoursWorkedInput.value = result.payroll.hours_worked || 0;
+          leaveHoursInput.value = result.payroll.leave_deductions || 0;
+          
+          document.getElementById("psName").textContent = result.payroll.employee_name || '--';
+          document.getElementById("psPosition").textContent = result.payroll.job_title || '--';
+          
+          const annualSalary = result.payroll.annual_salary || (result.payroll.gross_pay * 12);
+          document.getElementById("refSalary").textContent = formatMoney(annualSalary);
+          
+          calculate();
+          alert('Payroll calculated from attendance successfully!');
+        }
+      } catch (error) {
+        console.error('Error auto-calculating:', error);
+        alert('Failed to auto-calculate: ' + error.message);
+      }
+    }
+
+    // --- INPUT EVENT LISTENERS ---
+    ["monthlyBase", "leaveHours", "bonus", "taxRate", "hoursWorked"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", calculate);
+    });
+
+    // --- ADD SAVE AND AUTO-CALCULATE BUTTONS ---
+    // Add these buttons to the UI (you'll need to add them to the HTML)
+    function addButtons() {
+      const container = document.querySelector('.input-strip-grid');
+      if (container) {
+        // Add save button
+        const saveDiv = document.createElement('div');
+        saveDiv.innerHTML = `
+          <button id="savePayrollBtn" class="btn btn-success w-100">
+            <i class="bi bi-save"></i> Save
+          </button>
+        `;
+        container.appendChild(saveDiv);
+        
+        // Add auto-calculate button in a new row below
+        const rowDiv = document.createElement('div');
+        rowDiv.style.gridColumn = '1 / -1';
+        rowDiv.style.marginTop = '10px';
+        rowDiv.innerHTML = `
+          <button id="autoCalcBtn" class="btn btn-primary w-100">
+            <i class="bi bi-calculator"></i> Auto-Calculate from Attendance
+          </button>
+        `;
+        container.parentNode.appendChild(rowDiv);
+        
+        document.getElementById('savePayrollBtn')?.addEventListener('click', savePayroll);
+        document.getElementById('autoCalcBtn')?.addEventListener('click', autoCalculate);
+      }
+    }
+
+    // --- INITIALIZATION ---
+    // Load employees and setup
+    loadEmployees();
+    addButtons();
+
+    // --- SIDEBAR TOGGLE ---
+    document.getElementById("sidebar-toggle-btn").onclick = () =>
+      document.getElementById("wrapper").classList.toggle("toggled");
+    document.getElementById("mobile-toggle").onclick = () =>
+      document.getElementById("wrapper").classList.toggle("toggled");
+
+    // --- CLOCK ---
+    function updateClock() {
+      const now = new Date();
+      document.querySelector(".t-date").textContent = now.toLocaleDateString(
+        undefined,
+        { weekday: "long", month: "short", day: "numeric" },
+      );
+      document.querySelector(".t-time").textContent = now.toLocaleTimeString(
+        undefined,
+        { hour: "2-digit", minute: "2-digit" },
+      );
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+  });
+</script>
   </body>
 </html>
