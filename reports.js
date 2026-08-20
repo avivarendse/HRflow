@@ -3,7 +3,7 @@
 // Connected to the backend API
 // ======================================================
 
-const API_URL = "http://localhost:4000/api/reports";
+const API_URL = "http://localhost:3000/api/reports";
 
 let reportData = [];
 let currentFilteredList = [];

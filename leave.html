@@ -3,82 +3,120 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>HR Flow | Leave Management</title>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="style.css" />
   </head>
+
   <body>
+
+    <!-- Authentication + theme -->
     <script>
+      if (sessionStorage.getItem("isAuthenticated") !== "true") {
+        window.location.href = "login.html";
+      }
+
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark-mode");
       }
     </script>
+
     <div id="wrapper">
+
+      <!-- SIDEBAR -->
       <aside id="sidebar">
+
         <div class="sidebar-header">
+
           <div class="sidebar-logo-box">
             <i class="bi bi-buildings-fill"></i>
           </div>
+
           <div class="sidebar-brand-text">
-            <span class="brand-name">HR<span>Flow</span></span>
-            <span class="brand-sub">Modern HR Platform</span>
+            <span class="brand-name">
+              HR<span>Flow</span>
+            </span>
+
+            <span class="brand-sub">
+              Modern HR Platform
+            </span>
           </div>
+
         </div>
+
         <ul class="sidebar-menu">
+
           <li class="sidebar-item">
-            <a class="sidebar-link" href="dashboard.html"
-              ><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a
-            >
+            <a class="sidebar-link" href="dashboard.html">
+              <i class="bi bi-grid-1x2-fill"></i>
+              <span>Dashboard</span>
+            </a>
           </li>
+
           <li class="sidebar-item">
-            <a class="sidebar-link" href="employees.html"
-              ><i class="bi bi-people-fill"></i><span>Employees</span></a
-            >
+            <a class="sidebar-link" href="employees.html">
+              <i class="bi bi-people-fill"></i>
+              <span>Employees</span>
+            </a>
           </li>
+
           <li class="sidebar-item">
-            <a class="sidebar-link" href="payroll.html"
-              ><i class="bi bi-cash-stack"></i><span>Payroll</span></a
-            >
+            <a class="sidebar-link" href="payroll.html">
+              <i class="bi bi-cash-stack"></i>
+              <span>Payroll</span>
+            </a>
           </li>
+
           <li class="sidebar-item">
             <a class="sidebar-link" href="performance.html">
               <i class="bi bi-graph-up-arrow"></i>
               <span>Performance</span>
             </a>
           </li>
+
           <li class="sidebar-item">
-            <a
-              class="sidebar-link"
-              href="attendance.html"
-            >
+            <a class="sidebar-link" href="attendance.html">
               <i class="bi bi-calendar-check"></i>
               <span>Attendance</span>
             </a>
           </li>
+
           <li class="sidebar-item">
-            <a class="sidebar-link active" href="leave.html"
-              ><i class="bi bi-calendar2-x"></i><span>Leave</span></a
-            >
+            <a class="sidebar-link active" href="leave.html">
+              <i class="bi bi-calendar2-x"></i>
+              <span>Leave</span>
+            </a>
           </li>
+
           <li class="sidebar-item">
-            <a class="sidebar-link" href="reports.html"
-              ><i class="bi bi-bar-chart-line-fill"></i><span>Reports</span></a
-            >
+            <a class="sidebar-link" href="reports.html">
+              <i class="bi bi-bar-chart-line-fill"></i>
+              <span>Reports</span>
+            </a>
           </li>
+
           <li class="sidebar-item">
-            <a class="sidebar-link" href="settings.html"
-              ><i class="bi bi-gear-fill"></i><span>Settings</span></a
-            >
+            <a class="sidebar-link" href="settings.html">
+              <i class="bi bi-gear-fill"></i>
+              <span>Settings</span>
+            </a>
           </li>
+
         </ul>
+
         <div class="sidebar-footer">
+
           <button
             id="sidebar-toggle-btn"
             class="sidebar-collapse-btn"
@@ -86,22 +124,37 @@
           >
             <i class="bi bi-chevron-left"></i>
           </button>
+
         </div>
+
       </aside>
 
+
+      <!-- MAIN CONTENT -->
       <main id="page-content-wrapper">
+
+        <!-- TOPBAR -->
         <div class="content-topbar">
+
           <div class="page-titles">
+
             <button
               class="btn btn-sm btn-custom-outline mobile-menu-btn mb-2"
               id="mobile-toggle"
             >
               <i class="bi bi-list"></i>
             </button>
+
             <h1>Leave Management</h1>
-            <p>Submit and approve time-off requests.</p>
+
+            <p>
+              Submit and approve time-off requests.
+            </p>
+
           </div>
+
           <div class="topbar-tools">
+
             <button
               class="theme-toggle-btn"
               id="themeToggleBtn"
@@ -110,158 +163,1351 @@
             >
               <i class="bi bi-moon-fill"></i>
             </button>
-            <div class="topbar-datetime" id="topbarDatetime">
+
+            <div class="topbar-datetime">
               <div class="t-date">--</div>
               <div class="t-time">--</div>
             </div>
+
           </div>
+
         </div>
 
+
+        <!-- PAGE CONTENT -->
         <div class="main-container">
+
           <div class="row g-4">
+
+
+            <!-- NEW REQUEST -->
             <div class="col-lg-5">
+
               <div class="card card-custom">
+
                 <div class="card-body">
+
                   <h5 class="fw-bold mb-3 text-primary">
-                    <i class="bi bi-send me-2"></i>New Request
+                    <i class="bi bi-send me-2"></i>
+                    New Request
                   </h5>
+
+
                   <form id="leaveForm">
+
+                    <!-- Employee -->
                     <div class="mb-3">
-                      <label class="form-label small fw-bold">Employee</label>
+
+                      <label
+                        class="form-label small fw-bold"
+                        for="leaveEmpSelect"
+                      >
+                        Employee
+                      </label>
+
                       <select
                         class="form-select form-control-custom"
                         id="leaveEmpSelect"
-                      ></select>
+                        required
+                      >
+
+                        <option value="">
+                          Loading employees...
+                        </option>
+
+                      </select>
+
                     </div>
-                    <div class="row g-2 mb-3">
-                      <div class="col-6">
-                        <label class="form-label small fw-bold"
-                          >Start Date</label
-                        >
-                        <input
-                          type="date"
-                          class="form-control form-control-custom"
-                        />
-                      </div>
-                      <div class="col-6">
-                        <label class="form-label small fw-bold">End Date</label>
-                        <input
-                          type="date"
-                          class="form-control form-control-custom"
-                        />
-                      </div>
-                    </div>
+
+
+                    <!-- Leave Date -->
                     <div class="mb-3">
-                      <label class="form-label small fw-bold">Reason</label>
+
+                      <label
+                        class="form-label small fw-bold"
+                        for="leaveDate"
+                      >
+                        Leave Date
+                      </label>
+
+                      <input
+                        type="date"
+                        class="form-control form-control-custom"
+                        id="leaveDate"
+                        required
+                      />
+
+                    </div>
+
+
+                    <!-- Reason -->
+                    <div class="mb-3">
+
+                      <label
+                        class="form-label small fw-bold"
+                        for="leaveReason"
+                      >
+                        Reason
+                      </label>
+
                       <textarea
                         class="form-control form-control-custom"
+                        id="leaveReason"
                         rows="3"
+                        placeholder="Enter reason for leave..."
+                        required
                       ></textarea>
+
                     </div>
+
+
                     <button
                       type="submit"
                       class="btn btn-custom btn-custom-primary w-100"
+                      id="submitLeaveBtn"
                     >
+                      <i class="bi bi-send me-1"></i>
                       Submit Request
                     </button>
+
                   </form>
+
+
+                  <!-- Form feedback -->
+                  <div
+                    id="formMessage"
+                    class="alert mt-3 d-none"
+                    role="alert"
+                  ></div>
+
                 </div>
+
               </div>
+
             </div>
 
+
+            <!-- APPROVAL QUEUE -->
             <div class="col-lg-7">
+
               <div class="card card-custom">
+
                 <div class="card-body">
-                  <h5 class="fw-bold mb-3 text-primary">
-                    <i class="bi bi-list-check me-2"></i>Approval Queue
-                  </h5>
-                  <div id="requestList"></div>
+
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
+                  >
+
+                    <h5 class="fw-bold text-primary mb-0">
+                      <i class="bi bi-list-check me-2"></i>
+                      Approval Queue
+                    </h5>
+
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-custom-outline"
+                      id="refreshLeaveBtn"
+                    >
+                      <i class="bi bi-arrow-clockwise me-1"></i>
+                      Refresh
+                    </button>
+
+                  </div>
+
+
+                  <div id="requestList">
+
+                    <div class="text-center text-muted py-4">
+
+                      <div
+                        class="spinner-border spinner-border-sm me-2"
+                        role="status"
+                      ></div>
+
+                      Loading leave requests...
+
+                    </div>
+
+                  </div>
+
                 </div>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
+
       </main>
+
     </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="dummy-data.js"></script>
+
+
     <script>
-      const themeToggleBtn = document.getElementById("themeToggleBtn");
-      function applyTheme(isDark) {
-        document.body.classList.toggle("dark-mode", isDark);
-        localStorage.setItem("darkMode", isDark ? "true" : "false");
-        if (themeToggleBtn) {
-          themeToggleBtn.innerHTML = isDark
-            ? '<i class="bi bi-sun-fill"></i>'
-            : '<i class="bi bi-moon-fill"></i>';
-        }
+
+      /*
+       * ============================================================
+       * CONFIGURATION
+       * ============================================================
+       */
+
+      const API_BASE_URL =
+        "http://localhost:3000/api";
+
+
+      /*
+       * ============================================================
+       * DOM ELEMENTS
+       * ============================================================
+       */
+
+      const themeToggleBtn =
+        document.getElementById("themeToggleBtn");
+
+      const empSelect =
+        document.getElementById("leaveEmpSelect");
+
+      const leaveForm =
+        document.getElementById("leaveForm");
+
+      const leaveDate =
+        document.getElementById("leaveDate");
+
+      const leaveReason =
+        document.getElementById("leaveReason");
+
+      const requestList =
+        document.getElementById("requestList");
+
+      const formMessage =
+        document.getElementById("formMessage");
+
+      const submitLeaveBtn =
+        document.getElementById("submitLeaveBtn");
+
+      const refreshLeaveBtn =
+        document.getElementById("refreshLeaveBtn");
+
+
+      /*
+       * ============================================================
+       * AUTHENTICATION
+       * ============================================================
+       */
+
+      function getAuthToken() {
+
+        return (
+          localStorage.getItem("token") ||
+          sessionStorage.getItem("token")
+        );
+
       }
-      applyTheme(localStorage.getItem("darkMode") === "true");
-      themeToggleBtn?.addEventListener("click", () =>
-        applyTheme(!document.body.classList.contains("dark-mode")),
+
+
+      function getAuthHeaders() {
+
+        const token =
+          getAuthToken();
+
+        return {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        };
+
+      }
+
+
+      /*
+       * ============================================================
+       * HANDLE AUTH ERRORS
+       * ============================================================
+       */
+
+      function handleUnauthorized() {
+
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+
+        sessionStorage.removeItem(
+          "isAuthenticated"
+        );
+
+        window.location.href =
+          "login.html";
+
+      }
+
+
+      /*
+       * ============================================================
+       * THEME
+       * ============================================================
+       */
+
+      function applyTheme(isDark) {
+
+        document.body.classList.toggle(
+          "dark-mode",
+          isDark
+        );
+
+        localStorage.setItem(
+          "darkMode",
+          isDark ? "true" : "false"
+        );
+
+        if (themeToggleBtn) {
+
+          themeToggleBtn.innerHTML =
+            isDark
+              ? '<i class="bi bi-sun-fill"></i>'
+              : '<i class="bi bi-moon-fill"></i>';
+
+        }
+
+      }
+
+
+      applyTheme(
+        localStorage.getItem("darkMode") === "true"
       );
+
+
+      themeToggleBtn?.addEventListener(
+        "click",
+        () => {
+
+          applyTheme(
+            !document.body.classList.contains(
+              "dark-mode"
+            )
+          );
+
+        }
+      );
+
+
+      /*
+       * ============================================================
+       * SIDEBAR
+       * ============================================================
+       */
 
       document
         .getElementById("sidebar-toggle-btn")
-        ?.addEventListener("click", () => {
-          document.getElementById("wrapper").classList.toggle("toggled");
-        });
+        ?.addEventListener(
+          "click",
+          () => {
+
+            document
+              .getElementById("wrapper")
+              .classList.toggle("toggled");
+
+          }
+        );
+
+
       document
         .getElementById("mobile-toggle")
-        ?.addEventListener("click", () => {
-          document.getElementById("wrapper").classList.toggle("toggled");
-        });
+        ?.addEventListener(
+          "click",
+          () => {
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const data = window.__DUMMY_DATA__ || {};
-        const empSelect = document.getElementById("leaveEmpSelect");
-        const list = document.getElementById("requestList");
+            document
+              .getElementById("wrapper")
+              .classList.toggle("toggled");
 
-        // Fixed target parsing reference below
-        if (data.Performance && empSelect) {
-          data.Performance.forEach((emp) => {
-            let opt = new Option(emp.name, emp.employeeId);
-            empSelect.add(opt);
-          });
+          }
+        );
+
+
+      /*
+       * ============================================================
+       * CLOCK
+       * ============================================================
+       */
+
+      function updateClock() {
+
+        const now =
+          new Date();
+
+        const dateElement =
+          document.querySelector(".t-date");
+
+        const timeElement =
+          document.querySelector(".t-time");
+
+
+        if (dateElement) {
+
+          dateElement.textContent =
+            now.toLocaleDateString(
+              undefined,
+              {
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+              }
+            );
+
         }
 
-              function updateClock() {
-        const now = new Date();
-        document.querySelector(".t-date").textContent = now.toLocaleDateString(
-          undefined,
-          { weekday: "long", month: "short", day: "numeric" },
-        );
-        document.querySelector(".t-time").textContent = now.toLocaleTimeString(
-          undefined,
-          { hour: "2-digit", minute: "2-digit" },
-        );
+
+        if (timeElement) {
+
+          timeElement.textContent =
+            now.toLocaleTimeString(
+              undefined,
+              {
+                hour: "2-digit",
+                minute: "2-digit",
+              }
+            );
+
+        }
+
       }
-      updateClock();
-      setInterval(updateClock, 1000);
 
-        if (list && data.Performance) {
-          list.innerHTML = "";
-          data.Performance.forEach((record) => {
-            if (record.leaveRequests) {
-              record.leaveRequests.forEach((req) => {
-                const item = document.createElement("div");
-                item.className =
-                  "p-3 border rounded mb-2 d-flex justify-content-between align-items-center";
-                item.innerHTML = `
-                  <div>
-                    <div class="fw-bold">${record.name}</div>
-                    <div class="text-muted small">${req.reason} · ${req.date} (${req.status})</div>
-                  </div>
-                  <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-outline-danger">Reject</button>
-                    <button class="btn btn-sm btn-custom-primary">Approve</button>
-                  </div>`;
-                list.appendChild(item);
-              });
+
+      updateClock();
+
+      setInterval(
+        updateClock,
+        1000
+      );
+
+
+      /*
+       * ============================================================
+       * LOAD EMPLOYEES
+       *
+       * GET /api/employees
+       * ============================================================
+       */
+
+      async function loadEmployees() {
+
+        try {
+
+          empSelect.innerHTML = `
+            <option value="">
+              Loading employees...
+            </option>
+          `;
+
+
+          const response =
+            await fetch(
+              `${API_BASE_URL}/employees`,
+              {
+                headers:
+                  getAuthHeaders(),
+              }
+            );
+
+
+          if (response.status === 401) {
+
+            handleUnauthorized();
+
+            return;
+
+          }
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              "Failed to load employees."
+            );
+
+          }
+
+
+          const employees =
+            await response.json();
+
+
+          empSelect.innerHTML = `
+            <option value="">
+              Select an employee
+            </option>
+          `;
+
+
+          employees.forEach(
+            (employee) => {
+
+              const option =
+                document.createElement(
+                  "option"
+                );
+
+
+              option.value =
+                employee.employees_id;
+
+
+              option.textContent =
+                `${employee.first_name} ${employee.last_name}`;
+
+
+              empSelect.appendChild(
+                option
+              );
+
             }
-          });
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Employee loading error:",
+            error
+          );
+
+
+          empSelect.innerHTML = `
+            <option value="">
+              Failed to load employees
+            </option>
+          `;
+
         }
-      });
+
+      }
+
+
+      /*
+       * ============================================================
+       * LOAD LEAVE REQUESTS
+       *
+       * GET /api/leave
+       * ============================================================
+       */
+
+      async function loadLeaveRequests() {
+
+        try {
+
+          requestList.innerHTML = `
+            <div class="text-center text-muted py-4">
+
+              <div
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+              ></div>
+
+              Loading leave requests...
+
+            </div>
+          `;
+
+
+          /*
+           * Get employees and leave requests.
+           */
+
+          const [
+            employeesResponse,
+            leaveResponse
+          ] = await Promise.all([
+
+            fetch(
+              `${API_BASE_URL}/employees`,
+              {
+                headers:
+                  getAuthHeaders(),
+              }
+            ),
+
+            fetch(
+              `${API_BASE_URL}/leave`,
+              {
+                headers:
+                  getAuthHeaders(),
+              }
+            )
+
+          ]);
+
+
+          /*
+           * Authentication failure.
+           */
+
+          if (
+            employeesResponse.status === 401 ||
+            leaveResponse.status === 401
+          ) {
+
+            handleUnauthorized();
+
+            return;
+
+          }
+
+
+          if (!employeesResponse.ok) {
+
+            throw new Error(
+              "Failed to load employees."
+            );
+
+          }
+
+
+          if (!leaveResponse.ok) {
+
+            throw new Error(
+              "Failed to load leave requests."
+            );
+
+          }
+
+
+          const employees =
+            await employeesResponse.json();
+
+
+          const leaveData =
+            await leaveResponse.json();
+
+
+          const leaveRequests =
+            leaveData.leave_requests || [];
+
+
+          /*
+           * Create employee lookup.
+           */
+
+          const employeeMap =
+            new Map();
+
+
+          employees.forEach(
+            (employee) => {
+
+              employeeMap.set(
+                Number(
+                  employee.employees_id
+                ),
+                `${employee.first_name} ${employee.last_name}`
+              );
+
+            }
+          );
+
+
+          /*
+           * No requests.
+           */
+
+          if (
+            leaveRequests.length === 0
+          ) {
+
+            requestList.innerHTML = `
+
+              <div class="text-center text-muted py-5">
+
+                <i
+                  class="bi bi-calendar2-check"
+                  style="font-size: 2rem;"
+                ></i>
+
+                <p class="mt-2 mb-0">
+                  No leave requests found.
+                </p>
+
+              </div>
+
+            `;
+
+            return;
+
+          }
+
+
+          requestList.innerHTML =
+            "";
+
+
+          /*
+           * Render each request.
+           */
+
+          leaveRequests.forEach(
+            (request) => {
+
+              const employeeName =
+                employeeMap.get(
+                  Number(
+                    request.employees_id
+                  )
+                ) ||
+                `Employee #${request.employees_id}`;
+
+
+              /*
+               * Format date.
+               */
+
+              let formattedDate =
+                request.leave_date;
+
+
+              if (
+                request.leave_date
+              ) {
+
+                const date =
+                  new Date(
+                    request.leave_date
+                  );
+
+
+                if (
+                  !isNaN(
+                    date.getTime()
+                  )
+                ) {
+
+                  formattedDate =
+                    date.toLocaleDateString(
+                      "en-ZA",
+                      {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      }
+                    );
+
+                }
+
+              }
+
+
+              /*
+               * Status.
+               */
+
+              const status =
+                String(
+                  request.status ||
+                  "Pending"
+                ).toLowerCase();
+
+
+              let statusClass =
+                "bg-secondary";
+
+
+              if (
+                status === "approved"
+              ) {
+
+                statusClass =
+                  "bg-success";
+
+              } else if (
+                status === "pending"
+              ) {
+
+                statusClass =
+                  "bg-warning text-dark";
+
+              } else if (
+                status === "denied" ||
+                status === "rejected"
+              ) {
+
+                statusClass =
+                  "bg-danger";
+
+              }
+
+
+              /*
+               * Request card.
+               */
+
+              const item =
+                document.createElement(
+                  "div"
+                );
+
+
+              item.className =
+                "p-3 border rounded mb-2";
+
+
+              item.innerHTML = `
+
+                <div
+                  class="d-flex justify-content-between align-items-start gap-3"
+                >
+
+                  <div>
+
+                    <div class="fw-bold">
+                      ${escapeHtml(
+                        employeeName
+                      )}
+                    </div>
+
+                    <div
+                      class="text-muted small mt-1"
+                    >
+                      ${escapeHtml(
+                        request.reason ||
+                        "No reason provided"
+                      )}
+
+                      ·
+
+                      ${escapeHtml(
+                        formattedDate
+                      )}
+                    </div>
+
+                  </div>
+
+
+                  <span
+                    class="badge ${statusClass}"
+                  >
+                    ${escapeHtml(
+                      request.status ||
+                      "Pending"
+                    )}
+                  </span>
+
+                </div>
+
+
+                ${
+                  status === "pending"
+                    ? `
+
+                      <div
+                        class="d-flex gap-2 mt-3"
+                      >
+
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger"
+                          onclick="updateLeaveStatus(${request.leave_id}, 'Denied')"
+                        >
+                          <i class="bi bi-x-lg me-1"></i>
+                          Reject
+                        </button>
+
+
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-custom-primary"
+                          onclick="updateLeaveStatus(${request.leave_id}, 'Approved')"
+                        >
+                          <i class="bi bi-check-lg me-1"></i>
+                          Approve
+                        </button>
+
+                      </div>
+
+                    `
+                    : ""
+                }
+
+              `;
+
+
+              requestList.appendChild(
+                item
+              );
+
+            }
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Leave request loading error:",
+            error
+          );
+
+
+          requestList.innerHTML = `
+
+            <div class="alert alert-danger">
+
+              <i
+                class="bi bi-exclamation-triangle me-2"
+              ></i>
+
+              ${escapeHtml(
+                error.message
+              )}
+
+            </div>
+
+          `;
+
+        }
+
+      }
+
+
+      /*
+       * ============================================================
+       * SUBMIT LEAVE REQUEST
+       *
+       * POST /api/leave
+       *
+       * Backend expects:
+       *
+       * {
+       *   employees_id,
+       *   leave_date,
+       *   reason
+       * }
+       * ============================================================
+       */
+
+      leaveForm?.addEventListener(
+        "submit",
+        async (event) => {
+
+          event.preventDefault();
+
+
+          const employees_id =
+            empSelect.value;
+
+
+          const leave_date =
+            leaveDate.value;
+
+
+          const reason =
+            leaveReason.value.trim();
+
+
+          /*
+           * Frontend validation.
+           */
+
+          if (
+            !employees_id ||
+            !leave_date ||
+            !reason
+          ) {
+
+            showFormMessage(
+              "Please complete all fields.",
+              "danger"
+            );
+
+            return;
+
+          }
+
+
+          try {
+
+            submitLeaveBtn.disabled =
+              true;
+
+
+            submitLeaveBtn.innerHTML = `
+              <span
+                class="spinner-border spinner-border-sm me-1"
+                role="status"
+              ></span>
+
+              Submitting...
+            `;
+
+
+            /*
+             * Send request to backend.
+             */
+
+            const response =
+              await fetch(
+                `${API_BASE_URL}/leave`,
+                {
+                  method: "POST",
+
+                  headers:
+                    getAuthHeaders(),
+
+                  body:
+                    JSON.stringify({
+                      employees_id:
+                        Number(
+                          employees_id
+                        ),
+
+                      leave_date,
+
+                      reason,
+                    }),
+                }
+              );
+
+
+            /*
+             * Authentication failure.
+             */
+
+            if (
+              response.status === 401
+            ) {
+
+              handleUnauthorized();
+
+              return;
+
+            }
+
+
+            const data =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                data.message ||
+                "Failed to submit leave request."
+              );
+
+            }
+
+
+            /*
+             * Success.
+             */
+
+            showFormMessage(
+              "Leave request submitted successfully.",
+              "success"
+            );
+
+
+            /*
+             * Reset form.
+             */
+
+            leaveForm.reset();
+
+
+            /*
+             * Reload approval queue.
+             */
+
+            await loadLeaveRequests();
+
+
+          } catch (error) {
+
+            console.error(
+              "Submit leave error:",
+              error
+            );
+
+
+            showFormMessage(
+              error.message,
+              "danger"
+            );
+
+
+          } finally {
+
+            submitLeaveBtn.disabled =
+              false;
+
+
+            submitLeaveBtn.innerHTML = `
+              <i class="bi bi-send me-1"></i>
+              Submit Request
+            `;
+
+          }
+
+        }
+      );
+
+
+      /*
+       * ============================================================
+       * APPROVE / REJECT LEAVE REQUEST
+       *
+       * PUT /api/leave/:id
+       *
+       * IMPORTANT:
+       * The backend PUT endpoint expects all four fields:
+       *
+       * employees_id
+       * leave_date
+       * reason
+       * status
+       *
+       * Therefore we first fetch the existing request, then send
+       * the complete updated object.
+       * ============================================================
+       */
+
+      async function updateLeaveStatus(
+        leaveId,
+        newStatus
+      ) {
+
+        try {
+
+          /*
+           * Get the existing request.
+           */
+
+          const getResponse =
+            await fetch(
+              `${API_BASE_URL}/leave/${leaveId}`,
+              {
+                headers:
+                  getAuthHeaders(),
+              }
+            );
+
+
+          if (
+            getResponse.status === 401
+          ) {
+
+            handleUnauthorized();
+
+            return;
+
+          }
+
+
+          if (!getResponse.ok) {
+
+            throw new Error(
+              "Failed to retrieve leave request."
+            );
+
+          }
+
+
+          const existingData =
+            await getResponse.json();
+
+
+          const existingRequest =
+            existingData.leave_request;
+
+
+          /*
+           * Update status.
+           */
+
+          const updateResponse =
+            await fetch(
+              `${API_BASE_URL}/leave/${leaveId}`,
+              {
+                method: "PUT",
+
+                headers:
+                  getAuthHeaders(),
+
+                body:
+                  JSON.stringify({
+
+                    employees_id:
+                      existingRequest.employees_id,
+
+                    leave_date:
+                      existingRequest.leave_date.split("T")[0],
+
+                    reason:
+                      existingRequest.reason,
+
+                    status:
+                      newStatus,
+
+                  }),
+              }
+            );
+
+
+          if (
+            updateResponse.status === 401
+          ) {
+
+            handleUnauthorized();
+
+            return;
+
+          }
+
+
+          const updateData =
+            await updateResponse.json();
+
+
+          if (!updateResponse.ok) {
+
+            throw new Error(
+              updateData.message ||
+              "Failed to update leave request."
+            );
+
+          }
+
+
+          /*
+           * Reload queue.
+           */
+
+          await loadLeaveRequests();
+
+
+        } catch (error) {
+
+          console.error(
+            "Update leave request error:",
+            error
+          );
+
+
+          alert(
+            error.message
+          );
+
+        }
+
+      }
+
+
+      /*
+       * ============================================================
+       * FORM MESSAGE
+       * ============================================================
+       */
+
+      function showFormMessage(
+        message,
+        type
+      ) {
+
+        formMessage.textContent =
+          message;
+
+
+        formMessage.className =
+          `alert alert-${type} mt-3`;
+
+      }
+
+
+      /*
+       * ============================================================
+       * HTML ESCAPING
+       * ============================================================
+       */
+
+      function escapeHtml(
+        value
+      ) {
+
+        return String(value)
+          .replace(
+            /&/g,
+            "&amp;"
+          )
+          .replace(
+            /</g,
+            "&lt;"
+          )
+          .replace(
+            />/g,
+            "&gt;"
+          )
+          .replace(
+            /"/g,
+            "&quot;"
+          )
+          .replace(
+            /'/g,
+            "&#039;"
+          );
+
+      }
+
+
+      /*
+       * ============================================================
+       * REFRESH BUTTON
+       * ============================================================
+       */
+
+      refreshLeaveBtn?.addEventListener(
+        "click",
+        async () => {
+
+          refreshLeaveBtn.disabled =
+            true;
+
+
+          refreshLeaveBtn.innerHTML = `
+            <span
+              class="spinner-border spinner-border-sm me-1"
+              role="status"
+            ></span>
+
+            Refreshing...
+          `;
+
+
+          await loadLeaveRequests();
+
+
+          refreshLeaveBtn.disabled =
+            false;
+
+
+          refreshLeaveBtn.innerHTML = `
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Refresh
+          `;
+
+        }
+      );
+
+
+      /*
+       * ============================================================
+       * INITIALISE PAGE
+       * ============================================================
+       */
+
+      loadEmployees();
+
+      loadLeaveRequests();
+
     </script>
+
   </body>
 </html>

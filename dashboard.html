@@ -151,7 +151,7 @@
                       <i class="bi bi-people-fill text-primary"></i>
                     </div>
                   </div>
-                  <h2>10</h2>
+                  <h2 id="totalEmployees">10</h2>
                   <small>Total Employees</small>
                 </div>
               </div>
@@ -164,7 +164,7 @@
                       <i class="bi bi-cash-stack"></i>
                     </div>
                   </div>
-                  <h2>R636k</h2>
+                  <h2 id="payrollProcessed">R636k</h2>
                   <small>Payroll Processed</small>
                 </div>
               </div>
@@ -177,7 +177,7 @@
                       <i class="bi bi-clock-history"></i>
                     </div>
                   </div>
-                  <h2>0</h2>
+                  <h2 id="pendingRequests">0</h2>
                   <small>Pending Requests</small>
                 </div>
               </div>
@@ -190,7 +190,7 @@
                       <i class="bi bi-calendar-check text-accent"></i>
                     </div>
                   </div>
-                  <h2>96.4%</h2>
+                  <h2 id="performanceRate">96.4%</h2>
                   <small>Performance Rate</small>
                 </div>
               </div>
@@ -286,6 +286,34 @@
       document.addEventListener("DOMContentLoaded", () => {
         const themeToggleBtn = document.getElementById("themeToggleBtn");
         let perfChart = null;
+
+        async function loadDashboardStats() {
+          try {
+            const response = await fetch("http://localhost:3000/api/dashboard/stats");
+
+            if (!response.ok) {
+              throw new Error(`HTTP error: ${response.status}`);
+            }
+
+            const stats = await response.json();
+
+            document.getElementById("totalEmployees").textContent =
+            stats.totalEmployees;
+
+            document.getElementById("payrollProcessed").textContent =
+            `R${Number(stats.payrollProcessed).toLocaleString("en-ZA")}`;
+
+            document.getElementById("pendingRequests").textContent =
+            stats.pendingRequests;
+
+            document.getElementById("performanceRate").textContent =
+              stats.performanceRate;
+          } catch (error) {
+            console.error("Failed to load dashboard statistics:", error);
+          } 
+        }
+
+        loadDashboardStats();
 
         // Render Performance Overview Chart Configuration 
         function initPerformanceChart(isDark) {

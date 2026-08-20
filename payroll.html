@@ -48,9 +48,9 @@
               <span>Performance</span>
             </a>
           </li>
-          
+
           <li class="sidebar-item">
-            <a
+            
               class="sidebar-link"
               href="attendance.html"
             >
@@ -111,6 +111,8 @@
         </div>
 
         <div class="main-container">
+          <div id="statusBanner" class="alert d-none mb-3" role="alert"></div>
+
           <div class="card card-custom mb-4">
             <div
               class="card-body input-strip-grid"
@@ -129,7 +131,9 @@
                   id="empSelect"
                   class="form-select form-control-custom"
                   style="cursor: pointer"
-                ></select>
+                >
+                  <option value="">Loading employees...</option>
+                </select>
               </div>
               <div>
                 <label class="small fw-bold text-muted text-uppercase"
@@ -214,6 +218,14 @@
                   <p class="text-muted small mb-0">
                     <span id="psDept">--</span> · <span id="psId">--</span>
                   </p>
+                  <button
+                    id="saveBtn"
+                    class="btn btn-primary btn-sm mt-2"
+                    type="button"
+                    disabled
+                  >
+                    <i class="bi bi-save2"></i> Save Payroll
+                  </button>
                 </div>
               </div>
 
@@ -278,6 +290,54 @@
     function getAuthToken() {
       return localStorage.getItem('token');
     }
+    <script>
+      const API_BASE = "/api/payroll";
+      let employeesCache = [];
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const empSelect = document.getElementById("empSelect");
+        const saveBtn = document.getElementById("saveBtn");
+        const statusBanner = document.getElementById("statusBanner");
+
+        // --- AUTH CHECK ---
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        function authHeaders() {
+          return {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          };
+        }
+
+        function showBanner(message, type) {
+          statusBanner.textContent = message;
+          statusBanner.className = "alert alert-" + type + " mb-3";
+        }
+
+        function hideBanner() {
+          statusBanner.className = "alert d-none mb-3";
+        }
+
+        async function apiFetch(path, options = {}) {
+          const res = await fetch(API_BASE + path, {
+            ...options,
+            headers: { ...authHeaders(), ...(options.headers || {}) },
+          });
+          if (res.status === 401 || res.status === 403) {
+            sessionStorage.removeItem("token");
+            window.location.href = "login.html";
+            throw new Error("Session expired");
+          }
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || data.success === false) {
+            throw new Error(data.message || "Request failed (" + res.status + ")");
+          }
+          return data;
+        }
 
     // Helper for API calls
     async function apiCall(endpoint, options = {}) {
@@ -343,6 +403,10 @@
       const gross = base + bonus;
       const taxDed = gross * (taxRate / 100);
       const net = gross - taxDed - leaveDed;
+        // --- PAYROLL LOGIC ---
+        function formatMoney(v) {
+          return "ZAR " + Math.round(v || 0).toLocaleString("en-ZA");
+        }
 
       document.getElementById("netFigure").textContent = formatMoney(net);
       document.getElementById("psBase").textContent = formatMoney(base);
@@ -371,6 +435,16 @@
         if (employees.length > 0) {
           empSelect.value = employees[0].id;
           empSelect.dispatchEvent(new Event('change'));
+          document.getElementById("netFigure").textContent = formatMoney(net);
+          document.getElementById("psBase").textContent = formatMoney(base);
+          document.getElementById("psBonus").textContent = formatMoney(bonus);
+          document.getElementById("psGross").textContent = formatMoney(gross);
+          document.getElementById("psTax").textContent =
+            "- " + formatMoney(taxDed);
+          document.getElementById("psLeave").textContent =
+            "- " + formatMoney(leaveDed);
+          document.getElementById("psNet").textContent = formatMoney(net);
+          document.getElementById("refSalary").textContent = formatMoney(net);
         }
       } catch (error) {
         console.error('Error loading employees:', error);
@@ -405,6 +479,70 @@
           document.getElementById("refSalary").textContent = formatMoney(annualSalary);
           
           calculate();
+        // --- LOAD EMPLOYEES FROM REAL BACKEND ---
+        async function loadEmployees() {
+          try {
+            const data = await apiFetch("/employees");
+            employeesCache = data.employees || [];
+            empSelect.innerHTML = "";
+            if (employeesCache.length === 0) {
+              empSelect.add(new Option("No employees found", ""));
+              return;
+            }
+            employeesCache.forEach((emp) => {
+              const label = `${emp.first_name} ${emp.last_name}`;
+              empSelect.add(new Option(label, emp.employees_id));
+            });
+            empSelect.dispatchEvent(new Event("change"));
+          } catch (err) {
+            showBanner("Failed to load employees: " + err.message, "danger");
+          }
+        }
+
+        // --- LOAD REAL PAYROLL DATA FOR SELECTED EMPLOYEE ---
+        async function loadEmployeePayroll(employeeId) {
+          const emp = employeesCache.find(
+            (e) => String(e.employees_id) === String(employeeId),
+          );
+          if (!emp) return;
+
+          document.getElementById("psName").textContent =
+            `${emp.first_name} ${emp.last_name}`;
+          document.getElementById("psPosition").textContent =
+            emp.position || "Staff Member";
+          document.getElementById("psDept").textContent =
+            emp.department_name || "Operations";
+          document.getElementById("psId").textContent = "EMP-" + emp.employees_id;
+
+          document.getElementById("monthlyBase").value = Math.round(
+            (emp.salary || 0) / 12,
+          );
+          document.getElementById("bonus").value = 0;
+          document.getElementById("leaveHours").value = 0;
+          document.getElementById("hoursWorked").value = 0;
+
+          try {
+            const data = await apiFetch(`/employee/${employeeId}`);
+            const record = Array.isArray(data.payroll)
+              ? data.payroll[0]
+              : data.payroll;
+            if (record) {
+              document.getElementById("hoursWorked").value =
+                record.hours_worked || 0;
+              document.getElementById("leaveHours").value =
+                record.hours_worked || 0;
+              if (record.bonus !== undefined)
+                document.getElementById("bonus").value = record.bonus;
+              if (record.monthly_base !== undefined)
+                document.getElementById("monthlyBase").value =
+                  record.monthly_base;
+            }
+          } catch (err) {
+            // No existing payroll record yet is fine — just use salary defaults
+          }
+
+          calculate();
+          saveBtn.disabled = false;
         }
       } catch (error) {
         // 404 means no payroll record yet - that's fine
@@ -437,6 +575,12 @@
         alert('Please select an employee first.');
         return;
       }
+        empSelect.addEventListener("change", () => {
+          hideBanner();
+          if (empSelect.value) {
+            loadEmployeePayroll(empSelect.value);
+          }
+        });
 
       const currentPeriod = new Date().toISOString().slice(0, 7);
       const grossPay = parseFloat(monthlyBaseInput.value) || 0;
@@ -541,6 +685,69 @@
         
         document.getElementById('savePayrollBtn')?.addEventListener('click', savePayroll);
         document.getElementById('autoCalcBtn')?.addEventListener('click', autoCalculate);
+        // --- SAVE TO REAL BACKEND ---
+        saveBtn.addEventListener("click", async () => {
+          const employeeId = empSelect.value;
+          if (!employeeId) return;
+
+          saveBtn.disabled = true;
+          saveBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Saving...';
+
+          const payload = {
+            employeeId,
+            monthlyBase:
+              parseFloat(document.getElementById("monthlyBase").value) || 0,
+            hoursWorked:
+              parseFloat(document.getElementById("hoursWorked").value) || 0,
+            leaveHours:
+              parseFloat(document.getElementById("leaveHours").value) || 0,
+            bonus: parseFloat(document.getElementById("bonus").value) || 0,
+            taxRate: parseFloat(document.getElementById("taxRate").value) || 0,
+          };
+
+          try {
+            await apiFetch("/calculate", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            showBanner("Payroll saved successfully.", "success");
+          } catch (err) {
+            showBanner("Failed to save payroll: " + err.message, "danger");
+          } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="bi bi-save2"></i> Save Payroll';
+          }
+        });
+
+        loadEmployees();
+
+        // Clock
+        function updateClock() {
+          const now = new Date();
+          document.querySelector(".t-date").textContent =
+            now.toLocaleDateString(undefined, {
+              weekday: "long",
+              month: "short",
+              day: "numeric",
+            });
+          document.querySelector(".t-time").textContent =
+            now.toLocaleTimeString(undefined, {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        document.getElementById("sidebar-toggle-btn").onclick = () =>
+          document.getElementById("wrapper").classList.toggle("toggled");
+        document.getElementById("mobile-toggle").onclick = () =>
+          document.getElementById("wrapper").classList.toggle("toggled");
+      });
+
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
       }
     }
 
