@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -293,6 +293,7 @@
     transition: background 0.15s ease;
   }
   .signin-btn:hover{ background:#28A876; }
+  .signin-btn:disabled{ opacity:0.7; cursor:not-allowed; }
 
   .demo-note{
     background: rgba(47,191,131,0.08);
@@ -416,7 +417,7 @@
           <label for="email">Email</label>
           <div class="input-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-            <input type="email" id="email" placeholder="you@moderntech.com" autocomplete="username" value="priya.raman@moderntech.com" />
+            <input type="email" id="email" placeholder="you@moderntech.com" autocomplete="username" />
           </div>
         </div>
 
@@ -424,8 +425,8 @@
           <label for="password">Password</label>
           <div class="input-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
-            <input type="text" id="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" value="ledgerline-demo" />
-            <button type="button" class="toggle-pw" id="togglePw">Hide</button>
+            <input type="password" id="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" />
+            <button type="button" class="toggle-pw" id="togglePw">Show</button>
           </div>
         </div>
 
@@ -457,10 +458,14 @@
 </div>
 
 <script>
+  var API_BASE = 'http://localhost:4000';
+
   var form = document.getElementById('loginForm');
   var errorMsg = document.getElementById('errorMsg');
   var togglePw = document.getElementById('togglePw');
   var pwInput = document.getElementById('password');
+  var signinBtn = document.querySelector('.signin-btn');
+  var signinBtnDefaultHTML = signinBtn.innerHTML;
 
   togglePw.addEventListener('click', function(){
     if(pwInput.type === 'password'){
@@ -484,7 +489,41 @@
     }
 
     errorMsg.classList.remove('show');
-    window.location.href = 'Payroll.html';
+    signinBtn.disabled = true;
+    signinBtn.textContent = 'Signing in...';
+
+    fetch(API_BASE + '/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: email, password: password })
+    })
+      .then(function(res){
+        return res.json().then(function(data){
+          return { status: res.status, body: data };
+        });
+      })
+      .then(function(result){
+        if (!result.body.success) {
+          errorMsg.textContent = result.body.message || 'Login failed. Please try again.';
+          errorMsg.classList.add('show');
+          signinBtn.disabled = false;
+          signinBtn.innerHTML = signinBtnDefaultHTML;
+          return;
+        }
+
+        // Store token for use on other pages
+        sessionStorage.setItem('authToken', result.body.token);
+        sessionStorage.setItem('authUser', JSON.stringify(result.body.user));
+
+        window.location.href = 'Payroll.html';
+      })
+      .catch(function(err){
+        console.error('Login request failed:', err);
+        errorMsg.textContent = 'Could not reach the server. Is the backend running?';
+        errorMsg.classList.add('show');
+        signinBtn.disabled = false;
+        signinBtn.innerHTML = signinBtnDefaultHTML;
+      });
   });
 
   document.getElementById('forgotLink').addEventListener('click', function(e){
@@ -493,4 +532,4 @@
   });
 </script>
 </body>
-</html> -->
+</html>
