@@ -114,13 +114,33 @@
             <p>Welcome back! Here is what's happening today.</p>
           </div>
           <div class="topbar-tools">
-            <div class="topbar-search">
+            <div class="topbar-search" style="position: relative;">
               <i class="bi bi-search"></i>
               <input
                 type="text"
                 class="form-control"
-                placeholder="Search anything..."
+                id="topbarSearchInput"
+                placeholder="Search employees..."
+                autocomplete="off"
               />
+              <div
+                id="topbarSearchResults"
+                class="d-none"
+                style="
+                  position: absolute;
+                  top: 100%;
+                  left: 0;
+                  right: 0;
+                  background: var(--card, #fff);
+                  border: 1px solid rgba(0,0,0,0.1);
+                  border-radius: 8px;
+                  margin-top: 6px;
+                  max-height: 320px;
+                  overflow-y: auto;
+                  z-index: 1050;
+                  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+                "
+              ></div>
             </div>
             <button
               class="theme-toggle-btn"
@@ -327,6 +347,107 @@
           }
         }
         loadRecentActivity();
+
+        // --- TOPBAR SEARCH (real employee lookup) ---
+        const searchInput = document.getElementById("topbarSearchInput");
+        const searchResults = document.getElementById("topbarSearchResults");
+        let allEmployeesForSearch = [];
+        let employeesLoadedForSearch = false;
+        let searchDebounce = null;
+
+        async function ensureEmployeesLoadedForSearch() {
+          if (employeesLoadedForSearch) return;
+          try {
+            const response = await fetch("https://moderntech-backend-1.onrender.com/api/employees");
+            if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+            allEmployeesForSearch = await response.json();
+            employeesLoadedForSearch = true;
+          } catch (error) {
+            console.error("Failed to load employees for search:", error);
+          }
+        }
+
+        function renderSearchResults(matches, query) {
+          if (!query) {
+            searchResults.classList.add("d-none");
+            searchResults.innerHTML = "";
+            return;
+          }
+
+          if (matches.length === 0) {
+            searchResults.innerHTML = `<div class="p-3 text-muted small">No employees match "${query}".</div>`;
+            searchResults.classList.remove("d-none");
+            return;
+          }
+
+          searchResults.innerHTML = matches
+            .slice(0, 8)
+            .map((emp) => `
+              <div class="d-flex align-items-center gap-2 p-2 topbar-search-result" style="cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.06);" data-id="${emp.employees_id}">
+                <div class="icon-shape bg-soft-primary" style="width: 32px; height: 32px; flex-shrink: 0;">
+                  <i class="bi bi-person text-primary" style="font-size: 0.8rem;"></i>
+                </div>
+                <div>
+                  <div class="fw-bold small">${emp.first_name} ${emp.last_name}</div>
+                  <div class="text-muted" style="font-size: 0.75rem;">${emp.position || '--'} &middot; ${emp.department_name || '--'}</div>
+                </div>
+              </div>
+            `)
+            .join("");
+
+          searchResults.classList.remove("d-none");
+
+          searchResults.querySelectorAll(".topbar-search-result").forEach((el) => {
+            el.addEventListener("click", () => {
+              window.location.href = "employees.html";
+            });
+          });
+        }
+
+        searchInput?.addEventListener("input", () => {
+          const query = searchInput.value.trim().toLowerCase();
+
+          clearTimeout(searchDebounce);
+          searchDebounce = setTimeout(async () => {
+            if (!query) {
+              renderSearchResults([], "");
+              return;
+            }
+            await ensureEmployeesLoadedForSearch();
+            const matches = allEmployeesForSearch.filter((emp) => {
+              const haystack = `${emp.first_name} ${emp.last_name} ${emp.position || ''} ${emp.department_name || ''}`.toLowerCase();
+              return haystack.includes(query);
+            });
+            renderSearchResults(matches, query);
+          }, 200);
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".topbar-search")) {
+            searchResults.classList.add("d-none");
+          }
+        });
+
+        // --- EXPORT REPORT (CSV of performance chart data) ---
+        document.getElementById("exportReportBtn")?.addEventListener("click", () => {
+          if (!perfChart) return;
+
+          const labels = perfChart.data.labels;
+          const values = perfChart.data.datasets[0].data;
+
+          let csv = "Month,Performance Efficiency (%)\n";
+          labels.forEach((label, i) => {
+            csv += `${label},${values[i]}\n`;
+          });
+
+          const blob = new Blob([csv], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "performance_report.csv";
+          a.click();
+          URL.revokeObjectURL(url);
+        });
 
         // Render Performance Overview Chart Configuration 
         function initPerformanceChart(isDark) {
