@@ -261,348 +261,151 @@
 
 
           <!-- ====================================================
-               STATISTICS
+               LOADING / ERROR STATE
           ===================================================== -->
 
-          <div class="row g-4 mb-4">
-
-
-            <!-- PRESENT -->
-            <div class="col-md-3">
-
-              <div class="card card-custom stat-card">
-
-                <div class="card-body">
-
-                  <div class="stat-top">
-
-                    <div class="icon-shape bg-soft-success">
-
-                      <i
-                        class="bi bi-check-circle text-success"
-                      ></i>
-
-                    </div>
-
-                  </div>
-
-
-                  <h2 id="presentCount">
-                    0
-                  </h2>
-
-                  <small>
-                    Present Records
-                  </small>
-
-                </div>
-
-              </div>
-
+          <div
+            id="attendanceLoadingState"
+            class="text-center py-5"
+          >
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
             </div>
-
-
-
-            <!-- ABSENT -->
-            <div class="col-md-3">
-
-              <div class="card card-custom stat-card">
-
-                <div class="card-body">
-
-                  <div class="stat-top">
-
-                    <div class="icon-shape bg-soft-danger">
-
-                      <i
-                        class="bi bi-x-circle text-danger"
-                      ></i>
-
-                    </div>
-
-                  </div>
-
-
-                  <h2 id="absentCount">
-                    0
-                  </h2>
-
-                  <small>
-                    Absent Records
-                  </small>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            <!-- LATE -->
-            <div class="col-md-3">
-
-              <div class="card card-custom stat-card">
-
-                <div class="card-body">
-
-                  <div class="stat-top">
-
-                    <div class="icon-shape bg-soft-warning">
-
-                      <i
-                        class="bi bi-clock-history text-warning"
-                      ></i>
-
-                    </div>
-
-                  </div>
-
-
-                  <h2 id="lateCount">
-                    0
-                  </h2>
-
-                  <small>
-                    Late Records
-                  </small>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-
-            <!-- RATE -->
-            <div class="col-md-3">
-
-              <div class="card card-custom stat-card">
-
-                <div class="card-body">
-
-                  <div class="stat-top">
-
-                    <div class="icon-shape bg-soft-primary">
-
-                      <i
-                        class="bi bi-calendar-check text-primary"
-                      ></i>
-
-                    </div>
-
-                  </div>
-
-
-                  <h2 id="attendanceRate">
-                    0%
-                  </h2>
-
-                  <small>
-                    Overall Attendance
-                  </small>
-
-                </div>
-
-              </div>
-
-            </div>
-
+            <p class="text-muted mt-3 mb-0">Loading attendance data...</p>
           </div>
 
 
-
-          <!-- ====================================================
-               EMPLOYEE ATTENDANCE
-          ===================================================== -->
-
-          <div class="card card-custom mb-4">
-
-            <div class="card-body">
-
-
-              <!-- Heading -->
-              <div
-                class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
-              >
-
-                <div>
-
-                  <h5 class="fw-bold mb-1 text-primary">
-                    Employee Attendance
-                  </h5>
-
-                  <p class="text-muted mb-0">
-                    Search employees and review their attendance history.
-                  </p>
-
-                </div>
-
-              </div>
-
-
-
-              <!-- ==================================================
-                   SEARCH + FILTER
-              =================================================== -->
-
-              <div class="row g-3 mb-4">
-
-
-                <!-- Search -->
-                <div class="col-lg-8">
-
-                  <div class="input-group">
-
-                    <span class="input-group-text">
-                      <i class="bi bi-search"></i>
-                    </span>
-
-                    <input
-                      type="text"
-                      id="attendanceSearch"
-                      class="form-control"
-                      placeholder="Search by employee name or ID..."
-                    />
-
-                  </div>
-
-                </div>
-
-
-                <!-- Status Filter -->
-                <div class="col-lg-4">
-
-                  <select
-                    id="statusFilter"
-                    class="form-select"
-                  >
-
-                    <option value="all">
-                      All Attendance
-                    </option>
-
-                    <option value="Present">
-                      Present
-                    </option>
-
-                    <option value="Absent">
-                      Absent
-                    </option>
-
-                  </select>
-
-                </div>
-
-              </div>
-
-
-
-              <!-- ==================================================
-                   EMPLOYEE CARDS
-              =================================================== -->
-
-              <div
-                id="employeeAttendanceContainer"
-                class="row g-4"
-              >
-
-                <!-- JavaScript inserts employee cards here -->
-
-              </div>
-
-
+          <div
+            id="attendanceErrorState"
+            class="text-center py-5 d-none"
+          >
+            <div class="icon-shape bg-soft-danger mx-auto mb-3">
+              <i class="bi bi-exclamation-triangle text-danger"></i>
             </div>
-
+            <h5 class="fw-bold">Couldn't load attendance data</h5>
+            <p class="text-muted mb-3" id="attendanceErrorMessage">
+              Something went wrong while fetching attendance records.
+            </p>
+            <button
+              class="btn btn-custom btn-custom-primary"
+              id="retryAttendanceBtn"
+              type="button"
+            >
+              <i class="bi bi-arrow-clockwise"></i>
+              Retry
+            </button>
           </div>
 
 
-
-          <!-- ====================================================
-               ATTENDANCE SUMMARY
-          ===================================================== -->
-
-          <div class="row g-4">
+          <div id="attendanceContent" class="d-none">
 
 
-            <!-- Overview -->
-            <div class="col-lg-7">
+            <!-- ====================================================
+                 STATISTICS
+            ===================================================== -->
 
-              <div class="card card-custom h-100">
-
-                <div class="card-body">
-
-                  <h5 class="fw-bold mb-1 text-primary">
-                    Attendance Overview
-                  </h5>
-
-                  <p class="text-muted mb-4">
-                    Summary of the available employee attendance records.
-                  </p>
+            <div class="row g-4 mb-4">
 
 
-                  <div class="row g-3">
+              <!-- PRESENT -->
+              <div class="col-md-4">
 
+                <div class="card card-custom stat-card">
 
-                    <!-- Present -->
-                    <div class="col-sm-4">
+                  <div class="card-body">
 
-                      <div
-                        class="p-3 rounded-3 bg-soft-success"
-                      >
+                    <div class="stat-top">
 
-                        <small class="d-block mb-1">
-                          Present
-                        </small>
+                      <div class="icon-shape bg-soft-success">
 
-                        <strong id="summaryPresent">
-                          0 records
-                        </strong>
+                        <i
+                          class="bi bi-check-circle text-success"
+                        ></i>
 
                       </div>
 
                     </div>
 
 
-                    <!-- Absent -->
-                    <div class="col-sm-4">
+                    <h2 id="presentCount">
+                      0
+                    </h2>
 
-                      <div
-                        class="p-3 rounded-3 bg-soft-danger"
-                      >
+                    <small>
+                      Present Records
+                    </small>
 
-                        <small class="d-block mb-1">
-                          Absent
-                        </small>
+                  </div>
 
-                        <strong id="summaryAbsent">
-                          0 records
-                        </strong>
+                </div>
+
+              </div>
+
+
+
+              <!-- ABSENT -->
+              <div class="col-md-4">
+
+                <div class="card card-custom stat-card">
+
+                  <div class="card-body">
+
+                    <div class="stat-top">
+
+                      <div class="icon-shape bg-soft-danger">
+
+                        <i
+                          class="bi bi-x-circle text-danger"
+                        ></i>
+
+                      </div>
+
+                    </div>
+
+
+                    <h2 id="absentCount">
+                      0
+                    </h2>
+
+                    <small>
+                      Absent Records
+                    </small>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- RATE -->
+              <div class="col-md-4">
+
+                <div class="card card-custom stat-card">
+
+                  <div class="card-body">
+
+                    <div class="stat-top">
+
+                      <div class="icon-shape bg-soft-primary">
+
+                        <i
+                          class="bi bi-calendar-check text-primary"
+                        ></i>
 
                       </div>
 
                     </div>
 
 
-                    <!-- Late -->
-                    <div class="col-sm-4">
+                    <h2 id="attendanceRate">
+                      0%
+                    </h2>
 
-                      <div
-                        class="p-3 rounded-3 bg-soft-warning"
-                      >
-
-                        <small class="d-block mb-1">
-                          Late
-                        </small>
-
-                        <strong id="summaryLate">
-                          0 records
-                        </strong>
-
-                      </div>
-
-                    </div>
+                    <small>
+                      Overall Attendance
+                    </small>
 
                   </div>
 
@@ -614,42 +417,225 @@
 
 
 
-            <!-- Reminder -->
-            <div class="col-lg-5">
+            <!-- ====================================================
+                 EMPLOYEE ATTENDANCE
+            ===================================================== -->
 
-              <div class="card card-custom h-100">
+            <div class="card card-custom mb-4">
 
-                <div class="card-body">
-
-                  <h5 class="fw-bold mb-1 text-primary">
-                    Attendance Reminder
-                  </h5>
-
-                  <p class="text-muted mb-3">
-                    Employees with absent attendance records.
-                  </p>
+              <div class="card-body">
 
 
-                  <div class="d-flex align-items-center gap-3">
+                <!-- Heading -->
+                <div
+                  class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4"
+                >
 
-                    <div class="icon-shape bg-soft-warning">
+                  <div>
 
-                      <i
-                        class="bi bi-bell text-warning"
-                      ></i>
+                    <h5 class="fw-bold mb-1 text-primary">
+                      Employee Attendance
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                      Search employees and review their attendance history.
+                    </p>
+
+                  </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     SEARCH + FILTER
+                =================================================== -->
+
+                <div class="row g-3 mb-4">
+
+
+                  <!-- Search -->
+                  <div class="col-lg-8">
+
+                    <div class="input-group">
+
+                      <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                      </span>
+
+                      <input
+                        type="text"
+                        id="attendanceSearch"
+                        class="form-control"
+                        placeholder="Search by employee name or ID..."
+                      />
 
                     </div>
 
+                  </div>
 
-                    <div>
 
-                      <strong id="attendanceReminder">
-                        No attendance issues
-                      </strong>
+                  <!-- Status Filter -->
+                  <div class="col-lg-4">
 
-                      <small class="d-block text-muted">
-                        Review attendance records regularly.
-                      </small>
+                    <select
+                      id="statusFilter"
+                      class="form-select"
+                    >
+
+                      <option value="all">
+                        All Attendance
+                      </option>
+
+                      <option value="Present">
+                        Present
+                      </option>
+
+                      <option value="Absent">
+                        Absent
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                </div>
+
+
+
+                <!-- ==================================================
+                     EMPLOYEE CARDS
+                =================================================== -->
+
+                <div
+                  id="employeeAttendanceContainer"
+                  class="row g-4"
+                >
+
+                  <!-- JavaScript inserts employee cards here -->
+
+                </div>
+
+
+              </div>
+
+            </div>
+
+
+
+            <!-- ====================================================
+                 ATTENDANCE SUMMARY
+            ===================================================== -->
+
+            <div class="row g-4">
+
+
+              <!-- Overview -->
+              <div class="col-lg-7">
+
+                <div class="card card-custom h-100">
+
+                  <div class="card-body">
+
+                    <h5 class="fw-bold mb-1 text-primary">
+                      Attendance Overview
+                    </h5>
+
+                    <p class="text-muted mb-4">
+                      Summary of the available employee attendance records.
+                    </p>
+
+
+                    <div class="row g-3">
+
+
+                      <!-- Present -->
+                      <div class="col-sm-6">
+
+                        <div
+                          class="p-3 rounded-3 bg-soft-success"
+                        >
+
+                          <small class="d-block mb-1">
+                            Present
+                          </small>
+
+                          <strong id="summaryPresent">
+                            0 records
+                          </strong>
+
+                        </div>
+
+                      </div>
+
+
+                      <!-- Absent -->
+                      <div class="col-sm-6">
+
+                        <div
+                          class="p-3 rounded-3 bg-soft-danger"
+                        >
+
+                          <small class="d-block mb-1">
+                            Absent
+                          </small>
+
+                          <strong id="summaryAbsent">
+                            0 records
+                          </strong>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Reminder -->
+              <div class="col-lg-5">
+
+                <div class="card card-custom h-100">
+
+                  <div class="card-body">
+
+                    <h5 class="fw-bold mb-1 text-primary">
+                      Attendance Reminder
+                    </h5>
+
+                    <p class="text-muted mb-3">
+                      Employees with absent attendance records.
+                    </p>
+
+
+                    <div class="d-flex align-items-center gap-3">
+
+                      <div class="icon-shape bg-soft-warning">
+
+                        <i
+                          class="bi bi-bell text-warning"
+                        ></i>
+
+                      </div>
+
+
+                      <div>
+
+                        <strong id="attendanceReminder">
+                          No attendance issues
+                        </strong>
+
+                        <small class="d-block text-muted">
+                          Review attendance records regularly.
+                        </small>
+
+                      </div>
 
                     </div>
 
@@ -683,21 +669,40 @@
 
 
     <!-- =========================================================
-         YOUR DUMMY DATA
-         
-         IMPORTANT:
-         Keep this BEFORE the attendance JavaScript below.
-    ========================================================== -->
-
-    <script src="dummy-data.js"></script>
-
-
-
-    <!-- =========================================================
          ATTENDANCE JAVASCRIPT
-    ========================================================== -->
+         
+         Pulls real data from GET /api/attendance instead of
+         dummy-data.js. Expected response shape (array):
+         [
+           {
+             employeeId: 1,
+             name: "Jane Doe",
+             records: [
+               { date: "2025-01-05", status: "Present" },
+               { date: "2025-01-06", status: "Absent" }
+             ]
+           },
+           ...
+         ]
+    ========================================================== */
 
     <script>
+
+      /* =========================================================
+         API CONFIG
+
+         Adjust API_BASE_URL if your frontend/backend hosting
+         setup changes. This mirrors the CORS origins already
+         configured in server.js.
+      ========================================================== */
+
+      const API_BASE_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:4000"
+          : "https://hrflow-xg3y.onrender.com";
+
+
 
       /* =========================================================
          DARK MODE
@@ -827,35 +832,129 @@
 
 
       /* =========================================================
-         GET ATTENDANCE DATA
-         
-         Your data.js uses:
-
-         window.__DUMMY_DATA__.Performance
-
-         Each employee contains:
-         - employeeId
-         - name
-         - Performance[]
-         - leaveRequests[]
+         STATE
       ========================================================== */
 
-      const attendanceEmployees =
-        window.__DUMMY_DATA__?.Performance || [];
+      let attendanceEmployees = [];
 
 
 
       /* =========================================================
-         GLOBAL COUNTERS
+         DOM REFERENCES FOR LOADING / ERROR / CONTENT
       ========================================================== */
 
-      let totalPresent = 0;
+      const loadingStateEl =
+        document.getElementById("attendanceLoadingState");
 
-      let totalAbsent = 0;
+      const errorStateEl =
+        document.getElementById("attendanceErrorState");
 
-      let totalLate = 0;
+      const errorMessageEl =
+        document.getElementById("attendanceErrorMessage");
 
-      let totalRecords = 0;
+      const contentEl =
+        document.getElementById("attendanceContent");
+
+
+
+      function showLoading() {
+
+        loadingStateEl?.classList.remove("d-none");
+        errorStateEl?.classList.add("d-none");
+        contentEl?.classList.add("d-none");
+
+      }
+
+
+      function showError(message) {
+
+        loadingStateEl?.classList.add("d-none");
+        errorStateEl?.classList.remove("d-none");
+        contentEl?.classList.add("d-none");
+
+        if (errorMessageEl && message) {
+
+          errorMessageEl.textContent = message;
+
+        }
+
+      }
+
+
+      function showContent() {
+
+        loadingStateEl?.classList.add("d-none");
+        errorStateEl?.classList.add("d-none");
+        contentEl?.classList.remove("d-none");
+
+      }
+
+
+
+      /* =========================================================
+         FETCH ATTENDANCE DATA
+      ========================================================== */
+
+      async function fetchAttendanceData() {
+
+        showLoading();
+
+
+        try {
+
+          const response = await fetch(
+            `${API_BASE_URL}/api/attendance`
+          );
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              `Request failed with status ${response.status}`
+            );
+
+          }
+
+
+          const data = await response.json();
+
+
+          attendanceEmployees =
+            Array.isArray(data) ? data : [];
+
+
+          renderAttendancePage();
+
+          showContent();
+
+        } catch (error) {
+
+          console.error(
+            "Failed to load attendance data:",
+            error
+          );
+
+          showError(
+            "We couldn't reach the attendance API. Make sure the server is running and try again."
+          );
+
+        }
+
+      }
+
+
+
+      /* =========================================================
+         RENDER EVERYTHING (STATS + CARDS)
+      ========================================================== */
+
+      function renderAttendancePage() {
+
+        calculateAndRenderStats();
+
+        renderEmployeeCards();
+
+      }
 
 
 
@@ -863,145 +962,112 @@
          CALCULATE OVERALL STATISTICS
       ========================================================== */
 
-      attendanceEmployees.forEach(
-        (employee) => {
+      function calculateAndRenderStats() {
 
-          const records =
-            Array.isArray(
-              employee.Performance
-            )
-              ? employee.Performance
-              : [];
+        let totalPresent = 0;
+
+        let totalAbsent = 0;
+
+        let totalRecords = 0;
 
 
-          records.forEach(
-            (record) => {
+        attendanceEmployees.forEach(
+          (employee) => {
 
-              totalRecords++;
-
-
-              const status =
-                String(
-                  record.status || ""
-                ).toLowerCase();
+            const records =
+              Array.isArray(employee.records)
+                ? employee.records
+                : [];
 
 
-              if (status === "present") {
+            records.forEach(
+              (record) => {
 
-                totalPresent++;
+                totalRecords++;
+
+
+                const status =
+                  String(
+                    record.status || ""
+                  ).toLowerCase();
+
+
+                if (status === "present") {
+
+                  totalPresent++;
+
+                }
+
+
+                if (status === "absent") {
+
+                  totalAbsent++;
+
+                }
 
               }
+            );
 
-
-              if (status === "absent") {
-
-                totalAbsent++;
-
-              }
-
-
-              if (
-                status === "late" ||
-                status === "late arrival"
-              ) {
-
-                totalLate++;
-
-              }
-
-            }
-          );
-
-        }
-      );
-
-
-
-      /* =========================================================
-         OVERALL ATTENDANCE RATE
-      ========================================================== */
-
-      const overallAttendanceRate =
-        totalRecords > 0
-          ? Math.round(
-              (totalPresent / totalRecords) * 100
-            )
-          : 0;
-
-
-
-      /* =========================================================
-         UPDATE STATISTICS
-      ========================================================== */
-
-      document.getElementById(
-        "presentCount"
-      ).textContent =
-        totalPresent;
-
-
-      document.getElementById(
-        "absentCount"
-      ).textContent =
-        totalAbsent;
-
-
-      document.getElementById(
-        "lateCount"
-      ).textContent =
-        totalLate;
-
-
-      document.getElementById(
-        "attendanceRate"
-      ).textContent =
-        overallAttendanceRate + "%";
-
-
-
-      /* =========================================================
-         UPDATE SUMMARY
-      ========================================================== */
-
-      document.getElementById(
-        "summaryPresent"
-      ).textContent =
-        totalPresent + " records";
-
-
-      document.getElementById(
-        "summaryAbsent"
-      ).textContent =
-        totalAbsent + " records";
-
-
-      document.getElementById(
-        "summaryLate"
-      ).textContent =
-        totalLate + " records";
-
-
-
-      /* =========================================================
-         REMINDER
-      ========================================================== */
-
-      const attendanceReminder =
-        document.getElementById(
-          "attendanceReminder"
+          }
         );
 
 
-      if (totalAbsent > 0) {
+        const overallAttendanceRate =
+          totalRecords > 0
+            ? Math.round(
+                (totalPresent / totalRecords) * 100
+              )
+            : 0;
 
-        attendanceReminder.textContent =
-          totalAbsent +
-          " absent attendance records";
 
-      } else {
+        document.getElementById(
+          "presentCount"
+        ).textContent =
+          totalPresent;
 
-        attendanceReminder.textContent =
-          "No attendance issues";
+
+        document.getElementById(
+          "absentCount"
+        ).textContent =
+          totalAbsent;
+
+
+        document.getElementById(
+          "attendanceRate"
+        ).textContent =
+          overallAttendanceRate + "%";
+
+
+        document.getElementById(
+          "summaryPresent"
+        ).textContent =
+          totalPresent + " records";
+
+
+        document.getElementById(
+          "summaryAbsent"
+        ).textContent =
+          totalAbsent + " records";
+
+
+        const attendanceReminder =
+          document.getElementById(
+            "attendanceReminder"
+          );
+
+
+        if (totalAbsent > 0) {
+
+          attendanceReminder.textContent =
+            totalAbsent +
+            " absent attendance records";
+
+        } else {
+
+          attendanceReminder.textContent =
+            "No attendance issues";
+
+        }
 
       }
 
@@ -1084,9 +1150,9 @@
 
               const records =
                 Array.isArray(
-                  employee.Performance
+                  employee.records
                 )
-                  ? employee.Performance
+                  ? employee.records
                   : [];
 
 
@@ -1161,9 +1227,9 @@
 
             const records =
               Array.isArray(
-                employee.Performance
+                employee.records
               )
-                ? employee.Performance
+                ? employee.records
                 : [];
 
 
@@ -1184,20 +1250,6 @@
                     record.status
                   ).toLowerCase() ===
                   "absent"
-              ).length;
-
-
-            const late =
-              records.filter(
-                (record) =>
-                  String(
-                    record.status
-                  ).toLowerCase() ===
-                    "late" ||
-                  String(
-                    record.status
-                  ).toLowerCase() ===
-                    "late arrival"
               ).length;
 
 
@@ -1308,20 +1360,6 @@
                       ${absent} Absent
                     </span>
 
-
-                    ${
-                      late > 0
-                        ? `
-                          <span
-                            class="badge-dept bg-soft-warning"
-                          >
-                            <i class="bi bi-clock me-1"></i>
-                            ${late} Late
-                          </span>
-                        `
-                        : ""
-                    }
-
                   </div>
 
 
@@ -1351,100 +1389,90 @@
                     >
 
                       ${
-                        records
-                          .map(
-                            (record) => {
+                        records.length > 0
+                          ? records
+                              .map(
+                                (record) => {
 
-                              const status =
-                                String(
-                                  record.status || ""
-                                ).toLowerCase();
-
-
-                              let icon =
-                                "bi-circle";
+                                  const status =
+                                    String(
+                                      record.status || ""
+                                    ).toLowerCase();
 
 
-                              let statusClass =
-                                "bg-soft-primary";
+                                  let icon =
+                                    "bi-circle";
 
 
-                              if (
-                                status ===
-                                "present"
-                              ) {
-
-                                icon =
-                                  "bi-check-circle-fill";
-
-                                statusClass =
-                                  "bg-soft-success";
-
-                              }
+                                  let statusClass =
+                                    "bg-soft-primary";
 
 
-                              if (
-                                status ===
-                                "absent"
-                              ) {
+                                  if (
+                                    status ===
+                                    "present"
+                                  ) {
 
-                                icon =
-                                  "bi-x-circle-fill";
+                                    icon =
+                                      "bi-check-circle-fill";
 
-                                statusClass =
-                                  "bg-soft-danger";
+                                    statusClass =
+                                      "bg-soft-success";
 
-                              }
-
-
-                              if (
-                                status ===
-                                  "late" ||
-                                status ===
-                                  "late arrival"
-                              ) {
-
-                                icon =
-                                  "bi-clock-fill";
-
-                                statusClass =
-                                  "bg-soft-warning";
-
-                              }
+                                  }
 
 
-                              return `
+                                  if (
+                                    status ===
+                                    "absent"
+                                  ) {
 
-                                <div
-                                  class="d-flex justify-content-between align-items-center py-2 border-bottom"
-                                >
+                                    icon =
+                                      "bi-x-circle-fill";
 
-                                  <span>
-                                    ${formatDate(
-                                      record.date
-                                    )}
-                                  </span>
+                                    statusClass =
+                                      "bg-soft-danger";
+
+                                  }
 
 
-                                  <span
-                                    class="badge-dept ${statusClass}"
-                                  >
+                                  return `
 
-                                    <i
-                                      class="bi ${icon} me-1"
-                                    ></i>
+                                    <div
+                                      class="d-flex justify-content-between align-items-center py-2 border-bottom"
+                                    >
 
-                                    ${record.status}
+                                      <span>
+                                        ${formatDate(
+                                          record.date
+                                        )}
+                                      </span>
 
-                                  </span>
 
-                                </div>
+                                      <span
+                                        class="badge-dept ${statusClass}"
+                                      >
 
-                              `;
+                                        <i
+                                          class="bi ${icon} me-1"
+                                        ></i>
 
-                            }
-                          )
-                          .join("")
+                                        ${record.status}
+
+                                      </span>
+
+                                    </div>
+
+                                  `;
+
+                                }
+                              )
+                              .join("")
+                          : `
+                              <p class="text-muted small mb-0 py-2">
+                                No attendance records yet.
+                              </p>
+                            `
                       }
 
                     </div>
@@ -1543,6 +1571,21 @@
 
 
       /* =========================================================
+         RETRY BUTTON
+      ========================================================== */
+
+      document
+        .getElementById(
+          "retryAttendanceBtn"
+        )
+        ?.addEventListener(
+          "click",
+          fetchAttendanceData
+        );
+
+
+
+      /* =========================================================
          EXPORT CSV
       ========================================================== */
 
@@ -1584,9 +1627,9 @@
 
                 const records =
                   Array.isArray(
-                    employee.Performance
+                    employee.records
                   )
-                    ? employee.Performance
+                    ? employee.records
                     : [];
 
 
@@ -1710,7 +1753,7 @@
          INITIALISE PAGE
       ========================================================== */
 
-      renderEmployeeCards();
+      fetchAttendanceData();
 
     </script>
 
