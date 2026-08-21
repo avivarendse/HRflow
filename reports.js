@@ -3,7 +3,7 @@
 // Connected to the backend API
 // ======================================================
 
-const API_URL = "http://localhost:3000/api/reports";
+const API_URL = "https://moderntech-backend-1.onrender.com/api/reports";
 
 let reportData = [];
 let currentFilteredList = [];
