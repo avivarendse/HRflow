@@ -111,6 +111,8 @@
         </div>
 
         <div class="main-container">
+          <div id="statusBanner" class="alert d-none mb-3" role="alert"></div>
+
           <div class="card card-custom">
             <div class="card-body">
               <h5 class="fw-bold mb-3 text-primary">Master Directory</h5>
@@ -127,6 +129,7 @@
                     </tr>
                   </thead>
                   <tbody id="EmployeesTable">
+                    <tr><td colspan="6" class="text-center text-muted">Loading employees...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -144,28 +147,35 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
+            <div id="modalError" class="alert alert-danger d-none"></div>
             <form id="addEmployeeForm">
               <div class="mb-3">
-                <label for="empName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="empName" required placeholder="e.g. Sarah Jenkins">
+                <label for="empFirstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="empFirstName" required placeholder="e.g. Sarah">
               </div>
               <div class="mb-3">
-                <label for="empId" class="form-label">Employee ID</label>
-                <input type="text" class="form-control" id="empId" required placeholder="e.g. 11">
+                <label for="empLastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="empLastName" required placeholder="e.g. Jenkins">
               </div>
               <div class="mb-3">
                 <label for="empDept" class="form-label">Department</label>
-                <input type="text" class="form-control" id="empDept" required placeholder="e.g. Marketing">
+                <select class="form-select" id="empDept" required>
+                  <option value="">Loading departments...</option>
+                </select>
               </div>
               <div class="mb-3">
                 <label for="empRole" class="form-label">Job Title / Role</label>
                 <input type="text" class="form-control" id="empRole" required placeholder="e.g. Senior Strategist">
               </div>
               <div class="mb-3">
+                <label for="empSalary" class="form-label">Salary</label>
+                <input type="number" class="form-control" id="empSalary" placeholder="e.g. 450000" value="0">
+              </div>
+              <div class="mb-3">
                 <label for="empEmail" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="empEmail" required placeholder="e.g. sarah.j@company.com">
               </div>
-              <button type="submit" class="btn btn-primary w-100">Register Employee</button>
+              <button type="submit" class="btn btn-primary w-100" id="saveEmpBtn">Register Employee</button>
             </form>
           </div>
         </div>
@@ -173,11 +183,46 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="dummy-data.js"></script>
     <script>
-      // Verify global scope dataset from dummy-data.js exists safely
-    if (!window.dummyData) window.dummyData = {};
-    if (!window.dummyData.employees) window.dummyData.employees = [];
+      const API_BASE = "https://moderntech-backend-1.onrender.com/api/employees";
+      let employeesCache = [];
+      let departmentsCache = [];
+
+      // --- AUTH CHECK ---
+      const token = sessionStorage.getItem("token");
+      if (!token) {
+        window.location.href = "index.html";
+      }
+
+      function authHeaders() {
+        return {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        };
+      }
+
+      const statusBanner = document.getElementById("statusBanner");
+      function showBanner(message, type) {
+        statusBanner.textContent = message;
+        statusBanner.className = "alert alert-" + type + " mb-3";
+      }
+
+      async function apiFetch(path, options = {}) {
+        const res = await fetch(API_BASE + path, {
+          ...options,
+          headers: { ...authHeaders(), ...(options.headers || {}) },
+        });
+        if (res.status === 401 || res.status === 403) {
+          sessionStorage.removeItem("token");
+          window.location.href = "index.html";
+          throw new Error("Session expired");
+        }
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.error || data.message || "Request failed (" + res.status + ")");
+        }
+        return data;
+      }
 
       // Theme context operations
       const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -213,23 +258,55 @@
       updateClock();
       setInterval(updateClock, 1000);
 
+      // --- LOAD REAL EMPLOYEES FROM BACKEND ---
+      async function loadEmployees() {
+        try {
+          employeesCache = await apiFetch("/");
+          renderEmployees();
+        } catch (err) {
+          showBanner("Failed to load employees: " + err.message, "danger");
+          document.getElementById("EmployeesTable").innerHTML =
+            '<tr><td colspan="6" class="text-center text-danger">Could not load employees.</td></tr>';
+        }
+      }
+
+      // --- LOAD REAL DEPARTMENTS FOR THE DROPDOWN ---
+      async function loadDepartments() {
+        const select = document.getElementById("empDept");
+        try {
+          departmentsCache = await apiFetch("/departments");
+          select.innerHTML = '<option value="">Select a department</option>';
+          departmentsCache.forEach((dept) => {
+            const opt = new Option(dept.department_name, dept.department_id);
+            select.add(opt);
+          });
+        } catch (err) {
+          select.innerHTML = '<option value="">Failed to load departments</option>';
+        }
+      }
+
       // Core UI Generation Engine
       function renderEmployees() {
         const table = document.getElementById("EmployeesTable");
         if (!table) return;
-        
-        table.innerHTML = ""; // Flushes live DOM workspace
 
-        window.__DUMMY_DATA__.employees.forEach((emp, index) => {
+        table.innerHTML = "";
+
+        if (employeesCache.length === 0) {
+          table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No employees found.</td></tr>';
+          return;
+        }
+
+        employeesCache.forEach((emp) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td><strong>${emp.name}</strong></td>
-            <td>${emp.employeeId}</td>
-            <td>${emp.department || '--'}</td>
+            <td><strong>${emp.first_name} ${emp.last_name}</strong></td>
+            <td>${emp.employees_id}</td>
+            <td>${emp.department_name || '--'}</td>
             <td>${emp.position || '--'}</td>
             <td>${emp.contact || '--'}</td>
             <td class="text-end">
-              <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${index})" title="Offboard Employee">
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteEmployee(${emp.employees_id})" title="Offboard Employee">
                 <i class="bi bi-trash-fill"></i>
               </button>
             </td>
@@ -238,41 +315,68 @@
         });
       }
 
-      // Add Record Event Interceptor
-      document.getElementById("addEmployeeForm")?.addEventListener("submit", function(e) {
-        e.preventDefault();
+      // --- ADD EMPLOYEE: REAL POST TO BACKEND ---
+      const modalError = document.getElementById("modalError");
+      const saveBtn = document.getElementById("saveEmpBtn");
 
-        // Object mapped perfectly to match dummy-data.js schema structure
-        const newProfile = {
-          employeeId: parseInt(document.getElementById("empId").value) || document.getElementById("empId").value,
-          name: document.getElementById("empName").value,
-          position: document.getElementById("empRole").value,
-          department: document.getElementById("empDept").value,
-          salary: 0, 
-          employmentHistory: `Joined in ${new Date().getFullYear()}`,
-          contact: document.getElementById("empEmail").value
+      document.getElementById("addEmployeeForm")?.addEventListener("submit", async function(e) {
+        e.preventDefault();
+        modalError.classList.add("d-none");
+
+        const payload = {
+          first_name: document.getElementById("empFirstName").value.trim(),
+          last_name: document.getElementById("empLastName").value.trim(),
+          position: document.getElementById("empRole").value.trim(),
+          department_id: document.getElementById("empDept").value,
+          salary: parseFloat(document.getElementById("empSalary").value) || 0,
+          employment_history: `Joined in ${new Date().getFullYear()}`,
+          contact: document.getElementById("empEmail").value.trim()
         };
 
-        window.__DUMMY_DATA__.employees.push(newProfile);
-        renderEmployees();
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
 
-        // Safe Framework Model dismissal
-        this.reset();
-        const modalElement = document.getElementById('addEmployeeModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalElement);
-        modalInstance.hide();
+        try {
+          await apiFetch("/", {
+            method: "POST",
+            body: JSON.stringify(payload)
+          });
+
+          await loadEmployees();
+
+          this.reset();
+          const modalElement = document.getElementById('addEmployeeModal');
+          const modalInstance = bootstrap.Modal.getInstance(modalElement);
+          modalInstance.hide();
+          showBanner("Employee added successfully.", "success");
+        } catch (err) {
+          modalError.textContent = err.message;
+          modalError.classList.remove("d-none");
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "Register Employee";
+        }
       });
 
-      // Array Deletion Logic
-      window.deleteEmployee = function(index) {
-        if (confirm("Are you certain you want to delete this employee profile from the master roster?")) {
-          window.__DUMMY_DATA__.employees.splice(index, 1);
-          renderEmployees();
+      // --- DELETE EMPLOYEE: REAL DELETE TO BACKEND ---
+      window.deleteEmployee = async function(employeeId) {
+        if (!confirm("Are you certain you want to delete this employee profile from the master roster?")) {
+          return;
+        }
+        try {
+          await apiFetch(`/${employeeId}`, { method: "DELETE" });
+          await loadEmployees();
+          showBanner("Employee deleted.", "success");
+        } catch (err) {
+          showBanner("Failed to delete employee: " + err.message, "danger");
         }
       };
 
-      // Lifecycle load initialization 
-      document.addEventListener("DOMContentLoaded", renderEmployees);
+      // Lifecycle load initialization
+      document.addEventListener("DOMContentLoaded", () => {
+        loadEmployees();
+        loadDepartments();
+      });
     </script>
   </body>
 </html>
